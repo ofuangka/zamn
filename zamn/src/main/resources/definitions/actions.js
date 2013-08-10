@@ -4,14 +4,14 @@
 		"targetingRange" : {
 			"type" : "DECAYING",
 			"range" : 2,
-			"filterType" : "NULL_TILE_FILTER",
+			"filter" : "NULL_TILE_FILTER",
 			"inclusive" : false
 		},
-		"actualRangeFilterType" : "OCCUPIED_BY_CRITTER_FILTER",
+		"actualRangeFilter" : "OCCUPIED_BY_CRITTER_FILTER",
 		"areaOfEffect" : {
 			"type" : "DECAYING",
 			"range" : 1,
-			"filterType" : "NULL_TILE_FILTER",
+			"filter" : "NULL_TILE_FILTER",
 			"inclusive" : true
 		},
 		"effect" : {
@@ -27,14 +27,14 @@
 		"targetingRange" : {
 			"type" : "DECAYING",
 			"range" : 1,
-			"filterType" : "NULL_TILE_FILTER",
+			"filter" : "NULL_TILE_FILTER",
 			"inclusive" : false
 		},
-		"actualRangeFilterType" : "OCCUPIED_BY_CRITTER_FILTER",
+		"actualRangeFilter" : "OCCUPIED_BY_CRITTER_FILTER",
 		"areaOfEffect" : {
 			"type" : "DECAYING",
 			"range" : 0,
-			"filterType" : "NULL_TILE_FILTER",
+			"filter" : "NULL_TILE_FILTER",
 			"inclusive" : true
 		},
 		"effect" : {

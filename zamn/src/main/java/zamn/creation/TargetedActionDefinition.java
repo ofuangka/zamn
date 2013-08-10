@@ -2,14 +2,14 @@ package zamn.creation;
 
 public class TargetedActionDefinition {
 
-	private String actualRangeFilterType;
+	private String actualRangeFilter;
 	private TileCollectorDefinition areaOfEffect;
 	private EffectDefinition effect;
 	private String name;
 	private TileCollectorDefinition targetingRange;
 
-	public String getActualRangeFilterType() {
-		return actualRangeFilterType;
+	public String getActualRangeFilter() {
+		return actualRangeFilter;
 	}
 
 	public TileCollectorDefinition getAreaOfEffect() {
@@ -28,8 +28,8 @@ public class TargetedActionDefinition {
 		return targetingRange;
 	}
 
-	public void setActualRangeFilterType(String actualRangeFilterType) {
-		this.actualRangeFilterType = actualRangeFilterType;
+	public void setActualRangeFilter(String actualRangeFilter) {
+		this.actualRangeFilter = actualRangeFilter;
 	}
 
 	public void setAreaOfEffect(TileCollectorDefinition areaOfEffect) {

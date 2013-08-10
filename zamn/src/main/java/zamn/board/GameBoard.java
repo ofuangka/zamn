@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.util.CollectionUtils;
 
 import zamn.board.controlmode.AbstractGameBoardControlMode;
 import zamn.board.controlmode.AdventureMode;
@@ -28,36 +29,30 @@ import zamn.ui.IKeySink;
 public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 	private static final String INITIAL_BOARD_ID = "goStraight";
-
 	private static final String INITIAL_HERO_ID = "mainCharacter";
-
 	private static final Logger LOG = Logger.getLogger(GameBoard.class);
-
 	private static final long serialVersionUID = -6548852244995136036L;
 
 	private BoardLoader boardLoader;
-
 	private Critter controllingCritter;
 	private CritterFactory critterFactory;
 	private List<Critter> critters = new ArrayList<Critter>();
 	private List<Tile> crosshairTiles = new ArrayList<Tile>();
-
 	private List<Tile> disabledTiles = new ArrayList<Tile>();
-	private Map<String, String> exits = new HashMap<String, String>();
-
+	private IEventContext eventContext;
+	private Map<String, String[]> exits = new HashMap<String, String[]>();
+	private List<Critter> heroes = new ArrayList<Critter>();
 	private List<AbstractGameBoardControlMode> modeHistory = new ArrayList<AbstractGameBoardControlMode>();
-
 	private List<Critter> sequence = new ArrayList<Critter>();
-
 	private List<Tile> tilesInTargetingRange = new ArrayList<Tile>();
 
 	public GameBoard(IEventContext eventContext) {
-		super(eventContext);
+		this.eventContext = eventContext;
 		eventContext.onAll(this);
 	}
 
-	public void addExit(String key, String boardId) {
-		exits.put(key, boardId);
+	public void addExit(int x, int y, Direction dir, String[] boardIdAndEntrance) {
+		exits.put(getExitKey(x, y, dir), boardIdAndEntrance);
 	}
 
 	/**
@@ -79,7 +74,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		repaint();
 	}
 
-	public void clearCrosshair() {
+	public void clearCrosshairUi() {
 		LOG.debug("Removing all crosshair tiles...");
 		while (!crosshairTiles.isEmpty()) {
 			crosshairTiles.remove(0).setCrosshair(false);
@@ -87,7 +82,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		repaint();
 	}
 
-	public void clearDisabledTiles() {
+	public void clearDisabledTileUi() {
 		LOG.debug("Removing all out of range tiles...");
 		while (!disabledTiles.isEmpty()) {
 			disabledTiles.remove(0).setEnabled(true);
@@ -95,19 +90,16 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		repaint();
 	}
 
-	public void clearExits() {
-		LOG.debug("Clearing exits...");
-		exits.clear();
-	}
-
-	public void clearTargetingRange() {
+	public void clearTargetingRangeUi() {
 		LOG.debug("Clearing targetable Tile objects...");
 		while (!tilesInTargetingRange.isEmpty()) {
 			tilesInTargetingRange.remove(0).setInTargetingRange(false);
 		}
+		repaint();
 	}
 
 	public void createCritterSequence() {
+		sequence.addAll(heroes);
 		sequence.addAll(critters);
 		Collections.sort(sequence, Critter.SPEED_COMPARATOR);
 		Collections.reverse(sequence);
@@ -131,6 +123,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		removePiece(deadCritter);
 		critters.remove(deadCritter);
 		sequence.remove(deadCritter);
+		heroes.remove(deadCritter);
 	}
 
 	protected void doOnCritterTargetedActionRequest(TargetedAction action) {
@@ -143,10 +136,10 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 	protected void doOnNewGameRequest() {
 		forceClearBoardState();
-		load(INITIAL_BOARD_ID);
+		forceClearGameState();
 		Critter initialHero = getInitialHero();
-		placePiece(initialHero, 1, 2);
-		critters.add(initialHero);
+		heroes.add(initialHero);
+		load(INITIAL_BOARD_ID);
 		nextTurn();
 	}
 
@@ -162,7 +155,15 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	}
 
 	/**
-	 * Any state that the board keeps track of gets cleared here
+	 * Clears the game state, ignoring the UI and board state
+	 */
+	protected void forceClearGameState() {
+		heroes.clear();
+	}
+
+	/**
+	 * Clears the board state without clearing the game state, ignoring the UI
+	 * state
 	 */
 	protected void forceClearBoardState() {
 		critters.clear();
@@ -187,8 +188,16 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return modeHistory.get(modeHistory.size() - 1);
 	}
 
+	public IEventContext getEventContext() {
+		return eventContext;
+	}
+
 	public String getExitKey(int x, int y, Direction dir) {
-		return x + ',' + y + ',' + dir.toString();
+		return x + "," + y + "," + dir.toString();
+	}
+
+	public List<Critter> getHeroes() {
+		return heroes;
 	}
 
 	protected Critter getInitialHero() {
@@ -218,6 +227,9 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			doOnCritterAddedToBoard((Critter) arg);
 			break;
 		}
+		case COORDINATES_REQUEST: {
+			doOnCoordinatesRequest();
+		}
 		default: {
 			break;
 		}
@@ -225,15 +237,12 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return true;
 	}
 
+	private void doOnCoordinatesRequest() {
+		LOG.info(controllingCritter.getX() + ", " + controllingCritter.getY());
+	}
+
 	public boolean isAtLeastOneHeroOnBoard() {
-		boolean ret = false;
-		for (Critter critter : critters) {
-			if (!critter.isHostile()) {
-				ret = true;
-				break;
-			}
-		}
-		return ret;
+		return !heroes.isEmpty();
 	}
 
 	public boolean isInCombat() {
@@ -253,6 +262,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 	public void load(String boardId, int entryPoint) {
 		LOG.info("Loading board " + boardId + "[" + entryPoint + "]...");
+		forceClearBoardState();
 		try {
 			boardLoader.load(boardId, entryPoint, this);
 		} catch (IOException e) {
@@ -263,9 +273,9 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	public void nextTurn() {
 		LOG.debug("Starting new turn...");
 
-		clearDisabledTiles();
-		clearTargetingRange();
-		clearCrosshair();
+		clearDisabledTileUi();
+		clearTargetingRangeUi();
+		clearCrosshairUi();
 
 		modeHistory.clear();
 
@@ -301,6 +311,35 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		}
 	}
 
+	public void placeHeroes(Tile entranceTile) {
+		for (Critter hero : heroes) {
+			placeHero(hero, entranceTile);
+		}
+	}
+
+	protected void placeHero(Critter hero, Tile entranceTile) {
+		List<Tile> queue = new ArrayList<Tile>();
+		queue.add(entranceTile);
+		if (!placeHeroHelper(hero, queue)) {
+			throw new IllegalStateException("Unable to place hero on board");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	protected boolean placeHeroHelper(Critter hero, List<Tile> queue) {
+		for (Tile tile : queue) {
+			if (!tile.isOccupied() && tile.isWalkable()) {
+				placePiece(hero, tile.getX(), tile.getY());
+				return true;
+			} else {
+				queue.addAll(CollectionUtils.arrayToList(tile
+						.getAdjacentTiles()));
+				return placeHeroHelper(hero, queue);
+			}
+		}
+		return false;
+	}
+
 	public void popMode() {
 		modeHistory.remove(modeHistory.size() - 1);
 		refreshMode();
@@ -317,7 +356,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	}
 
 	public void renderCrosshair(List<Tile> tilesInCrosshair) {
-		clearCrosshair();
+		clearCrosshairUi();
 		if (tilesInCrosshair != null) {
 			for (Tile tile : tilesInCrosshair) {
 				tile.setCrosshair(true);
@@ -340,7 +379,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	}
 
 	public void setTargetingRange(List<Tile> targetingRange) {
-		clearTargetingRange();
+		clearTargetingRangeUi();
 		if (targetingRange != null) {
 			for (Tile tile : targetingRange) {
 				tile.setInTargetingRange(true);
@@ -361,12 +400,16 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		if (!isInCombat()) {
 			String exitKey = getExitKey(piece.getX(), piece.getY(), dir);
 			if (exits.containsKey(exitKey)) {
-				load(exits.get(exitKey));
+				String[] exit = exits.get(exitKey);
+				load(exit[0], Integer.valueOf(exit[1]));
 				nextTurn();
-				return true;
+				return false;
+			} else {
+				return super.tryMove(piece, dir);
 			}
+		} else {
+			return super.tryMove(piece, dir);
 		}
-		return super.tryMove(piece, dir);
 	}
 
 	/**

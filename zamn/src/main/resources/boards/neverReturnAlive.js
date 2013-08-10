@@ -15,27 +15,8 @@
 	"exits" : [ {
 		"boardId" : "barScene",
 		"dir" : "RIGHT",
-		"x" : 18,
-		"y" : 3,
-		"entryPoint" : 0
-	}, {
-		"boardId" : "barScene",
-		"dir" : "RIGHT",
-		"x" : 18,
-		"y" : 4,
-		"entryPoint" : 1
-	}, {
-		"boardId" : "neverReturnAlive",
-		"dir" : "DOWN",
-		"x" : 11,
-		"y" : 14,
-		"entryPoint" : 0
-	}, {
-		"boardId" : "neverReturnAlive",
-		"dir" : "DOWN",
-		"x" : 12,
-		"y" : 14,
-		"entryPoint" : 1
+		"x" : 2,
+		"y" : 3
 	} ],
 	"tiles" : [ [ {
 		"_" : false,

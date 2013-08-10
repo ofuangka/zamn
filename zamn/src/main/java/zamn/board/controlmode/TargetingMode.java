@@ -79,7 +79,7 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 			List<Tile> affectedTiles = aoe.collect(actualRange
 					.get(currentIndex));
 			for (Tile tile : affectedTiles) {
-				tileEffect.interact(tile);
+				tileEffect.apply(tile);
 			}
 			LOG.debug("Valid tile selection, ending turn");
 			getEventContext().fire(GameEventContext.GameEventType.END_OF_TURN);
@@ -90,9 +90,9 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 
 	@Override
 	public void esc() {
-		getGameBoard().clearDisabledTiles();
-		getGameBoard().clearTargetingRange();
-		getGameBoard().clearCrosshair();
+		getGameBoard().clearDisabledTileUi();
+		getGameBoard().clearTargetingRangeUi();
+		getGameBoard().clearCrosshairUi();
 		getGameBoard().popMode();
 		getEventContext().fire(
 				GameEventContext.GameEventType.PREVIOUS_IN_GAME_MENU_REQUEST);
@@ -101,7 +101,7 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 	@Override
 	public void left() {
 		if (currentIndex != NO_SELECTABLE_TILE_INDEX) {
-			getGameBoard().clearCrosshair();
+			getGameBoard().clearCrosshairUi();
 			actualRange.get(currentIndex).setCrosshair(false);
 			currentIndex = (currentIndex == 0) ? actualRange.size() - 1
 					: currentIndex - 1;
@@ -122,7 +122,7 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 	@Override
 	public void right() {
 		if (currentIndex != NO_SELECTABLE_TILE_INDEX) {
-			getGameBoard().clearCrosshair();
+			getGameBoard().clearCrosshairUi();
 			actualRange.get(currentIndex).setCrosshair(false);
 			currentIndex = (currentIndex == actualRange.size() - 1) ? 0
 					: currentIndex + 1;

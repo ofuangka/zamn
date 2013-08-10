@@ -18,7 +18,7 @@ import org.apache.log4j.Logger;
  * @author ofuangka
  * 
  */
-public class Tile extends PositionedSpriteSheetSprite {
+public class Tile extends AbstractBoardPiece {
 
 	public static final int BOTTOM_EDGE = 2;
 
@@ -59,10 +59,8 @@ public class Tile extends PositionedSpriteSheetSprite {
 	public static final int TOP_EDGE = 0;
 
 	private Tile[] adjacents = new Tile[NUM_TILE_EDGES];
-
 	private boolean enabled = true;
 	private boolean inTargetingRange = false;
-
 	private int movementCost = DEFAULT_MOVEMENT_COST;
 
 	private AbstractBoardPiece occupant;
@@ -81,8 +79,8 @@ public class Tile extends PositionedSpriteSheetSprite {
 	 */
 	public void add(AbstractBoardPiece piece) {
 		if (piece != null) {
-			if (!piece.isTakingUpSpace()
-					|| (piece.isTakingUpSpace() && !isOccupied())) {
+			if (!piece.isSolid()
+					|| (piece.isSolid() && !isOccupied())) {
 				if (pieces.isEmpty()) {
 					pieces.add(piece);
 				} else {
@@ -93,7 +91,7 @@ public class Tile extends PositionedSpriteSheetSprite {
 					}
 					pieces.add(i, piece);
 				}
-				if (piece.isTakingUpSpace()) {
+				if (piece.isSolid()) {
 					occupant = piece;
 				}
 			} else {
@@ -133,7 +131,7 @@ public class Tile extends PositionedSpriteSheetSprite {
 			g2d.fillRect(0, 0, spriteSize.width, spriteSize.height);
 		}
 
-		for (PositionedSpriteSheetSprite piece : pieces) {
+		for (AbstractBoardPiece piece : pieces) {
 			g2d.drawImage(piece.getImage(), 0, 0, spriteSize.width,
 					spriteSize.height, 0, 0, spriteSize.width,
 					spriteSize.height, null);
@@ -207,7 +205,7 @@ public class Tile extends PositionedSpriteSheetSprite {
 		if (piece != null) {
 			pieces.remove(piece);
 
-			if (piece.isTakingUpSpace()) {
+			if (piece.isSolid()) {
 				occupant = null;
 			}
 		}

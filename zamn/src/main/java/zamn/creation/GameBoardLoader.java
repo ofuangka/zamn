@@ -12,6 +12,7 @@ import zamn.board.AbstractBoard;
 import zamn.board.GameBoard;
 import zamn.board.Tile;
 import zamn.board.piece.Critter;
+import zamn.common.Direction;
 import zamn.framework.event.Event;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
@@ -33,9 +34,12 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 	}
 
 	@Override
-	protected void doLoad(BoardDefinition boardDefinition, AbstractBoard board) {
+	protected void doLoad(BoardDefinition boardDefinition, AbstractBoard board,
+			int entryPoint) {
 
-		Tile[][] tiles = board.getTiles();
+		GameBoard gameBoard = ((GameBoard) board);
+
+		Tile[][] tiles = gameBoard.getTiles();
 
 		CritterPositionDefinition[] critterPositionDefinitions = boardDefinition
 				.getCritters();
@@ -58,10 +62,17 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 		ExitDefinition[] exitDefinitions = boardDefinition.getExits();
 		for (int i = 0; i < exitDefinitions.length; i++) {
 			ExitDefinition exitDefinition = exitDefinitions[i];
-			String key = exitDefinition.getX() + ',' + exitDefinition.getY()
-					+ ',' + exitDefinition.getDir();
-			((GameBoard) board).addExit(key, exitDefinition.getBoardId());
+			gameBoard.addExit(
+					exitDefinition.getX(),
+					exitDefinition.getY(),
+					Direction.valueOf(exitDefinition.getDir().toUpperCase()),
+					new String[] { exitDefinition.getBoardId(),
+							String.valueOf(exitDefinition.getEntryPoint()) });
 		}
+
+		Integer[][] entrances = boardDefinition.getEntrances();
+		Tile entranceTile = tiles[entrances[entryPoint][0]][entrances[entryPoint][1]];
+		gameBoard.placeHeroes(entranceTile);
 	}
 
 	protected void doOnCritterDeath(Critter deadCritter) {

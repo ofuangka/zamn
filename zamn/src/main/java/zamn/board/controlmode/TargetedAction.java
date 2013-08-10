@@ -4,8 +4,8 @@ import zamn.board.tilecollector.ITileCollector;
 import zamn.board.tilecollector.TileListFilter;
 
 /**
- * CritterActions are all made up of a targeting range, and area of effect, and
- * the effect itself
+ * actions are all made up of a targeting range, an area of effect, and the
+ * effect itself
  * 
  * @author ofuangka
  * 

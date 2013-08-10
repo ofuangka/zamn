@@ -1,13 +1,13 @@
 package zamn.creation;
 
 public class TileCollectorDefinition {
-	private String filterType;
+	private String filter;
 	private boolean inclusive;
 	private int range;
 	private String type;
 
-	public String getFilterType() {
-		return filterType;
+	public String getFilter() {
+		return filter;
 	}
 
 	public int getRange() {
@@ -22,8 +22,8 @@ public class TileCollectorDefinition {
 		return inclusive;
 	}
 
-	public void setFilterType(String filter) {
-		this.filterType = filter;
+	public void setFilter(String filter) {
+		this.filter = filter;
 	}
 
 	public void setInclusive(boolean inclusive) {

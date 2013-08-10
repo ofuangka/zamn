@@ -6,9 +6,14 @@ public class ExitDefinition {
 	private int index;
 	private int x;
 	private int y;
+	private int entryPoint;
 
 	public String getBoardId() {
 		return boardId;
+	}
+
+	public int getEntryPoint() {
+		return entryPoint;
 	}
 
 	public String getDir() {
@@ -33,6 +38,10 @@ public class ExitDefinition {
 
 	public void setDir(String dir) {
 		this.dir = dir;
+	}
+
+	public void setEntryPoint(int entryPoint) {
+		this.entryPoint = entryPoint;
 	}
 
 	public void setIndex(int index) {

@@ -39,7 +39,7 @@ public class BoardLoader {
 		tileSpriteMap = spriteMapDefinition.getSpriteMap();
 	}
 
-	protected void doLoad(BoardDefinition boardDefinition, AbstractBoard board) {
+	protected void doLoad(BoardDefinition boardDefinition, AbstractBoard board, int entryPoint) {
 		// hook for subclasses
 	}
 
@@ -77,7 +77,7 @@ public class BoardLoader {
 
 		board.setTiles(ret);
 
-		doLoad(boardDefinition, board);
+		doLoad(boardDefinition, board, entryPoint);
 	}
 
 	@Required

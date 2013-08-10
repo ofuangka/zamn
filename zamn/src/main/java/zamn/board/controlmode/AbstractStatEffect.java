@@ -12,13 +12,14 @@ import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 
 /**
- * This class represents an HP reducing attack whose damage is driven by a
- * Critter.Stat
+ * This class represents an effect driven by some modifier
  * 
  * @author ofuangka
  * 
  */
 public abstract class AbstractStatEffect extends AbstractEffect {
+
+	public static final int STAT_INFINITY = -1;
 
 	private static final Logger LOG = Logger
 			.getLogger(AbstractStatEffect.class);
@@ -59,7 +60,7 @@ public abstract class AbstractStatEffect extends AbstractEffect {
 	 * HP. If the target has died, it fires a CRITTER_DEATH event
 	 */
 	@Override
-	public void interact(Tile targetTile) {
+	public void apply(Tile targetTile) {
 
 		if (targetTile.isOccupied()) {
 
@@ -73,14 +74,14 @@ public abstract class AbstractStatEffect extends AbstractEffect {
 				int roll = (min + random.nextInt(max - min) + getModifier())
 						* ((positive) ? -1 : 1);
 
-				int maxValue = -1;
+				int maxValue = STAT_INFINITY;
 				int newValue = target.getStat(affectedStat) - roll;
+				Critter.Stat maxStat = affectedStat.getMaxStat();
 
-				if (Critter.Stat.HP.equals(affectedStat)) {
-					maxValue = target.getStat(Critter.Stat.MAXHP);
+				if (maxStat != null) {
+					maxValue = target.getStat(maxStat);
 				}
-
-				if (maxValue != -1 && maxValue < newValue) {
+				if (maxValue != STAT_INFINITY && maxValue < newValue) {
 					newValue = maxValue;
 				}
 

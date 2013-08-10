@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import zamn.common.Direction;
-import zamn.framework.event.IEventContext;
 import zamn.ui.IDelegatingKeySink;
 import zamn.ui.ILayer;
 
@@ -23,37 +22,17 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		IDelegatingKeySink {
 
 	public static final int INVALID_X = -1;
-
 	public static final int INVALID_Y = -1;
-	private static final Logger LOG = Logger.getLogger(AbstractBoard.class);
 
+	private static final Logger LOG = Logger.getLogger(AbstractBoard.class);
 	private static final long serialVersionUID = -2949485746939158973L;
 
-	private IEventContext eventContext;
-
 	private Dimension spriteSize;
-
 	protected Tile[][] tiles;
-
-	public AbstractBoard(IEventContext eventContext) {
-		this.eventContext = eventContext;
-	}
 
 	@Override
 	public void backspace() {
 		getCurrentKeySink().backspace();
-	}
-
-	/**
-	 * A hook to perform any additional checks before executing a move
-	 * 
-	 * @param piece
-	 * @param nextTile
-	 * @return
-	 */
-	protected boolean doBeforeMoveExecution(AbstractBoardPiece piece,
-			Tile nextTile, Direction dir) {
-		return true;
 	}
 
 	@Override
@@ -71,26 +50,6 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		getCurrentKeySink().esc();
 	}
 
-	public Tile[] getAdjacentTiles(int x, int y) {
-		Tile[] ret = new Tile[Tile.NUM_TILE_EDGES];
-		if (isInBounds(x, y)) {
-			ret = getTile(x, y).getAdjacentTiles();
-		}
-		return ret;
-	}
-
-	public Tile[] getAdjacentTiles(PositionedSpriteSheetSprite piece) {
-		return getAdjacentTiles(piece.getX(), piece.getY());
-	}
-
-	public Tile[] getAdjacentTiles(Tile tile) {
-		return tile.getAdjacentTiles();
-	}
-
-	public IEventContext getEventContext() {
-		return eventContext;
-	}
-
 	public Dimension getSpriteSize() {
 		return spriteSize;
 	}
@@ -102,7 +61,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	public Tile[][] getTiles() {
 		return tiles;
 	}
-	
+
 	/**
 	 * The Board layer is never empty
 	 * 
@@ -121,8 +80,10 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	 * @return
 	 */
 	public boolean isInBounds(int x, int y) {
-		return !(x < 0) && x < tiles.length
-				&& isInBounds(x, y, 0, 0, tiles.length, tiles[x].length);
+		return !(x < 0)
+				&& x < tiles.length
+				&& AbstractBoard.isInBounds(x, y, 0, 0, tiles.length,
+						tiles[x].length);
 	}
 
 	/**
@@ -137,7 +98,8 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	 * @param maxY
 	 * @return
 	 */
-	public boolean isInBounds(int x, int y, int minX, int minY, int dx, int dy) {
+	public static boolean isInBounds(int x, int y, int minX, int minY, int dx,
+			int dy) {
 		return !(x < minX) && !(y < minY) && (x < minX + dx) && (y < minY + dy);
 	}
 
@@ -146,6 +108,13 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		getCurrentKeySink().left();
 	}
 
+	/**
+	 * This method calls repaint
+	 * 
+	 * @param piece
+	 * @param x
+	 * @param y
+	 */
 	public void placePiece(AbstractBoardPiece piece, int x, int y) {
 		removePiece(piece);
 		if (tiles[x][y] == null) {
@@ -158,6 +127,11 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	}
 
+	/**
+	 * This method calls repaint
+	 * 
+	 * @param piece
+	 */
 	public void removePiece(AbstractBoardPiece piece) {
 		int x = piece.getX();
 		int y = piece.getY();
@@ -209,7 +183,8 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	/**
 	 * Moves an arbitrary piece one space in the given direction unless the Tile
 	 * in the direction is invalid, disabled or occupied. Returns true if the
-	 * move was successful
+	 * move was successful. This method calls repaint transitively through
+	 * placePiece
 	 * 
 	 * @param piece
 	 * @param dir
@@ -242,8 +217,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		if (isInBounds(nextX, nextY)) {
 			Tile nextTile = getTile(nextX, nextY);
 			if (nextTile.isWalkable() && nextTile.isEnabled()
-					&& !nextTile.isOccupied()
-					&& doBeforeMoveExecution(piece, nextTile, dir)) {
+					&& !nextTile.isOccupied()) {
 				placePiece(piece, nextX, nextY);
 				return true;
 

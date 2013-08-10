@@ -5,15 +5,15 @@ import zamn.board.piece.Critter;
 
 public abstract class AbstractEffect {
 
-	private Critter source;
+	private Critter critter;
 
-	public Critter getSource() {
-		return source;
+	public Critter getCritter() {
+		return critter;
 	}
 
-	public abstract void interact(Tile targetTile);
+	public abstract void apply(Tile targetTile);
 
-	public void setSource(Critter source) {
-		this.source = source;
+	public void setCritter(Critter critter) {
+		this.critter = critter;
 	}
 }

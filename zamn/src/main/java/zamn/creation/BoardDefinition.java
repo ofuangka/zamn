@@ -3,11 +3,16 @@ package zamn.creation;
 public class BoardDefinition {
 	private CritterPositionDefinition[] critterPositions;
 	private ExitDefinition[] exits;
+	private Integer[][] entrances;
 	private String id;
 	private TileDefinition[][] tiles;
 
 	public CritterPositionDefinition[] getCritters() {
 		return critterPositions;
+	}
+
+	public Integer[][] getEntrances() {
+		return entrances;
 	}
 
 	public ExitDefinition[] getExits() {
@@ -24,6 +29,10 @@ public class BoardDefinition {
 
 	public void setCritterPositions(CritterPositionDefinition[] critterPositions) {
 		this.critterPositions = critterPositions.clone();
+	}
+
+	public void setEntrances(Integer[][] entrances) {
+		this.entrances = entrances;
 	}
 
 	public void setExits(ExitDefinition[] exits) {

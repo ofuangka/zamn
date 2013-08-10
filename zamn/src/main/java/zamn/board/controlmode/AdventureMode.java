@@ -2,6 +2,7 @@ package zamn.board.controlmode;
 
 import zamn.board.GameBoard;
 import zamn.common.Direction;
+import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 
 public class AdventureMode extends AbstractGameBoardControlMode {
@@ -11,8 +12,8 @@ public class AdventureMode extends AbstractGameBoardControlMode {
 	}
 
 	public void configureTileState() {
-		getGameBoard().clearDisabledTiles();
-		getGameBoard().clearCrosshair();
+		getGameBoard().clearDisabledTileUi();
+		getGameBoard().clearCrosshairUi();
 	}
 
 	@Override
@@ -37,6 +38,11 @@ public class AdventureMode extends AbstractGameBoardControlMode {
 
 	public void space() {
 		getGameBoard().nextTurn();
+	}
+	
+	@Override
+	public void x() {
+		getEventContext().fire(GameEventContext.GameEventType.COORDINATES_REQUEST);
 	}
 
 	/**

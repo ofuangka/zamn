@@ -4,24 +4,22 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
-import zamn.framework.event.IEventContext;
+import org.apache.log4j.Logger;
 
 public abstract class AbstractViewportBoard extends AbstractBoard {
 
 	public static final int DEFAULT_VIEWPORT_PADDING_X = 2;
-
 	public static final int DEFAULT_VIEWPORT_PADDING_Y = 2;
+
 	private static final long serialVersionUID = 4713851524702696250L;
+	private static final Logger LOG = Logger
+			.getLogger(AbstractViewportBoard.class);
 
 	private int viewportPaddingX = DEFAULT_VIEWPORT_PADDING_X;
 	private int viewportPaddingY = DEFAULT_VIEWPORT_PADDING_Y;
 
 	private int viewportX;
 	private int viewportY;
-
-	public AbstractViewportBoard(IEventContext eventContext) {
-		super(eventContext);
-	}
 
 	/**
 	 * Given a point on the board, this method figures out where the viewport
@@ -73,22 +71,43 @@ public abstract class AbstractViewportBoard extends AbstractBoard {
 		}
 	}
 
+	/**
+	 * Returns the viewport height in sprites
+	 * 
+	 * @return
+	 */
 	protected int getViewportHeight() {
 		return getPreferredSize().height / getSpriteSize().height;
 	}
 
+	/**
+	 * Returns the viewport width in sprites
+	 * 
+	 * @return
+	 */
 	protected int getViewportWidth() {
 		return getPreferredSize().width / getSpriteSize().width;
 	}
 
+	/**
+	 * This method returns true if the xy coordinates lie within the viewport
+	 * and viewport padding
+	 * 
+	 * @param x
+	 * @param y
+	 * @return
+	 */
 	public boolean isInViewport(int x, int y) {
 
 		int viewportWidth = getViewportWidth();
 		int viewportHeight = getViewportHeight();
 
-		return isInBounds(x, y, viewportX + viewportPaddingX, viewportY
-				+ viewportPaddingY, viewportWidth - viewportPaddingX - 2,
-				viewportHeight - viewportPaddingY - 2);
+		warnIfViewportDimensionsAreZero(viewportWidth, viewportHeight);
+
+		return AbstractBoard.isInBounds(x, y, viewportX + viewportPaddingX,
+				viewportY + viewportPaddingY, viewportWidth - 2
+						* viewportPaddingX, viewportHeight - 2
+						* viewportPaddingY);
 	}
 
 	@Override
@@ -97,6 +116,8 @@ public abstract class AbstractViewportBoard extends AbstractBoard {
 
 		int viewportWidth = getViewportWidth();
 		int viewportHeight = getViewportHeight();
+
+		warnIfViewportDimensionsAreZero(viewportWidth, viewportHeight);
 
 		Graphics2D g2d = (Graphics2D) g;
 		for (int x = 0; x < viewportWidth; x++) {
@@ -124,6 +145,15 @@ public abstract class AbstractViewportBoard extends AbstractBoard {
 	public void setViewportXY(int viewportX, int viewportY) {
 		this.viewportX = viewportX;
 		this.viewportY = viewportY;
+	}
+
+	protected void warnIfViewportDimensionsAreZero(int viewportWidth,
+			int viewportHeight) {
+
+		if (viewportWidth == 0 || viewportHeight == 0) {
+			LOG.warn("Viewport has dimensions (" + viewportWidth + ", "
+					+ viewportHeight + "). Has its preferred size been set?");
+		}
 	}
 
 }

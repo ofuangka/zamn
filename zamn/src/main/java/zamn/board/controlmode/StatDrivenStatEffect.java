@@ -3,6 +3,13 @@ package zamn.board.controlmode;
 import zamn.board.piece.Critter;
 import zamn.framework.event.IEventContext;
 
+/**
+ * An AbstractStatEffect whose effect modifier is driven by a Critter.Stat value
+ * of the source
+ * 
+ * @author ofuangka
+ * 
+ */
 public class StatDrivenStatEffect extends AbstractStatEffect {
 
 	private final Critter.Stat drivingStat;
@@ -16,7 +23,7 @@ public class StatDrivenStatEffect extends AbstractStatEffect {
 
 	@Override
 	public int getModifier() {
-		return getSource().getStat(drivingStat);
+		return getCritter().getStat(drivingStat);
 	}
 
 }

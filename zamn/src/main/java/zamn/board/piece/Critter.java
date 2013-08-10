@@ -10,15 +10,21 @@ import zamn.util.NullSafeCompare;
 
 public class Critter extends AbstractBoardPiece {
 
-	public interface IHasDefaultValue {
+	public interface IStat {
 		public int getDefaultValue();
+		public Stat getMaxStat();
 	}
 
-	public enum Stat implements IHasDefaultValue {
+	public enum Stat implements IStat {
 		HP {
 			@Override
 			public int getDefaultValue() {
 				return 5;
+			}
+			
+			@Override
+			public Stat getMaxStat() {
+				return MAXHP;
 			}
 		},
 		MAXHP {
@@ -26,11 +32,21 @@ public class Critter extends AbstractBoardPiece {
 			public int getDefaultValue() {
 				return 5;
 			}
+			
+			@Override
+			public Stat getMaxStat() {
+				return null;
+			}
 		},
 		SMARTS {
 			@Override
 			public int getDefaultValue() {
 				return 5;
+			}
+			
+			@Override
+			public Stat getMaxStat() {
+				return null;
 			}
 		},
 		SPEED {
@@ -38,11 +54,21 @@ public class Critter extends AbstractBoardPiece {
 			public int getDefaultValue() {
 				return 3;
 			}
+			
+			@Override
+			public Stat getMaxStat() {
+				return null;
+			}
 		},
 		STRENGTH {
 			@Override
 			public int getDefaultValue() {
 				return 5;
+			}
+			
+			@Override
+			public Stat getMaxStat() {
+				return null;
 			}
 		}
 	}
@@ -66,7 +92,7 @@ public class Critter extends AbstractBoardPiece {
 	private List<String> talents;
 
 	public Critter() {
-		setTakingUpSpace(true);
+		setSolid(true);
 	}
 
 	public String getAttack() {
