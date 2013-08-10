@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	
+	<context:annotation-config />	
+	
+	<bean id="zamn" class="zamn.Zamn">
+		<property name="eventContext" ref="eventContext" />
+		<property name="gameScreen" ref="gameScreen" />
+		<property name="mainMenu" ref="mainMenu" />
+		<property name="windowSize" ref="windowSize" />
+		<property name="inGameMenuLayer" ref="inGameMenuLayer" />
+		<property name="critterMenuFactory">
+			<bean class="zamn.ui.menu.CritterMenuFactory">
+				<constructor-arg ref="eventContext" />
+				<property name="targetedActionFactory">
+					<bean class="zamn.creation.TargetedActionFactory">
+						<constructor-arg value="classpath:definitions/actions.js" />
+						<constructor-arg ref="objectMapper" />
+						<constructor-arg ref="eventContext" />
+					</bean>
+				</property>
+			</bean>
+		</property>
+		<property name="board" ref="board" />
+	</bean>
+
+	<bean id="gameScreen" class="zamn.ui.GameScreen">
+		<constructor-arg>
+			<bean class="zamn.ui.GameLayeredPane">
+				<constructor-arg>
+					<list>
+						<ref bean="board" />
+						<ref bean="inGameMenuLayer" />
+					</list>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+		<constructor-arg>
+			<bean class="zamn.ui.GameInterface"></bean>
+		</constructor-arg>
+		<constructor-arg ref="spriteSize" />
+		<constructor-arg value="0.8" />
+	</bean>
+
+	<bean id="inGameMenuLayer" class="zamn.ui.InGameMenuLayer" />
+
+	<bean id="board" class="zamn.board.GameBoard">
+		<constructor-arg ref="eventContext" />
+		<property name="spriteSize" ref="spriteSize" />
+		<property name="boardLoader">
+			<bean class="zamn.creation.GameBoardLoader">
+				<constructor-arg ref="objectMapper" />
+				<constructor-arg value="classpath:sprites/tiles.js" />
+				<constructor-arg ref="eventContext" />
+				<property name="spriteSize" ref="spriteSize" />
+				<property name="critterFactory" ref="critterFactory" />
+			</bean>
+		</property>
+		<property name="critterFactory" ref="critterFactory" />
+	</bean>
+
+	<bean id="mainMenu" class="zamn.ui.menu.Menu">
+		<property name="items">
+			<list>
+				<bean parent="eventMenuItem">
+					<property name="text" value="Start game" />
+					<property name="type">
+						<util:constant
+							static-field="zamn.framework.event.GameEventContext.GameEventType.NEW_GAME_REQUEST" />
+					</property>
+				</bean>
+				<bean parent="eventMenuItem">
+					<property name="text" value="Exit" />
+					<property name="type">
+						<util:constant
+							static-field="zamn.framework.event.GameEventContext.GameEventType.EXIT_GAME_REQUEST" />
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="eventContext" class="zamn.framework.event.GameEventContext" />
+	<bean id="windowSize" class="java.awt.Dimension">
+		<constructor-arg value="320" />
+		<constructor-arg value="256" />
+	</bean>
+	<bean id="spriteSize" class="java.awt.Dimension">
+		<constructor-arg value="32" />
+		<constructor-arg value="32" />
+	</bean>
+	<bean id="eventMenuItem" class="zamn.ui.menu.EventMenuItem"
+		abstract="true">
+		<property name="eventContext" ref="eventContext" />
+	</bean>
+	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
+	
+	<bean id="critterFactory" class="zamn.creation.CritterFactory">
+		<constructor-arg value="classpath:definitions/critters.js" />
+		<constructor-arg value="classpath:sprites/critters.js" />
+		<constructor-arg ref="objectMapper" />
+		<property name="spriteSize" ref="spriteSize" />
+	</bean>
+
+</beans>
