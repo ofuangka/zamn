@@ -5,13 +5,15 @@
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
-	
-	<context:annotation-config />	
-	
+
+	<context:annotation-config />
+
 	<bean id="zamn" class="zamn.Zamn">
 		<property name="eventContext" ref="eventContext" />
 		<property name="gameScreen" ref="gameScreen" />
+		<property name="gameOverMenu" ref="gameOverMenu" />
 		<property name="mainMenu" ref="mainMenu" />
+		<property name="systemMenu" ref="systemMenu" />
 		<property name="windowSize" ref="windowSize" />
 		<property name="inGameMenuLayer" ref="inGameMenuLayer" />
 		<property name="critterMenuFactory">
@@ -85,6 +87,41 @@
 		</property>
 	</bean>
 
+	<bean id="gameOverMenu" class="zamn.ui.menu.Menu">
+		<property name="items">
+			<list>
+				<bean parent="eventMenuItem">
+					<property name="text" value="You died" />
+					<property name="type">
+						<util:constant
+							static-field="zamn.framework.event.GameEventContext.GameEventType.MAIN_MENU_REQUEST" />
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="systemMenu" class="zamn.ui.menu.Menu">
+		<property name="items">
+			<list>
+				<bean parent="eventMenuItem">
+					<property name="text" value="Return to game" />
+					<property name="type">
+						<util:constant
+							static-field="zamn.framework.event.GameEventContext.GameEventType.RETURN_TO_GAME_REQUEST" />
+					</property>
+				</bean>
+				<bean parent="eventMenuItem">
+					<property name="text" value="Main menu" />
+					<property name="type">
+						<util:constant
+							static-field="zamn.framework.event.GameEventContext.GameEventType.MAIN_MENU_REQUEST" />
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+
 	<bean id="eventContext" class="zamn.framework.event.GameEventContext" />
 	<bean id="windowSize" class="java.awt.Dimension">
 		<constructor-arg value="320" />
@@ -99,7 +136,7 @@
 		<property name="eventContext" ref="eventContext" />
 	</bean>
 	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
-	
+
 	<bean id="critterFactory" class="zamn.creation.CritterFactory">
 		<constructor-arg value="classpath:definitions/critters.js" />
 		<constructor-arg value="classpath:sprites/critters.js" />

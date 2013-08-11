@@ -12,12 +12,12 @@ public class ExitDefinition {
 		return boardId;
 	}
 
-	public int getEntryPoint() {
-		return entryPoint;
-	}
-
 	public String getDir() {
 		return dir;
+	}
+
+	public int getEntryPoint() {
+		return entryPoint;
 	}
 
 	public int getIndex() {

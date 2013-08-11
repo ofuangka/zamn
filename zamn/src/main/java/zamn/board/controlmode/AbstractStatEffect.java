@@ -52,8 +52,6 @@ public abstract class AbstractStatEffect extends AbstractEffect {
 		this.eventContext = eventContext;
 	}
 
-	public abstract int getModifier();
-
 	/**
 	 * This method checks that a Critter is occupying the target tile. If so, it
 	 * calculates the damage done by the attack and subtracts from the target's
@@ -102,4 +100,6 @@ public abstract class AbstractStatEffect extends AbstractEffect {
 			LOG.debug("No occupant in Tile " + targetTile);
 		}
 	}
+
+	public abstract int getModifier();
 }

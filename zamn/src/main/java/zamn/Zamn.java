@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import zamn.board.GameBoard;
-import zamn.board.controlmode.TargetedAction;
 import zamn.common.Direction;
 import zamn.common.ZamnConstants;
 import zamn.framework.event.Event;
@@ -30,6 +29,7 @@ import zamn.framework.event.IEventHandler;
 import zamn.ui.IKeySink;
 import zamn.ui.InGameMenuLayer;
 import zamn.ui.menu.CritterMenuFactory;
+import zamn.ui.menu.EventMenuItem;
 import zamn.ui.menu.Menu;
 
 public class Zamn implements IEventHandler {
@@ -54,6 +54,7 @@ public class Zamn implements IEventHandler {
 	private IKeySink currentKeySink;
 	private IEventContext eventContext;
 	private JComponent gameScreen;
+	private Menu gameOverMenu;
 	private InGameMenuLayer inGameMenuLayer;
 	private Menu mainMenu;
 	private JPanel screenPanel;
@@ -220,7 +221,7 @@ public class Zamn implements IEventHandler {
 				.getControllingCritter()));
 	}
 
-	private void doOnCritterTargetedActionRequest(TargetedAction action) {
+	private void doOnCritterTargetedActionRequest(EventMenuItem menuItem) {
 		inGameMenuLayer.setVisible(false);
 	}
 
@@ -231,6 +232,14 @@ public class Zamn implements IEventHandler {
 
 	private void doOnExitRequest() {
 		System.exit(0);
+	}
+
+	private void doOnLoseCondition() {
+		showScreen(gameOverMenu);
+	}
+
+	private void doOnMainMenuRequest() {
+		showScreen(mainMenu);
 	}
 
 	protected void doOnNewGameRequest() {
@@ -247,6 +256,10 @@ public class Zamn implements IEventHandler {
 
 	private void doOnPushInGameSubMenu(Menu menu) {
 		inGameMenuLayer.pushMenu(menu);
+	}
+
+	private void doOnReturnToGameRequest() {
+		showScreen(gameScreen);
 	}
 
 	private void doOnSystemMenuRequest() {
@@ -281,6 +294,10 @@ public class Zamn implements IEventHandler {
 			doOnNewGameRequest();
 			break;
 		}
+		case LOSE_CONDITION: {
+			doOnLoseCondition();
+			break;
+		}
 		case PUSH_IN_GAME_SUBMENU_REQUEST: {
 			doOnPushInGameSubMenu((Menu) arg);
 			break;
@@ -289,12 +306,20 @@ public class Zamn implements IEventHandler {
 			doOnPreviousInGameMenuRequest();
 			break;
 		}
+		case RETURN_TO_GAME_REQUEST: {
+			doOnReturnToGameRequest();
+			break;
+		}
+		case MAIN_MENU_REQUEST: {
+			doOnMainMenuRequest();
+			break;
+		}
 		case SYSTEM_MENU_REQUEST: {
 			doOnSystemMenuRequest();
 			break;
 		}
 		case CRITTER_TARGETED_ACTION_REQUEST: {
-			doOnCritterTargetedActionRequest((TargetedAction) arg);
+			doOnCritterTargetedActionRequest((EventMenuItem) arg);
 			break;
 		}
 
@@ -320,6 +345,11 @@ public class Zamn implements IEventHandler {
 		this.eventContext = eventContext;
 	}
 
+	@Required
+	public void setGameOverMenu(Menu gameOverMenu) {
+		this.gameOverMenu = gameOverMenu;
+	}
+
 	public void setGameScreen(JComponent gameScreen) {
 		this.gameScreen = gameScreen;
 	}
@@ -334,6 +364,7 @@ public class Zamn implements IEventHandler {
 		this.mainMenu = mainMenu;
 	}
 
+	@Required
 	public void setSystemMenu(Menu systemMenu) {
 		this.systemMenu = systemMenu;
 	}

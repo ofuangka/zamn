@@ -19,8 +19,8 @@ public class InGameMenuLayer extends JPanel implements ILayer,
 	private static final Logger LOG = Logger.getLogger(InGameMenuLayer.class);
 
 	public static final int MARGIN_HORIZONTAL = 1;
-
 	public static final int MARGIN_VERTICAL = 1;
+	
 	private static final long serialVersionUID = -194016976519008438L;
 
 	private List<Menu> menus = new ArrayList<Menu>();

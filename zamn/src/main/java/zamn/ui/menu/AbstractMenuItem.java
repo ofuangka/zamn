@@ -28,8 +28,12 @@ public abstract class AbstractMenuItem extends JLabel {
 	}
 	
 	public AbstractMenuItem(IEventContext eventContext, String label) {
-		this();
+		this(label);
 		setEventContext(eventContext);
+	}
+	
+	public AbstractMenuItem(String label) {
+		this();
 		setText(label);
 	}
 

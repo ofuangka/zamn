@@ -1,11 +1,14 @@
 package zamn.board;
 
 import java.awt.Dimension;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComponent;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.util.CollectionUtils;
 
 import zamn.common.Direction;
 import zamn.ui.IDelegatingKeySink;
@@ -27,7 +30,25 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	private static final Logger LOG = Logger.getLogger(AbstractBoard.class);
 	private static final long serialVersionUID = -2949485746939158973L;
 
+	/**
+	 * Convenience method checks if the given coordinates are within the bounds
+	 * also given
+	 * 
+	 * @param x
+	 * @param y
+	 * @param minX
+	 * @param minY
+	 * @param maxX
+	 * @param maxY
+	 * @return
+	 */
+	public static boolean isInBounds(int x, int y, int minX, int minY, int dx,
+			int dy) {
+		return !(x < minX) && !(y < minY) && (x < minX + dx) && (y < minY + dy);
+	}
+
 	private Dimension spriteSize;
+
 	protected Tile[][] tiles;
 
 	@Override
@@ -86,23 +107,6 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 						tiles[x].length);
 	}
 
-	/**
-	 * Convenience method checks if the given coordinates are within the bounds
-	 * also given
-	 * 
-	 * @param x
-	 * @param y
-	 * @param minX
-	 * @param minY
-	 * @param maxX
-	 * @param maxY
-	 * @return
-	 */
-	public static boolean isInBounds(int x, int y, int minX, int minY, int dx,
-			int dy) {
-		return !(x < minX) && !(y < minY) && (x < minX + dx) && (y < minY + dy);
-	}
-
 	@Override
 	public void left() {
 		getCurrentKeySink().left();
@@ -125,6 +129,37 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 			repaint();
 		}
 
+	}
+
+	public void placePieceInGeneralArea(AbstractBoardPiece piece, int x, int y) {
+		if (tiles[x][y] == null) {
+			throwNullTileException(x, y);
+		} else {
+			List<Tile> queue = new ArrayList<Tile>();
+			queue.add(tiles[x][y]);
+			if (!placePieceInGeneralAreaHelper(piece, queue)) {
+				throw new IllegalStateException(
+						"Unable to place piece on board");
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	protected boolean placePieceInGeneralAreaHelper(AbstractBoardPiece piece,
+			List<Tile> queue) {
+		for (Tile tile : queue) {
+			if (tile != null) {
+				if (!tile.isOccupied() && tile.isWalkable()) {
+					placePiece(piece, tile.getX(), tile.getY());
+					return true;
+				} else {
+					queue.addAll(CollectionUtils.arrayToList(tile
+							.getAdjacentTiles()));
+					return placePieceInGeneralAreaHelper(piece, queue);
+				}
+			}
+		}
+		return false;
 	}
 
 	/**

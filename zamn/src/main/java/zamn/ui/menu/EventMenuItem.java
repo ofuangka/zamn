@@ -23,8 +23,12 @@ public class EventMenuItem extends AbstractMenuItem {
 
 	@Override
 	public void execute() {
-		getEventContext().fire(type, arg);
+		getEventContext().fire(type, this);
 
+	}
+	
+	public Object getArg() {
+		return arg;
 	}
 
 	public void setArg(Object arg) {

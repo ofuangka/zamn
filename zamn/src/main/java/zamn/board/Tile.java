@@ -79,8 +79,7 @@ public class Tile extends AbstractBoardPiece {
 	 */
 	public void add(AbstractBoardPiece piece) {
 		if (piece != null) {
-			if (!piece.isSolid()
-					|| (piece.isSolid() && !isOccupied())) {
+			if (!piece.isSolid() || (piece.isSolid() && !isOccupied())) {
 				if (pieces.isEmpty()) {
 					pieces.add(piece);
 				} else {
@@ -95,7 +94,8 @@ public class Tile extends AbstractBoardPiece {
 					occupant = piece;
 				}
 			} else {
-				LOG.warn("Trying to add a space taking piece when Tile is already occupied.");
+				throw new UnsupportedOperationException(
+						"Trying to add a space taking piece when Tile is already occupied.");
 			}
 		}
 

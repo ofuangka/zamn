@@ -72,7 +72,14 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 
 		Integer[][] entrances = boardDefinition.getEntrances();
 		Tile entranceTile = tiles[entrances[entryPoint][0]][entrances[entryPoint][1]];
-		gameBoard.placeHeroes(entranceTile);
+
+		for (Critter hero : heroes) {
+			gameBoard.placePieceInGeneralArea(hero, entranceTile.getX(),
+					entranceTile.getY());
+			eventContext
+					.fire(GameEventContext.GameEventType.CRITTER_ADDED_TO_BOARD,
+							hero);
+		}
 	}
 
 	protected void doOnCritterDeath(Critter deadCritter) {
@@ -92,6 +99,7 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 		switch ((GameEventContext.GameEventType) event.getType()) {
 		case NEW_GAME_REQUEST: {
 			doOnNewGameRequest();
+			break;
 		}
 		case HERO_JOIN_REQUEST: {
 			doOnHeroJoinRequest((Critter) arg);

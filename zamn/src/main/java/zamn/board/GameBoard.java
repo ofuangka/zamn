@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.util.CollectionUtils;
 
 import zamn.board.controlmode.AbstractGameBoardControlMode;
 import zamn.board.controlmode.AdventureMode;
@@ -25,6 +24,7 @@ import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 import zamn.framework.event.IEventHandler;
 import zamn.ui.IKeySink;
+import zamn.ui.menu.EventMenuItem;
 
 public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
@@ -41,7 +41,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	private List<Tile> disabledTiles = new ArrayList<Tile>();
 	private IEventContext eventContext;
 	private Map<String, String[]> exits = new HashMap<String, String[]>();
-	private List<Critter> heroes = new ArrayList<Critter>();
 	private List<AbstractGameBoardControlMode> modeHistory = new ArrayList<AbstractGameBoardControlMode>();
 	private List<Critter> sequence = new ArrayList<Critter>();
 	private List<Tile> tilesInTargetingRange = new ArrayList<Tile>();
@@ -99,7 +98,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	}
 
 	public void createCritterSequence() {
-		sequence.addAll(heroes);
 		sequence.addAll(critters);
 		Collections.sort(sequence, Critter.SPEED_COMPARATOR);
 		Collections.reverse(sequence);
@@ -115,6 +113,10 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		repaint();
 	}
 
+	private void doOnCoordinatesRequest() {
+		LOG.info(controllingCritter.getX() + ", " + controllingCritter.getY());
+	}
+
 	private void doOnCritterAddedToBoard(Critter newCritter) {
 		critters.add(newCritter);
 	}
@@ -123,11 +125,11 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		removePiece(deadCritter);
 		critters.remove(deadCritter);
 		sequence.remove(deadCritter);
-		heroes.remove(deadCritter);
 	}
 
-	protected void doOnCritterTargetedActionRequest(TargetedAction action) {
-		pushMode(new TargetingMode(this, getEventContext(), action));
+	protected void doOnCritterTargetedActionRequest(EventMenuItem menuItem) {
+		pushMode(new TargetingMode(this, getEventContext(),
+				(TargetedAction) menuItem.getArg()));
 	}
 
 	protected void doOnEndOfTurn() {
@@ -136,9 +138,8 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 	protected void doOnNewGameRequest() {
 		forceClearBoardState();
-		forceClearGameState();
-		Critter initialHero = getInitialHero();
-		heroes.add(initialHero);
+		eventContext.fire(GameEventContext.GameEventType.HERO_JOIN_REQUEST,
+				getInitialHero());
 		load(INITIAL_BOARD_ID);
 		nextTurn();
 	}
@@ -152,13 +153,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			}
 		}
 		repaint();
-	}
-
-	/**
-	 * Clears the game state, ignoring the UI and board state
-	 */
-	protected void forceClearGameState() {
-		heroes.clear();
 	}
 
 	/**
@@ -196,10 +190,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return x + "," + y + "," + dir.toString();
 	}
 
-	public List<Critter> getHeroes() {
-		return heroes;
-	}
-
 	protected Critter getInitialHero() {
 		return critterFactory.get(INITIAL_HERO_ID);
 	}
@@ -220,7 +210,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			break;
 		}
 		case CRITTER_TARGETED_ACTION_REQUEST: {
-			doOnCritterTargetedActionRequest((TargetedAction) arg);
+			doOnCritterTargetedActionRequest((EventMenuItem) arg);
 			break;
 		}
 		case CRITTER_ADDED_TO_BOARD: {
@@ -237,12 +227,15 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return true;
 	}
 
-	private void doOnCoordinatesRequest() {
-		LOG.info(controllingCritter.getX() + ", " + controllingCritter.getY());
-	}
-
 	public boolean isAtLeastOneHeroOnBoard() {
-		return !heroes.isEmpty();
+		boolean ret = false;
+		for (Critter critter : critters) {
+			if (!critter.isHostile()) {
+				ret = true;
+				break;
+			}
+		}
+		return ret;
 	}
 
 	public boolean isInCombat() {
@@ -311,35 +304,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		}
 	}
 
-	public void placeHeroes(Tile entranceTile) {
-		for (Critter hero : heroes) {
-			placeHero(hero, entranceTile);
-		}
-	}
-
-	protected void placeHero(Critter hero, Tile entranceTile) {
-		List<Tile> queue = new ArrayList<Tile>();
-		queue.add(entranceTile);
-		if (!placeHeroHelper(hero, queue)) {
-			throw new IllegalStateException("Unable to place hero on board");
-		}
-	}
-
-	@SuppressWarnings("unchecked")
-	protected boolean placeHeroHelper(Critter hero, List<Tile> queue) {
-		for (Tile tile : queue) {
-			if (!tile.isOccupied() && tile.isWalkable()) {
-				placePiece(hero, tile.getX(), tile.getY());
-				return true;
-			} else {
-				queue.addAll(CollectionUtils.arrayToList(tile
-						.getAdjacentTiles()));
-				return placeHeroHelper(hero, queue);
-			}
-		}
-		return false;
-	}
-
 	public void popMode() {
 		modeHistory.remove(modeHistory.size() - 1);
 		refreshMode();
@@ -403,6 +367,8 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 				String[] exit = exits.get(exitKey);
 				load(exit[0], Integer.valueOf(exit[1]));
 				nextTurn();
+				eventContext.fire(
+						GameEventContext.GameEventType.LOCATION_CHANGE, exit);
 				return false;
 			} else {
 				return super.tryMove(piece, dir);

@@ -40,11 +40,6 @@ public class AdventureMode extends AbstractGameBoardControlMode {
 		getGameBoard().nextTurn();
 	}
 	
-	@Override
-	public void x() {
-		getEventContext().fire(GameEventContext.GameEventType.COORDINATES_REQUEST);
-	}
-
 	/**
 	 * Convenience method combines delegation call of board.tryMove() with
 	 * board.nextTurn() if move was successful
@@ -63,6 +58,11 @@ public class AdventureMode extends AbstractGameBoardControlMode {
 	@Override
 	public void up() {
 		tryMove(Direction.UP);
+	}
+
+	@Override
+	public void x() {
+		getEventContext().fire(GameEventContext.GameEventType.COORDINATES_REQUEST);
 	}
 
 }
