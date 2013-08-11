@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.log4j.Logger;
-
 /**
  * A Tile is a positioned container of BoardPiece objects. It can have up to one
  * occupant BoardPiece that takes up space. It has a movement cost and can be
@@ -28,7 +26,7 @@ public class Tile extends AbstractBoardPiece {
 	private static final Color IN_TARGETING_RANGE_COLOR = new Color(255, 255,
 			255, 50);
 	public static final int LEFT_EDGE = 3;
-	private static final Logger LOG = Logger.getLogger(Tile.class);
+
 	public static final int NUM_TILE_EDGES = 4;
 
 	public static final int RIGHT_EDGE = 1;
