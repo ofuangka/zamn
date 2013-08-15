@@ -64,6 +64,10 @@ public class CritterFactory {
 		return ret;
 	}
 
+	public Set<String> idSet() {
+		return critterDefinitions.keySet();
+	}
+
 	@Required
 	public void setSpriteSize(Dimension spriteSize) {
 		this.spriteSize = spriteSize;

@@ -2,29 +2,22 @@ package zamn.ui;
 
 import java.awt.Dimension;
 
-import javax.swing.BorderFactory;
-import javax.swing.JSplitPane;
+import zamn.framework.event.IEventContext;
 
-public class GameScreen extends JSplitPane implements IDelegatingKeySink {
+public class GameScreen extends DistributedRoundedSplitPane implements
+		IDelegatingKeySink {
 
 	private static final long serialVersionUID = 1535542436102660670L;
 
-	private double distribution;
 	private GameInterface gameInterface;
 	private GameLayeredPane gameLayeredPane;
-	private Dimension spriteSize;
 
-	public GameScreen(GameLayeredPane gameLayeredPane,
-			GameInterface gameInterface, Dimension spriteSize,
-			double distribution) {
-		super(JSplitPane.HORIZONTAL_SPLIT, gameLayeredPane, gameInterface);
+	public GameScreen(IEventContext eventContext,
+			GameLayeredPane gameLayeredPane, GameInterface gameInterface,
+			Dimension spriteSize, double distribution) {
+		super(gameLayeredPane, gameInterface, spriteSize, distribution);
 		this.gameLayeredPane = gameLayeredPane;
 		this.gameInterface = gameInterface;
-		this.spriteSize = spriteSize;
-		this.distribution = distribution;
-		setOneTouchExpandable(false);
-		setDividerSize(0);
-		setBorder(BorderFactory.createEmptyBorder());
 	}
 
 	@Override
@@ -67,17 +60,6 @@ public class GameScreen extends JSplitPane implements IDelegatingKeySink {
 	}
 
 	@Override
-	public void setPreferredSize(Dimension preferredSize) {
-		super.setPreferredSize(preferredSize);
-		gameLayeredPane.setPreferredSize(new Dimension(
-				(int) (preferredSize.width * distribution / spriteSize.width)
-						* spriteSize.width, preferredSize.height));
-		gameInterface.setPreferredSize(new Dimension(preferredSize.width
-				- gameLayeredPane.getPreferredSize().width,
-				preferredSize.height));
-	}
-
-	@Override
 	public void space() {
 		getCurrentKeySink().space();
 
@@ -93,5 +75,10 @@ public class GameScreen extends JSplitPane implements IDelegatingKeySink {
 	public void x() {
 		getCurrentKeySink().x();
 
+	}
+
+	@Override
+	public boolean isListening() {
+		return getCurrentKeySink().isListening();
 	}
 }

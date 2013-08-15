@@ -18,4 +18,6 @@ public interface IKeySink {
 	void up();
 
 	void x();
+	
+	boolean isListening();
 }

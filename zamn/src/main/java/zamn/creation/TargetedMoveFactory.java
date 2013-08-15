@@ -10,7 +10,7 @@ import org.springframework.core.io.Resource;
 import zamn.board.Tile;
 import zamn.board.controlmode.AbstractEffect;
 import zamn.board.controlmode.StatDrivenStatEffect;
-import zamn.board.controlmode.TargetedAction;
+import zamn.board.controlmode.TargetedMove;
 import zamn.board.piece.Critter;
 import zamn.board.piece.Critter.Stat;
 import zamn.board.tilecollector.AbstractDecayingTileCollector;
@@ -19,17 +19,17 @@ import zamn.board.tilecollector.TileCollectorType;
 import zamn.board.tilecollector.TileListFilter;
 import zamn.framework.event.IEventContext;
 
-public class TargetedActionFactory {
+public class TargetedMoveFactory {
 
 	private final IEventContext eventContext;
-	private final Map<String, TargetedActionDefinition> targetedActionDefinitions;
+	private final Map<String, TargetedMoveDefinition> targetedActionDefinitions;
 
-	public TargetedActionFactory(Resource resource, ObjectMapper objectMapper,
+	public TargetedMoveFactory(Resource resource, ObjectMapper objectMapper,
 			IEventContext eventContext) {
 		try {
 			targetedActionDefinitions = objectMapper.readValue(resource
 					.getURI().toURL(),
-					new TypeReference<Map<String, TargetedActionDefinition>>() {
+					new TypeReference<Map<String, TargetedMoveDefinition>>() {
 					});
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -37,8 +37,8 @@ public class TargetedActionFactory {
 		this.eventContext = eventContext;
 	}
 
-	public TargetedAction get(String id, Critter critter) {
-		TargetedActionDefinition targetedActionDefinition = targetedActionDefinitions
+	public TargetedMove get(String id, Critter critter) {
+		TargetedMoveDefinition targetedActionDefinition = targetedActionDefinitions
 				.get(id);
 		if (targetedActionDefinition == null) {
 			throw new IllegalArgumentException(
@@ -52,7 +52,7 @@ public class TargetedActionFactory {
 				.getAreaOfEffect());
 		AbstractEffect effect = getEffect(targetedActionDefinition.getEffect());
 		effect.setCritter(critter);
-		return new TargetedAction(targetedActionDefinition.getName(),
+		return new TargetedMove(targetedActionDefinition.getName(),
 				targetedRange, actualRangeFilter, areaOfEffect, effect);
 
 	}

@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.util.CollectionUtils;
 
-import zamn.common.Direction;
+import zamn.board.controlmode.Action;
 import zamn.ui.IDelegatingKeySink;
 import zamn.ui.ILayer;
 
@@ -224,7 +224,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	 * @param piece
 	 * @param dir
 	 */
-	public boolean tryMove(AbstractBoardPiece piece, Direction dir) {
+	public boolean tryMove(AbstractBoardPiece piece, Action dir) {
 		LOG.debug("Attempting to move piece " + piece + " " + dir);
 		int nextX = piece.getX();
 		int nextY = piece.getY();

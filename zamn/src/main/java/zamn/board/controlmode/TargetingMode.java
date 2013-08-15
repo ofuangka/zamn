@@ -17,12 +17,12 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 
 	public static final int NO_SELECTABLE_TILE_INDEX = -1;
 
-	private final TargetedAction action;
+	private final TargetedMove action;
 	private List<Tile> actualRange;
 	private int currentIndex;
 
 	public TargetingMode(GameBoard board, IEventContext eventContext,
-			TargetedAction action) {
+			TargetedMove action) {
 		super(board, eventContext);
 		this.action = action;
 	}

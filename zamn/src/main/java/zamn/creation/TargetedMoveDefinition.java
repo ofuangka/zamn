@@ -1,6 +1,6 @@
 package zamn.creation;
 
-public class TargetedActionDefinition {
+public class TargetedMoveDefinition {
 
 	private String actualRangeFilter;
 	private TileCollectorDefinition areaOfEffect;

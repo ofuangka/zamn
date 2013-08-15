@@ -1,7 +1,6 @@
 package zamn.board.controlmode;
 
 import zamn.board.GameBoard;
-import zamn.common.Direction;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 
@@ -18,7 +17,7 @@ public class AdventureMode extends AbstractGameBoardControlMode {
 
 	@Override
 	public void down() {
-		tryMove(Direction.DOWN);
+		tryMove(Action.DOWN);
 	}
 
 	@Override
@@ -28,41 +27,41 @@ public class AdventureMode extends AbstractGameBoardControlMode {
 
 	@Override
 	public void left() {
-		tryMove(Direction.LEFT);
+		tryMove(Action.LEFT);
 	}
 
 	@Override
 	public void right() {
-		tryMove(Direction.RIGHT);
+		tryMove(Action.RIGHT);
 	}
 
 	public void space() {
 		getGameBoard().nextTurn();
 	}
-	
+
 	/**
 	 * Convenience method combines delegation call of board.tryMove() with
 	 * board.nextTurn() if move was successful
 	 * 
 	 * @param dir
 	 */
-	private void tryMove(Direction dir) {
+	private void tryMove(Action dir) {
 		GameBoard board = getGameBoard();
 		if (board.tryMove(dir)) {
 			board.alignViewport();
-			board.stepNeutralCritters();
 			board.nextTurn();
 		}
 	}
 
 	@Override
 	public void up() {
-		tryMove(Direction.UP);
+		tryMove(Action.UP);
 	}
 
 	@Override
 	public void x() {
-		getEventContext().fire(GameEventContext.GameEventType.COORDINATES_REQUEST);
+		getEventContext().fire(
+				GameEventContext.GameEventType.COORDINATES_REQUEST);
 	}
 
 }

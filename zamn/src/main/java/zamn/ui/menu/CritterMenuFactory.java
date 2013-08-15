@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
 
-import zamn.board.controlmode.TargetedAction;
+import zamn.board.controlmode.TargetedMove;
 import zamn.board.piece.Critter;
-import zamn.creation.TargetedActionFactory;
+import zamn.creation.TargetedMoveFactory;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 
@@ -31,7 +31,7 @@ public class CritterMenuFactory {
 	public static final String WAIT_LABEL = "Wait";
 
 	private IEventContext eventContext;
-	private TargetedActionFactory targetedActionFactory;
+	private TargetedMoveFactory targetedMoveFactory;
 
 	public CritterMenuFactory(IEventContext eventContext) {
 		this.eventContext = eventContext;
@@ -41,7 +41,7 @@ public class CritterMenuFactory {
 
 		Menu ret = new Menu();
 		List<AbstractMenuItem> menuItems = new ArrayList<AbstractMenuItem>();
-		TargetedAction attack = targetedActionFactory.get(critter.getAttack(),
+		TargetedMove attack = targetedMoveFactory.get(critter.getAttack(),
 				critter);
 		AbstractMenuItem attackMenuItem = new EventMenuItem(eventContext,
 				ATTACK_LABEL,
@@ -111,7 +111,7 @@ public class CritterMenuFactory {
 			menuItems.add(new NoopMenuItem());
 		} else {
 			for (String talent : talents) {
-				TargetedAction critterAction = targetedActionFactory.get(talent,
+				TargetedMove critterAction = targetedMoveFactory.get(talent,
 						critter);
 				menuItems
 						.add(new EventMenuItem(
@@ -127,8 +127,8 @@ public class CritterMenuFactory {
 	}
 
 	@Required
-	public void setTargetedActionFactory(
-			TargetedActionFactory targetedActionFactory) {
-		this.targetedActionFactory = targetedActionFactory;
+	public void setTargetedMoveFactory(
+			TargetedMoveFactory targetedMoveFactory) {
+		this.targetedMoveFactory = targetedMoveFactory;
 	}
 }

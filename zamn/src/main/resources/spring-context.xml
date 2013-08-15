@@ -19,9 +19,9 @@
 		<property name="critterMenuFactory">
 			<bean class="zamn.ui.menu.CritterMenuFactory">
 				<constructor-arg ref="eventContext" />
-				<property name="targetedActionFactory">
-					<bean class="zamn.creation.TargetedActionFactory">
-						<constructor-arg value="classpath:definitions/actions.js" />
+				<property name="targetedMoveFactory">
+					<bean class="zamn.creation.TargetedMoveFactory">
+						<constructor-arg value="classpath:definitions/moves.js" />
 						<constructor-arg ref="objectMapper" />
 						<constructor-arg ref="eventContext" />
 					</bean>
@@ -32,6 +32,7 @@
 	</bean>
 
 	<bean id="gameScreen" class="zamn.ui.GameScreen">
+		<constructor-arg ref="eventContext" />
 		<constructor-arg>
 			<bean class="zamn.ui.GameLayeredPane">
 				<constructor-arg>

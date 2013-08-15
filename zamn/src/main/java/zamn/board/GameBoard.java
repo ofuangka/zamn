@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Required;
 import zamn.board.controlmode.AbstractGameBoardControlMode;
 import zamn.board.controlmode.AdventureMode;
 import zamn.board.controlmode.CombatMovementMode;
-import zamn.board.controlmode.TargetedAction;
+import zamn.board.controlmode.Action;
+import zamn.board.controlmode.TargetedMove;
 import zamn.board.controlmode.TargetingMode;
 import zamn.board.piece.Critter;
-import zamn.common.Direction;
 import zamn.creation.BoardLoader;
 import zamn.creation.CritterFactory;
 import zamn.framework.event.Event;
@@ -50,7 +50,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		eventContext.onAll(this);
 	}
 
-	public void addExit(int x, int y, Direction dir, String[] boardIdAndEntrance) {
+	public void addExit(int x, int y, Action dir, String[] boardIdAndEntrance) {
 		exits.put(getExitKey(x, y, dir), boardIdAndEntrance);
 	}
 
@@ -70,6 +70,9 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		controllingCritter.setSelected(true);
 
 		alignViewport();
+		eventContext.fire(
+				GameEventContext.GameEventType.CRITTER_ASSIGNED_CONTROL,
+				critter);
 		repaint();
 	}
 
@@ -129,7 +132,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 	protected void doOnCritterTargetedActionRequest(EventMenuItem menuItem) {
 		pushMode(new TargetingMode(this, getEventContext(),
-				(TargetedAction) menuItem.getArg()));
+				(TargetedMove) menuItem.getArg()));
 	}
 
 	protected void doOnEndOfTurn() {
@@ -179,6 +182,10 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	 */
 	@Override
 	public IKeySink getCurrentKeySink() {
+		return getCurrentControlMode();
+	}
+
+	public AbstractGameBoardControlMode getCurrentControlMode() {
 		return modeHistory.get(modeHistory.size() - 1);
 	}
 
@@ -186,7 +193,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return eventContext;
 	}
 
-	public String getExitKey(int x, int y, Direction dir) {
+	public String getExitKey(int x, int y, Action dir) {
 		return x + "," + y + "," + dir.toString();
 	}
 
@@ -219,12 +226,70 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		}
 		case COORDINATES_REQUEST: {
 			doOnCoordinatesRequest();
+			break;
+		}
+		case LOCATION_CHANGE: {
+			doOnLocationChange((String[]) arg);
+			break;
 		}
 		default: {
 			break;
 		}
 		}
 		return true;
+	}
+
+	private void doOnLocationChange(String[] exit) {
+		load(exit[0], Integer.valueOf(exit[1]));
+		nextTurn();
+	}
+
+	private List<Action> getActions() {
+		List<Action> ret = new ArrayList<Action>();
+		Critter nearestOpponent = getNearestOpponent(controllingCritter);
+		ret.addAll(getBestPath(controllingCritter.getX(),
+				controllingCritter.getY(), nearestOpponent.getX(),
+				nearestOpponent.getY()));
+		ret.addAll(getBestAction(controllingCritter));
+		return ret;
+	}
+
+	public List<Action> getBestAction(Critter from) {
+		List<Action> ret = new ArrayList<Action>();
+		Tile[] adjacentTiles = getTile(from.getX(), from.getY()).getAdjacentTiles();
+		for (int i = 0; i < adjacentTiles.length; i++) {
+			if (adjacentTiles[i] != null && adjacentTiles[i].isOccupied()) {
+				AbstractBoardPiece occupant = adjacentTiles[i].getOccupant();
+				if (Critter.class.isAssignableFrom(occupant.getClass())) {
+					Critter entity = (Critter) occupant;
+					
+					if (entity.isHostile()) {
+						
+						// attack the first selectable 
+						ret.add(Action.ENTER);
+						ret.add(Action.ENTER);
+						break;
+					}
+				}
+			}
+		}
+		if (ret.isEmpty()) {
+			
+			// wait
+			ret.add(Action.UP);
+			ret.add(Action.ENTER);
+		}
+		return ret;
+	}
+
+	public Critter getNearestOpponent(Critter from) {
+		return null;
+	}
+
+	public List<Action> getBestPath(int fromX, int fromY, int toX, int toY) {
+		List<Action> ret = new ArrayList<Action>();
+
+		return ret;
 	}
 
 	public boolean isAtLeastOneHeroOnBoard() {
@@ -293,14 +358,30 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 				// detect and set up the first control mode
 				firstMode = new CombatMovementMode(this, getEventContext());
 
-				// wait for user input
+				pushMode(firstMode);
+
+				if (controllingCritter.isHostile()) {
+
+					// generate a queue of moves
+					List<Action> actions = getActions();
+					for (Action action : actions) {
+						eventContext
+								.fire(GameEventContext.GameEventType.TRIGGER_ACTION_REQUEST,
+										action);
+
+						// wait
+					}
+
+				} else {
+					// wait for user input
+				}
 			} else {
 
 				firstMode = new AdventureMode(this, getEventContext());
 
-			}
+				pushMode(firstMode);
 
-			pushMode(firstMode);
+			}
 		}
 	}
 
@@ -355,18 +436,12 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		}
 	}
 
-	public void stepNeutralCritters() {
-
-	}
-
 	@Override
-	public boolean tryMove(AbstractBoardPiece piece, Direction dir) {
+	public boolean tryMove(AbstractBoardPiece piece, Action dir) {
 		if (!isInCombat()) {
 			String exitKey = getExitKey(piece.getX(), piece.getY(), dir);
 			if (exits.containsKey(exitKey)) {
 				String[] exit = exits.get(exitKey);
-				load(exit[0], Integer.valueOf(exit[1]));
-				nextTurn();
 				eventContext.fire(
 						GameEventContext.GameEventType.LOCATION_CHANGE, exit);
 				return false;
@@ -384,7 +459,12 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	 * @param dir
 	 * @return
 	 */
-	public boolean tryMove(Direction dir) {
+	public boolean tryMove(Action dir) {
 		return tryMove(controllingCritter, dir);
+	}
+
+	@Override
+	public boolean isListening() {
+		return controllingCritter == null || !controllingCritter.isHostile();
 	}
 }

@@ -123,4 +123,9 @@ public class GameLayeredPane extends JLayeredPane implements IDelegatingKeySink 
 	public void x() {
 		getCurrentKeySink().x();
 	}
+
+	@Override
+	public boolean isListening() {
+		return getCurrentKeySink().isListening();
+	}
 }

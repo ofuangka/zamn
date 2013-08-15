@@ -142,4 +142,9 @@ public class Menu extends JPanel implements IKeySink {
 
 	}
 
+	@Override
+	public boolean isListening() {
+		return true;
+	}
+
 }

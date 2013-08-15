@@ -150,4 +150,9 @@ public class InGameMenuLayer extends JPanel implements ILayer,
 	public void x() {
 		getCurrentKeySink().x();
 	}
+
+	@Override
+	public boolean isListening() {
+		return getCurrentKeySink().isListening();
+	}
 }

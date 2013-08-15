@@ -10,14 +10,14 @@ import zamn.board.tilecollector.TileListFilter;
  * @author ofuangka
  * 
  */
-public class TargetedAction {
+public class TargetedMove {
 	private final TileListFilter actualRangeFilter;
 	private final ITileCollector areaOfEffect;
 	private final AbstractEffect effect;
 	private final String name;
 	private final ITileCollector targetingRange;
 
-	public TargetedAction(String name, ITileCollector targetingRange,
+	public TargetedMove(String name, ITileCollector targetingRange,
 			TileListFilter actualRangeFilter, ITileCollector areaOfEffect,
 			AbstractEffect effect) {
 		this.name = name;

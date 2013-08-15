@@ -11,8 +11,8 @@ import org.springframework.core.io.Resource;
 import zamn.board.AbstractBoard;
 import zamn.board.GameBoard;
 import zamn.board.Tile;
+import zamn.board.controlmode.Action;
 import zamn.board.piece.Critter;
-import zamn.common.Direction;
 import zamn.framework.event.Event;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
@@ -65,7 +65,7 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 			gameBoard.addExit(
 					exitDefinition.getX(),
 					exitDefinition.getY(),
-					Direction.valueOf(exitDefinition.getDir().toUpperCase()),
+					Action.valueOf(exitDefinition.getDir().toUpperCase()),
 					new String[] { exitDefinition.getBoardId(),
 							String.valueOf(exitDefinition.getEntryPoint()) });
 		}

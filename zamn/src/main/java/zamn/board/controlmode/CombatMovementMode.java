@@ -7,7 +7,6 @@ import zamn.board.Tile;
 import zamn.board.piece.Critter;
 import zamn.board.tilecollector.CombatMovementTileCollector;
 import zamn.board.tilecollector.TileListFilter;
-import zamn.common.Direction;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 
@@ -33,7 +32,7 @@ public class CombatMovementMode extends AbstractGameBoardControlMode {
 
 	@Override
 	public void down() {
-		tryMove(Direction.DOWN);
+		tryMove(Action.DOWN);
 	}
 
 	@Override
@@ -55,7 +54,7 @@ public class CombatMovementMode extends AbstractGameBoardControlMode {
 
 	@Override
 	public void left() {
-		tryMove(Direction.LEFT);
+		tryMove(Action.LEFT);
 	}
 
 	@Override
@@ -82,10 +81,10 @@ public class CombatMovementMode extends AbstractGameBoardControlMode {
 
 	@Override
 	public void right() {
-		tryMove(Direction.RIGHT);
+		tryMove(Action.RIGHT);
 	}
 
-	protected void tryMove(Direction dir) {
+	protected void tryMove(Action dir) {
 		GameBoard board = getGameBoard();
 
 		if (board.tryMove(dir)) {
@@ -95,7 +94,7 @@ public class CombatMovementMode extends AbstractGameBoardControlMode {
 
 	@Override
 	public void up() {
-		tryMove(Direction.UP);
+		tryMove(Action.UP);
 	}
 
 }

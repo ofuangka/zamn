@@ -72,5 +72,10 @@ public abstract class AbstractGameBoardControlMode implements IKeySink {
 	public void x() {
 
 	}
+	
+	@Override
+	public boolean isListening() {
+		return true;
+	}
 
 }

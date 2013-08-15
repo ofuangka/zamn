@@ -20,8 +20,7 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import zamn.board.GameBoard;
-import zamn.common.Direction;
-import zamn.common.ZamnConstants;
+import zamn.board.controlmode.Action;
 import zamn.framework.event.Event;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
@@ -92,111 +91,123 @@ public class Zamn implements IEventHandler {
 		InputMap inputMap = new InputMap();
 		ActionMap actionMap = new ActionMap();
 
-		inputMap.put(KeyStroke.getKeyStroke(Direction.UP.toString()),
-				Direction.UP);
-		inputMap.put(KeyStroke.getKeyStroke(Direction.RIGHT.toString()),
-				Direction.RIGHT);
-		inputMap.put(KeyStroke.getKeyStroke(Direction.DOWN.toString()),
-				Direction.DOWN);
-		inputMap.put(KeyStroke.getKeyStroke(Direction.LEFT.toString()),
-				Direction.LEFT);
-		inputMap.put(KeyStroke.getKeyStroke(ZamnConstants.ENTER),
-				ZamnConstants.ENTER);
-		inputMap.put(KeyStroke.getKeyStroke(ZamnConstants.ESCAPE),
-				ZamnConstants.ESCAPE);
-		inputMap.put(KeyStroke.getKeyStroke(ZamnConstants.BACKSPACE),
-				ZamnConstants.BACKSPACE);
-		inputMap.put(KeyStroke.getKeyStroke(ZamnConstants.SPACE),
-				ZamnConstants.SPACE);
-		inputMap.put(KeyStroke.getKeyStroke(ZamnConstants.X), ZamnConstants.X);
+		inputMap.put(KeyStroke.getKeyStroke(Action.UP.toString()), Action.UP);
+		inputMap.put(KeyStroke.getKeyStroke(Action.RIGHT.toString()), Action.RIGHT);
+		inputMap.put(KeyStroke.getKeyStroke(Action.DOWN.toString()), Action.DOWN);
+		inputMap.put(KeyStroke.getKeyStroke(Action.LEFT.toString()), Action.LEFT);
+		inputMap.put(KeyStroke.getKeyStroke(Action.ENTER.toString()), Action.ENTER);
+		inputMap.put(KeyStroke.getKeyStroke(Action.ESCAPE.toString()),
+				Action.ESCAPE);
+		inputMap.put(KeyStroke.getKeyStroke(Action.BACK_SPACE.toString()),
+				Action.BACK_SPACE);
+		inputMap.put(KeyStroke.getKeyStroke(Action.SPACE.toString()), Action.SPACE);
+		inputMap.put(KeyStroke.getKeyStroke(Action.X.toString()), Action.X);
 
-		actionMap.put(Direction.UP, new AbstractAction() {
+		actionMap.put(Action.UP, new AbstractAction() {
 
 			private static final long serialVersionUID = -4035258231309741970L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentKeySink.up();
+				if (currentKeySink.isListening()) {
+					currentKeySink.up();
+				}
 			}
 
 		});
-		actionMap.put(Direction.RIGHT, new AbstractAction() {
+		actionMap.put(Action.RIGHT, new AbstractAction() {
 
 			private static final long serialVersionUID = 407938813491787305L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentKeySink.right();
+				if (currentKeySink.isListening()) {
+					currentKeySink.right();
+				}
 			}
 
 		});
-		actionMap.put(Direction.DOWN, new AbstractAction() {
+		actionMap.put(Action.DOWN, new AbstractAction() {
 
 			private static final long serialVersionUID = 4993801021049655318L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentKeySink.down();
+				if (currentKeySink.isListening()) {
+					currentKeySink.down();
+				}
 			}
 
 		});
-		actionMap.put(Direction.LEFT, new AbstractAction() {
+		actionMap.put(Action.LEFT, new AbstractAction() {
 
 			private static final long serialVersionUID = 6666716265151808233L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentKeySink.left();
+				if (currentKeySink.isListening()) {
+					currentKeySink.left();
+				}
 			}
 
 		});
-		actionMap.put(ZamnConstants.ENTER, new AbstractAction() {
+		actionMap.put(Action.ENTER, new AbstractAction() {
 
 			private static final long serialVersionUID = -2253852508738647202L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentKeySink.enter();
+				if (currentKeySink.isListening()) {
+					currentKeySink.enter();
+				}
 			}
 
 		});
-		actionMap.put(ZamnConstants.ESCAPE, new AbstractAction() {
+		actionMap.put(Action.ESCAPE, new AbstractAction() {
 
 			private static final long serialVersionUID = 5827916790133403430L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentKeySink.esc();
+				if (currentKeySink.isListening()) {
+					currentKeySink.esc();
+				}
 			}
 
 		});
-		actionMap.put(ZamnConstants.BACKSPACE, new AbstractAction() {
+		actionMap.put(Action.BACK_SPACE, new AbstractAction() {
 
 			private static final long serialVersionUID = 6253776701930914853L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentKeySink.backspace();
+				if (currentKeySink.isListening()) {
+					currentKeySink.backspace();
+				}
 			}
 
 		});
-		actionMap.put(ZamnConstants.SPACE, new AbstractAction() {
+		actionMap.put(Action.SPACE, new AbstractAction() {
 
 			private static final long serialVersionUID = 4561198885927625005L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentKeySink.space();
+				if (currentKeySink.isListening()) {
+					currentKeySink.space();
+				}
 			}
 
 		});
-		actionMap.put(ZamnConstants.X, new AbstractAction() {
+		actionMap.put(Action.X, new AbstractAction() {
 
 			private static final long serialVersionUID = 3176448439753484377L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				currentKeySink.x();
+				if (currentKeySink.isListening()) {
+					currentKeySink.x();
+				}
 			}
 
 		});
@@ -322,12 +333,28 @@ public class Zamn implements IEventHandler {
 			doOnCritterTargetedActionRequest((EventMenuItem) arg);
 			break;
 		}
+		case LOCATION_CHANGE: {
+			doOnLocationChange();
+			break;
+		}
+		case TRIGGER_ACTION_REQUEST: {
+			doOnTriggerActionRequest((Action) arg);
+			break;
+		}
 
 		default: {
 			break;
 		}
 		}
 		return true;
+	}
+
+	private void doOnTriggerActionRequest(Action action) {
+		trigger(action);
+	}
+
+	private void doOnLocationChange() {
+		showScreen(gameScreen);
 	}
 
 	@Required
@@ -417,5 +444,49 @@ public class Zamn implements IEventHandler {
 		screenPanel.add(screen, new GridBagConstraints());
 		screenPanel.revalidate();
 		screenPanel.repaint();
+	}
+
+	protected void trigger(Action action) {
+		switch (action) {
+		case BACK_SPACE: {
+			currentKeySink.backspace();
+			break;
+		}
+		case DOWN: {
+			currentKeySink.down();
+			break;
+		}
+		case ENTER: {
+			currentKeySink.enter();
+			break;
+		}
+		case ESCAPE: {
+			currentKeySink.esc();
+			break;
+		}
+		case LEFT: {
+			currentKeySink.left();
+			break;
+		}
+		case RIGHT: {
+			currentKeySink.right();
+			break;
+		}
+		case SPACE: {
+			currentKeySink.space();
+			break;
+		}
+		case UP: {
+			currentKeySink.up();
+			break;
+		}
+		case X: {
+			currentKeySink.x();
+			break;
+		}
+		default: {
+			break;
+		}
+		}
 	}
 }
