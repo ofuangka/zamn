@@ -2,18 +2,20 @@ package zamn.board;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import zamn.board.controlmode.AbstractGameBoardControlMode;
+import zamn.board.controlmode.Action;
 import zamn.board.controlmode.AdventureMode;
 import zamn.board.controlmode.CombatMovementMode;
-import zamn.board.controlmode.Action;
 import zamn.board.controlmode.TargetedMove;
 import zamn.board.controlmode.TargetingMode;
 import zamn.board.piece.Critter;
@@ -189,6 +191,47 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return modeHistory.get(modeHistory.size() - 1);
 	}
 
+	public List<Tile> getCloserTiles(int x1, int y1, int x2, int y2) {
+		List<Tile> ret = new ArrayList<Tile>();
+		Random random = getEventContext().getRandom();
+		if (random.nextBoolean()) {
+			if (x1 < x2) {
+				ret.add(getTile(x1 + 1, y1));
+			} else if (x2 < x1) {
+				ret.add(getTile(x1 - 1, y1));
+			}
+			if (y1 < y2) {
+				ret.add(getTile(x1, y1 + 1));
+			} else if (y2 < y1) {
+				ret.add(getTile(x1, y1 - 1));
+			}
+		} else {
+			if (y1 < y2) {
+				ret.add(getTile(x1, y1 + 1));
+			} else if (y2 < y1) {
+				ret.add(getTile(x1, y1 - 1));
+			}
+			if (x1 < x2) {
+				ret.add(getTile(x1 + 1, y1));
+			} else if (x2 < x1) {
+				ret.add(getTile(x1 - 1, y1));
+			}
+		}
+		return ret;
+	}
+
+	public Action getDir(int x1, int y1, int x2, int y2) {
+		if (x1 < x2) {
+			return Action.RIGHT;
+		} else if (x2 < x1) {
+			return Action.LEFT;
+		} else if (y1 < y2) {
+			return Action.DOWN;
+		} else {
+			return Action.UP;
+		}
+	}
+
 	public IEventContext getEventContext() {
 		return eventContext;
 	}
@@ -244,37 +287,29 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		nextTurn();
 	}
 
-	private List<Action> getActions() {
-		List<Action> ret = new ArrayList<Action>();
+	private void executeAi() {
 		Critter nearestOpponent = getNearestOpponent(controllingCritter);
-		ret.addAll(getBestPath(controllingCritter.getX(),
-				controllingCritter.getY(), nearestOpponent.getX(),
-				nearestOpponent.getY()));
-		ret.addAll(getBestAction(controllingCritter));
-		return ret;
+		if (nearestOpponent != null) {
+			eventContext.fire(
+					GameEventContext.GameEventType.TRIGGER_ACTIONS_REQUEST,
+					getBestPath(controllingCritter.getX(),
+							controllingCritter.getY(), nearestOpponent.getX(),
+							nearestOpponent.getY()));
+			eventContext.fire(
+					GameEventContext.GameEventType.TRIGGER_ACTIONS_REQUEST,
+					getBestMove(controllingCritter, nearestOpponent));
+		} else {
+			throw new IllegalStateException("No nearest opponent found");
+		}
 	}
 
-	public List<Action> getBestAction(Critter from) {
+	public List<Action> getBestMove(Critter from, Critter to) {
 		List<Action> ret = new ArrayList<Action>();
-		Tile[] adjacentTiles = getTile(from.getX(), from.getY()).getAdjacentTiles();
-		for (int i = 0; i < adjacentTiles.length; i++) {
-			if (adjacentTiles[i] != null && adjacentTiles[i].isOccupied()) {
-				AbstractBoardPiece occupant = adjacentTiles[i].getOccupant();
-				if (Critter.class.isAssignableFrom(occupant.getClass())) {
-					Critter entity = (Critter) occupant;
-					
-					if (entity.isHostile()) {
-						
-						// attack the first selectable 
-						ret.add(Action.ENTER);
-						ret.add(Action.ENTER);
-						break;
-					}
-				}
-			}
-		}
-		if (ret.isEmpty()) {
-			
+		if (isAdjacent(from.getX(), from.getY(), to.getX(), to.getY())) {
+			ret.add(Action.ENTER);
+			ret.add(Action.ENTER);
+		} else {
+
 			// wait
 			ret.add(Action.UP);
 			ret.add(Action.ENTER);
@@ -283,13 +318,59 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	}
 
 	public Critter getNearestOpponent(Critter from) {
+		Tile root = getTile(from.getX(), from.getY());
+		List<Tile> queue = new ArrayList<Tile>();
+		List<Tile> consumed = new ArrayList<Tile>();
+		queue.addAll(Arrays.asList(root.getAdjacentTiles()));
+		return getNearestOpponentHelper(queue, consumed, from.isHostile());
+	}
+
+	protected Critter getNearestOpponentHelper(List<Tile> queue,
+			List<Tile> consumed, boolean alignment) {
+		while (!queue.isEmpty()) {
+			Tile tile = queue.remove(0);
+			if (tile != null) {
+				if (tile.isOccupied()) {
+					AbstractBoardPiece piece = tile.getOccupant();
+					if (Critter.class.isAssignableFrom(piece.getClass())) {
+						Critter critter = (Critter) piece;
+						if (critter.isHostile() != alignment) {
+							return critter;
+						}
+					}
+				}
+				consumed.add(tile);
+				Tile[] adjacentTiles = tile.getAdjacentTiles();
+				for (int i = 0; i < adjacentTiles.length; i++) {
+					if (!consumed.contains(adjacentTiles[i])) {
+						queue.add(adjacentTiles[i]);
+					}
+				}
+			}
+		}
 		return null;
 	}
 
 	public List<Action> getBestPath(int fromX, int fromY, int toX, int toY) {
 		List<Action> ret = new ArrayList<Action>();
-
+		getBestPathHelper(fromX, fromY, toX, toY, ret);
+		ret.add(Action.ENTER);
 		return ret;
+	}
+
+	protected void getBestPathHelper(int fromX, int fromY, int toX, int toY,
+			List<Action> acc) {
+		if (!isAdjacent(fromX, fromY, toX, toY)) {
+			List<Tile> closerTiles = getCloserTiles(fromX, fromY, toX, toY);
+			for (Tile tile : closerTiles) {
+
+				if (tile.isEnabled() && tile.isWalkable() && !tile.isOccupied()) {
+					acc.add(getDir(fromX, fromY, tile.getX(), tile.getY()));
+					getBestPathHelper(tile.getX(), tile.getY(), toX, toY, acc);
+					break;
+				}
+			}
+		}
 	}
 
 	public boolean isAtLeastOneHeroOnBoard() {
@@ -362,15 +443,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 				if (controllingCritter.isHostile()) {
 
-					// generate a queue of moves
-					List<Action> actions = getActions();
-					for (Action action : actions) {
-						eventContext
-								.fire(GameEventContext.GameEventType.TRIGGER_ACTION_REQUEST,
-										action);
-
-						// wait
-					}
+					executeAi();
 
 				} else {
 					// wait for user input

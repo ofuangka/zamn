@@ -2,13 +2,13 @@ package zamn.board;
 
 import java.awt.Dimension;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.util.CollectionUtils;
 
 import zamn.board.controlmode.Action;
 import zamn.ui.IDelegatingKeySink;
@@ -83,6 +83,12 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		return tiles;
 	}
 
+	public boolean isAdjacent(int x1, int y1, int x2, int y2) {
+		List<Tile> adjacentTiles = Arrays.asList(getTile(x1, y1)
+				.getAdjacentTiles());
+		return adjacentTiles.contains(getTile(x2, y2));
+	}
+
 	/**
 	 * The Board layer is never empty
 	 * 
@@ -136,26 +142,32 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 			throwNullTileException(x, y);
 		} else {
 			List<Tile> queue = new ArrayList<Tile>();
+			List<Tile> consumed = new ArrayList<Tile>();
 			queue.add(tiles[x][y]);
-			if (!placePieceInGeneralAreaHelper(piece, queue)) {
+			if (!placePieceInGeneralAreaHelper(piece, queue, consumed)) {
 				throw new IllegalStateException(
 						"Unable to place piece on board");
 			}
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	protected boolean placePieceInGeneralAreaHelper(AbstractBoardPiece piece,
-			List<Tile> queue) {
-		for (Tile tile : queue) {
+			List<Tile> queue, List<Tile> consumed) {
+		while (!queue.isEmpty()) {
+			Tile tile = queue.remove(0);
 			if (tile != null) {
 				if (!tile.isOccupied() && tile.isWalkable()) {
 					placePiece(piece, tile.getX(), tile.getY());
 					return true;
 				} else {
-					queue.addAll(CollectionUtils.arrayToList(tile
-							.getAdjacentTiles()));
-					return placePieceInGeneralAreaHelper(piece, queue);
+					consumed.add(tile);
+					Tile[] adjacentTiles = tile.getAdjacentTiles();
+					for (int i = 0; i < adjacentTiles.length; i++) {
+						if (!consumed.contains(adjacentTiles[i])) {
+							queue.add(adjacentTiles[i]);
+						}
+					}
+					return placePieceInGeneralAreaHelper(piece, queue, consumed);
 				}
 			}
 		}

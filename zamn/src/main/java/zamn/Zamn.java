@@ -92,15 +92,20 @@ public class Zamn implements IEventHandler {
 		ActionMap actionMap = new ActionMap();
 
 		inputMap.put(KeyStroke.getKeyStroke(Action.UP.toString()), Action.UP);
-		inputMap.put(KeyStroke.getKeyStroke(Action.RIGHT.toString()), Action.RIGHT);
-		inputMap.put(KeyStroke.getKeyStroke(Action.DOWN.toString()), Action.DOWN);
-		inputMap.put(KeyStroke.getKeyStroke(Action.LEFT.toString()), Action.LEFT);
-		inputMap.put(KeyStroke.getKeyStroke(Action.ENTER.toString()), Action.ENTER);
+		inputMap.put(KeyStroke.getKeyStroke(Action.RIGHT.toString()),
+				Action.RIGHT);
+		inputMap.put(KeyStroke.getKeyStroke(Action.DOWN.toString()),
+				Action.DOWN);
+		inputMap.put(KeyStroke.getKeyStroke(Action.LEFT.toString()),
+				Action.LEFT);
+		inputMap.put(KeyStroke.getKeyStroke(Action.ENTER.toString()),
+				Action.ENTER);
 		inputMap.put(KeyStroke.getKeyStroke(Action.ESCAPE.toString()),
 				Action.ESCAPE);
 		inputMap.put(KeyStroke.getKeyStroke(Action.BACK_SPACE.toString()),
 				Action.BACK_SPACE);
-		inputMap.put(KeyStroke.getKeyStroke(Action.SPACE.toString()), Action.SPACE);
+		inputMap.put(KeyStroke.getKeyStroke(Action.SPACE.toString()),
+				Action.SPACE);
 		inputMap.put(KeyStroke.getKeyStroke(Action.X.toString()), Action.X);
 
 		actionMap.put(Action.UP, new AbstractAction() {
@@ -286,6 +291,7 @@ public class Zamn implements IEventHandler {
 		screen.setPreferredSize(windowSize);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public boolean handleEvent(Event event, Object arg) {
 		switch ((GameEventContext.GameEventType) event.getType()) {
@@ -337,8 +343,8 @@ public class Zamn implements IEventHandler {
 			doOnLocationChange();
 			break;
 		}
-		case TRIGGER_ACTION_REQUEST: {
-			doOnTriggerActionRequest((Action) arg);
+		case TRIGGER_ACTIONS_REQUEST: {
+			doOnTriggerActionsRequest((List<Action>) arg);
 			break;
 		}
 
@@ -349,8 +355,10 @@ public class Zamn implements IEventHandler {
 		return true;
 	}
 
-	private void doOnTriggerActionRequest(Action action) {
-		trigger(action);
+	private void doOnTriggerActionsRequest(List<Action> actions) {
+		for (Action action : actions) {
+			trigger(action);
+		}
 	}
 
 	private void doOnLocationChange() {

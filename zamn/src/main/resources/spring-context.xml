@@ -44,7 +44,9 @@
 			</bean>
 		</constructor-arg>
 		<constructor-arg>
-			<bean class="zamn.ui.GameInterface"></bean>
+			<bean class="zamn.ui.GameInterface">
+				<constructor-arg ref="eventContext" />
+			</bean>
 		</constructor-arg>
 		<constructor-arg ref="spriteSize" />
 		<constructor-arg value="0.8" />
