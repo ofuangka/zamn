@@ -81,6 +81,8 @@ public abstract class AbstractStatEffect extends AbstractEffect {
 				}
 				if (maxValue != STAT_INFINITY && maxValue < newValue) {
 					newValue = maxValue;
+				} else if (newValue < 0) {
+					newValue = 0;
 				}
 
 				LOG.debug("Target '" + target + "'." + affectedStat + " = "
@@ -88,7 +90,7 @@ public abstract class AbstractStatEffect extends AbstractEffect {
 
 				target.setStat(affectedStat, newValue);
 
-				if (target.getStat(Critter.Stat.HP) <= 0) {
+				if (target.getStat(Critter.Stat.HP) == 0) {
 					eventContext.fire(
 							GameEventContext.GameEventType.CRITTER_DEATH,
 							target);

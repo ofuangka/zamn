@@ -20,7 +20,8 @@
 			"drivingStat" : "SMARTS",
 			"affectedStat" : "HP",
 			"positive" : false
-		}
+		},
+		"mpCost" : 5
 	},
 	"default_attack" : {
 		"name" : "Attack",
@@ -43,6 +44,7 @@
 			"drivingStat" : "STRENGTH",
 			"affectedStat" : "HP",
 			"positive" : false
-		}
+		},
+		"mpCost" : 0
 	}
 }

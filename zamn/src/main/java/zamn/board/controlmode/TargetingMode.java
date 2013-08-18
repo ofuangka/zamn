@@ -69,20 +69,32 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 	@Override
 	public void enter() {
 
+		Critter controllingCritter = getGameBoard().getControllingCritter();
+
 		if (currentIndex != NO_SELECTABLE_TILE_INDEX) {
+			int beforeMp = controllingCritter.getStat(Critter.Stat.MP);
+			int mpCost = action.getMpCost();
 
-			// get the tile collector and effect
+			if (beforeMp >= mpCost) {
 
-			ITileCollector aoe = action.getAreaOfEffect();
-			AbstractEffect tileEffect = action.getEffect();
+				controllingCritter.setStat(Critter.Stat.MP, beforeMp - mpCost);
 
-			List<Tile> affectedTiles = aoe.collect(actualRange
-					.get(currentIndex));
-			for (Tile tile : affectedTiles) {
-				tileEffect.apply(tile);
+				// get the tile collector and effect
+
+				ITileCollector aoe = action.getAreaOfEffect();
+				AbstractEffect tileEffect = action.getEffect();
+
+				List<Tile> affectedTiles = aoe.collect(actualRange
+						.get(currentIndex));
+				for (Tile tile : affectedTiles) {
+					tileEffect.apply(tile);
+				}
+				LOG.debug("Valid tile selection, ending turn");
+				getEventContext().fire(
+						GameEventContext.GameEventType.END_OF_TURN);
+			} else {
+				LOG.warn("Not enough MP");
 			}
-			LOG.debug("Valid tile selection, ending turn");
-			getEventContext().fire(GameEventContext.GameEventType.END_OF_TURN);
 		} else {
 			LOG.warn("Invalid tile selection, please try again");
 		}

@@ -12,6 +12,7 @@ public class Critter extends AbstractBoardPiece {
 
 	public interface IStat {
 		public int getDefaultValue();
+
 		public Stat getMaxStat();
 	}
 
@@ -21,7 +22,7 @@ public class Critter extends AbstractBoardPiece {
 			public int getDefaultValue() {
 				return 5;
 			}
-			
+
 			@Override
 			public Stat getMaxStat() {
 				return MAXHP;
@@ -32,7 +33,29 @@ public class Critter extends AbstractBoardPiece {
 			public int getDefaultValue() {
 				return 5;
 			}
-			
+
+			@Override
+			public Stat getMaxStat() {
+				return null;
+			}
+		},
+		MP {
+			@Override
+			public int getDefaultValue() {
+				return 5;
+			}
+
+			@Override
+			public Stat getMaxStat() {
+				return MAXMP;
+			}
+		},
+		MAXMP {
+			@Override
+			public int getDefaultValue() {
+				return 5;
+			}
+
 			@Override
 			public Stat getMaxStat() {
 				return null;
@@ -43,7 +66,7 @@ public class Critter extends AbstractBoardPiece {
 			public int getDefaultValue() {
 				return 5;
 			}
-			
+
 			@Override
 			public Stat getMaxStat() {
 				return null;
@@ -54,7 +77,7 @@ public class Critter extends AbstractBoardPiece {
 			public int getDefaultValue() {
 				return 3;
 			}
-			
+
 			@Override
 			public Stat getMaxStat() {
 				return null;
@@ -65,7 +88,7 @@ public class Critter extends AbstractBoardPiece {
 			public int getDefaultValue() {
 				return 5;
 			}
-			
+
 			@Override
 			public Stat getMaxStat() {
 				return null;

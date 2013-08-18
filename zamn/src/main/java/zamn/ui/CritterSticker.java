@@ -41,8 +41,8 @@ public class CritterSticker extends JLabel {
 		int currHp = critter.getStat(Critter.Stat.HP);
 		int maxHp = critter.getStat(Critter.Stat.MAXHP);
 		int hpBarSize = ((preferredSize.width - 4) * currHp) / maxHp;
-		int currMp = critter.getStat(Critter.Stat.HP);
-		int maxMp = critter.getStat(Critter.Stat.MAXHP);
+		int currMp = critter.getStat(Critter.Stat.MP);
+		int maxMp = critter.getStat(Critter.Stat.MAXMP);
 		int mpBarSize = ((preferredSize.width - 4) * currMp) / maxMp;
 
 		g2d.setColor(Color.red);

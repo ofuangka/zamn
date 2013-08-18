@@ -22,12 +22,12 @@ import zamn.framework.event.IEventContext;
 public class TargetedMoveFactory {
 
 	private final IEventContext eventContext;
-	private final Map<String, TargetedMoveDefinition> targetedActionDefinitions;
+	private final Map<String, TargetedMoveDefinition> targetedMoveDefinitions;
 
 	public TargetedMoveFactory(Resource resource, ObjectMapper objectMapper,
 			IEventContext eventContext) {
 		try {
-			targetedActionDefinitions = objectMapper.readValue(resource
+			targetedMoveDefinitions = objectMapper.readValue(resource
 					.getURI().toURL(),
 					new TypeReference<Map<String, TargetedMoveDefinition>>() {
 					});
@@ -38,22 +38,23 @@ public class TargetedMoveFactory {
 	}
 
 	public TargetedMove get(String id, Critter critter) {
-		TargetedMoveDefinition targetedActionDefinition = targetedActionDefinitions
+		TargetedMoveDefinition targetedMoveDefinition = targetedMoveDefinitions
 				.get(id);
-		if (targetedActionDefinition == null) {
+		if (targetedMoveDefinition == null) {
 			throw new IllegalArgumentException(
-					"Unable to find action definition with ID: '" + id + "'");
+					"Unable to find move definition with ID: '" + id + "'");
 		}
-		ITileCollector targetedRange = getTileCollector(targetedActionDefinition
+		ITileCollector targetedRange = getTileCollector(targetedMoveDefinition
 				.getTargetingRange());
 		TileListFilter actualRangeFilter = TileListFilter
-				.valueOf(targetedActionDefinition.getActualRangeFilter());
-		ITileCollector areaOfEffect = getTileCollector(targetedActionDefinition
+				.valueOf(targetedMoveDefinition.getActualRangeFilter());
+		ITileCollector areaOfEffect = getTileCollector(targetedMoveDefinition
 				.getAreaOfEffect());
-		AbstractEffect effect = getEffect(targetedActionDefinition.getEffect());
+		AbstractEffect effect = getEffect(targetedMoveDefinition.getEffect());
 		effect.setCritter(critter);
-		return new TargetedMove(targetedActionDefinition.getName(),
-				targetedRange, actualRangeFilter, areaOfEffect, effect);
+		return new TargetedMove(targetedMoveDefinition.getName(),
+				targetedRange, actualRangeFilter, areaOfEffect, effect,
+				targetedMoveDefinition.getMpCost());
 
 	}
 

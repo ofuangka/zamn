@@ -7,6 +7,7 @@ public class TargetedMoveDefinition {
 	private EffectDefinition effect;
 	private String name;
 	private TileCollectorDefinition targetingRange;
+	private int mpCost;
 
 	public String getActualRangeFilter() {
 		return actualRangeFilter;
@@ -18,6 +19,10 @@ public class TargetedMoveDefinition {
 
 	public EffectDefinition getEffect() {
 		return effect;
+	}
+	
+	public int getMpCost() {
+		return mpCost;
 	}
 
 	public String getName() {
@@ -38,6 +43,10 @@ public class TargetedMoveDefinition {
 
 	public void setEffect(EffectDefinition effect) {
 		this.effect = effect;
+	}
+	
+	public void setMpCost(int mpCost) {
+		this.mpCost = mpCost;
 	}
 
 	public void setName(String name) {

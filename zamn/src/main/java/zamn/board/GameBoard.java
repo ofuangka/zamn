@@ -418,6 +418,11 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			// figure out who the next controlling piece is
 			assignControl(sequence.remove(0));
 
+			int beforeMp = controllingCritter.getStat(Critter.Stat.MP);
+			if (controllingCritter.getStat(Critter.Stat.MAXMP) > beforeMp) {
+				controllingCritter.setStat(Critter.Stat.MP, beforeMp + 1);
+			}
+
 			AbstractGameBoardControlMode firstMode;
 
 			if (isInCombat()) {

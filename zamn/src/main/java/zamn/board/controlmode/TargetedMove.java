@@ -16,15 +16,17 @@ public class TargetedMove {
 	private final AbstractEffect effect;
 	private final String name;
 	private final ITileCollector targetingRange;
+	private final int mpCost;
 
 	public TargetedMove(String name, ITileCollector targetingRange,
 			TileListFilter actualRangeFilter, ITileCollector areaOfEffect,
-			AbstractEffect effect) {
+			AbstractEffect effect, int mpCost) {
 		this.name = name;
 		this.targetingRange = targetingRange;
 		this.actualRangeFilter = actualRangeFilter;
 		this.areaOfEffect = areaOfEffect;
 		this.effect = effect;
+		this.mpCost = mpCost;
 	}
 
 	public TileListFilter getActualRangeFilter() {
@@ -37,6 +39,10 @@ public class TargetedMove {
 
 	public AbstractEffect getEffect() {
 		return effect;
+	}
+	
+	public int getMpCost() {
+		return mpCost;
 	}
 
 	public String getName() {
