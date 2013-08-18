@@ -14,5 +14,14 @@
 		"talents" : [],
 		"stats" : {},
 		"hostile" : true
+	},
+	"gbln0" : {
+		"spriteId" : "gobln",
+		"talents" : [],
+		"stats" : {
+			"MAXHP" : 10,
+			"HP" : 10
+		},
+		"hostile" : true
 	}
 }

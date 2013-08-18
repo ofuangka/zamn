@@ -8,7 +8,12 @@
 		"id" : "blob0",
 		"seedX" : 7,
 		"seedY" : 7
-	} ],
+	},
+	{
+		"id" : "gbln0",
+		"seedX" : 10,
+		"seedY" : 10
+	}],
 	"entrances" : [
 	    [ 2, 3 ]
 	],
