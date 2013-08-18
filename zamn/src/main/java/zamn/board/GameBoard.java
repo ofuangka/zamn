@@ -2,7 +2,6 @@ package zamn.board;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -318,37 +317,24 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	}
 
 	public Critter getNearestOpponent(Critter from) {
-		Tile root = getTile(from.getX(), from.getY());
-		List<Tile> queue = new ArrayList<Tile>();
-		List<Tile> consumed = new ArrayList<Tile>();
-		queue.addAll(Arrays.asList(root.getAdjacentTiles()));
-		return getNearestOpponentHelper(queue, consumed, from.isHostile());
-	}
-
-	protected Critter getNearestOpponentHelper(List<Tile> queue,
-			List<Tile> consumed, boolean alignment) {
-		while (!queue.isEmpty()) {
-			Tile tile = queue.remove(0);
-			if (tile != null) {
-				if (tile.isOccupied()) {
-					AbstractBoardPiece piece = tile.getOccupant();
-					if (Critter.class.isAssignableFrom(piece.getClass())) {
-						Critter critter = (Critter) piece;
-						if (critter.isHostile() != alignment) {
-							return critter;
-						}
-					}
-				}
-				consumed.add(tile);
-				Tile[] adjacentTiles = tile.getAdjacentTiles();
-				for (int i = 0; i < adjacentTiles.length; i++) {
-					if (!consumed.contains(adjacentTiles[i])) {
-						queue.add(adjacentTiles[i]);
-					}
-				}
+		Critter ret = null;
+		int minDistance = -1;
+		int bufDistance = -1;
+		for (int i = 0; i < critters.size(); i++) {
+			Critter critter = critters.get(i);
+			bufDistance = getDistance(from.getX(), from.getY(), critter.getX(),
+					critter.getY());
+			if ((minDistance == -1 || bufDistance < minDistance)
+					&& (from.isHostile() != critter.isHostile())) {
+				minDistance = bufDistance;
+				ret = critter;
 			}
 		}
-		return null;
+		return ret;
+	}
+
+	protected int getDistance(int x1, int y1, int x2, int y2) {
+		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
 	}
 
 	public List<Action> getBestPath(int fromX, int fromY, int toX, int toY) {
