@@ -61,6 +61,17 @@ public class Critter extends AbstractBoardPiece {
 				return null;
 			}
 		},
+		SIGHT {
+			@Override
+			public int getDefaultValue() {
+				return 5;
+			}
+			
+			@Override
+			public Stat getMaxStat() {
+				return null;
+			}
+		},
 		SMARTS {
 			@Override
 			public int getDefaultValue() {

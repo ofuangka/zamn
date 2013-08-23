@@ -1,7 +1,7 @@
 {
 	"mainCharacter" : {
 		"spriteId" : "thief",
-		"talents" : ["fire_bomb"],
+		"talents" : ["fire_bomb", "throw_rock"],
 		"stats" : {
 			"MAXHP" : 20,
 			"HP" : 20,

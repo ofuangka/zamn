@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
@@ -58,6 +60,8 @@ public class Zamn implements IEventHandler {
 	private Menu mainMenu;
 	private JPanel screenPanel;
 	private List<JComponent> shownScreens = new ArrayList<JComponent>();
+	private Timer animationTimer;
+	private List<Action> animationQueue = new ArrayList<Action>();
 
 	private Menu systemMenu;
 
@@ -74,9 +78,25 @@ public class Zamn implements IEventHandler {
 		eventContext.onAll(this);
 		createWindow();
 		createScreenPanel();
+		createAnimationTimer();
 		showScreen(mainMenu);
 		showAndCenterWindow();
 
+	}
+
+	private void createAnimationTimer() {
+		animationTimer = new Timer(250, new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if (animationQueue.isEmpty()) {
+					animationTimer.stop();
+				} else {
+					trigger(animationQueue.remove(0));
+					gameScreen.repaint();
+				}
+			}
+		});
 	}
 
 	/**
@@ -356,9 +376,8 @@ public class Zamn implements IEventHandler {
 	}
 
 	private void doOnTriggerActionsRequest(List<Action> actions) {
-		for (Action action : actions) {
-			trigger(action);
-		}
+		animationQueue.addAll(actions);
+		animationTimer.start();
 	}
 
 	private void doOnLocationChange() {
