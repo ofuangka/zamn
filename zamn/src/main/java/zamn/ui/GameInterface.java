@@ -32,14 +32,16 @@ public class GameInterface extends JScrollPane {
 		items.put(critter, critterItem);
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.gridx = 0;
-		gc.gridy = items.size();
+		gc.gridy = items.size() - 1;
 		getView().add(critterItem, gc);
 		refreshSpacer();
+		revalidate();
 		repaint();
 	}
 
 	public void removeCritter(Critter critter) {
 		getView().remove(items.remove(critter));
+		revalidate();
 		repaint();
 	}
 
@@ -49,6 +51,7 @@ public class GameInterface extends JScrollPane {
 			getView().remove(items.get(critter));
 		}
 		items.clear();
+		revalidate();
 		repaint();
 	}
 
@@ -60,10 +63,9 @@ public class GameInterface extends JScrollPane {
 		getView().remove(spacer);
 		GridBagConstraints gc = new GridBagConstraints();
 		gc.gridx = 0;
-		gc.gridy = items.size() + 1;
+		gc.gridy = items.size();
 		gc.weighty = 1;
 		getView().add(spacer, gc);
-		repaint();
 	}
 
 }

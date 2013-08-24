@@ -177,10 +177,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	public Critter getControllingCritter() {
 		return controllingCritter;
 	}
-	
-	public List<Critter> getCritterSequence() {
-		return critterSequence;
-	}
 
 	/**
 	 * The Board returns whichever current control mode
@@ -293,31 +289,31 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	private void executeAi() {
 		Critter nearestOpponent = getNearestOpponent(controllingCritter);
 		if (nearestOpponent != null) {
+			List<Action> aiActions = new ArrayList<Action>();
+			int[] finalPosition = addBestPath(controllingCritter.getX(),
+					controllingCritter.getY(), nearestOpponent.getX(),
+					nearestOpponent.getY(), aiActions);
+			addBestMove(finalPosition[0], finalPosition[1], nearestOpponent,
+					aiActions);
 			eventContext.fire(
 					GameEventContext.GameEventType.TRIGGER_ACTIONS_REQUEST,
-					getBestPath(controllingCritter.getX(),
-							controllingCritter.getY(), nearestOpponent.getX(),
-							nearestOpponent.getY()));
-			eventContext.fire(
-					GameEventContext.GameEventType.TRIGGER_ACTIONS_REQUEST,
-					getBestMove(controllingCritter, nearestOpponent));
+					aiActions);
 		} else {
 			throw new IllegalStateException("No nearest opponent found");
 		}
 	}
 
-	public List<Action> getBestMove(Critter from, Critter to) {
-		List<Action> ret = new ArrayList<Action>();
-		if (isAdjacent(from.getX(), from.getY(), to.getX(), to.getY())) {
-			ret.add(Action.ENTER);
-			ret.add(Action.ENTER);
+	public void addBestMove(int fromX, int fromY, Critter opponent,
+			List<Action> actions) {
+		if (isAdjacent(fromX, fromY, opponent.getX(), opponent.getY())) {
+			actions.add(Action.ENTER);
+			actions.add(Action.ENTER);
 		} else {
 
 			// wait
-			ret.add(Action.UP);
-			ret.add(Action.ENTER);
+			actions.add(Action.UP);
+			actions.add(Action.ENTER);
 		}
-		return ret;
 	}
 
 	public Critter getNearestOpponent(Critter from) {
@@ -341,14 +337,14 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
 	}
 
-	public List<Action> getBestPath(int fromX, int fromY, int toX, int toY) {
-		List<Action> ret = new ArrayList<Action>();
-		getBestPathHelper(fromX, fromY, toX, toY, ret);
-		ret.add(Action.ENTER);
+	public int[] addBestPath(int fromX, int fromY, int toX, int toY,
+			List<Action> acc) {
+		int[] ret = addBestPathHelper(fromX, fromY, toX, toY, acc);
+		acc.add(Action.ENTER);
 		return ret;
 	}
 
-	protected void getBestPathHelper(int fromX, int fromY, int toX, int toY,
+	protected int[] addBestPathHelper(int fromX, int fromY, int toX, int toY,
 			List<Action> acc) {
 		if (!isAdjacent(fromX, fromY, toX, toY)) {
 			List<Tile> closerTiles = getCloserTiles(fromX, fromY, toX, toY);
@@ -356,11 +352,12 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 				if (tile.isEnabled() && tile.isWalkable() && !tile.isOccupied()) {
 					acc.add(getDir(fromX, fromY, tile.getX(), tile.getY()));
-					getBestPathHelper(tile.getX(), tile.getY(), toX, toY, acc);
-					break;
+					return addBestPathHelper(tile.getX(), tile.getY(), toX,
+							toY, acc);
 				}
 			}
 		}
+		return new int[] { fromX, fromY };
 	}
 
 	public boolean isAtLeastOneHeroOnBoard() {
@@ -417,9 +414,8 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			if (critterSequence.isEmpty()) {
 				LOG.debug("Critter sequence empty, starting new round...");
 				createCritterSequence();
-				eventContext.fire(GameEventContext.GameEventType.BEGIN_ROUND);
+				eventContext.fire(GameEventContext.GameEventType.BEGIN_ROUND, critterSequence);
 			}
-			
 
 			// figure out who the next controlling piece is
 			assignControl(critterSequence.remove(0));

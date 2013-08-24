@@ -255,9 +255,8 @@ public class Zamn implements IEventHandler {
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
-	private void doOnBeginRound() {
+	private void doOnBeginRound(List<Critter> critterSequence) {
 		gameInterface.clearCritters();
-		List<Critter> critterSequence = board.getCritterSequence();
 		for (Critter critter : critterSequence) {
 			gameInterface.addCritter(critter);
 		}
@@ -383,7 +382,7 @@ public class Zamn implements IEventHandler {
 			break;
 		}
 		case BEGIN_ROUND: {
-			doOnBeginRound();
+			doOnBeginRound((List<Critter>) arg);
 			break;
 		}
 
