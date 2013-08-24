@@ -23,10 +23,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import zamn.board.GameBoard;
 import zamn.board.controlmode.Action;
+import zamn.board.piece.Critter;
 import zamn.framework.event.Event;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 import zamn.framework.event.IEventHandler;
+import zamn.ui.GameInterface;
 import zamn.ui.IKeySink;
 import zamn.ui.InGameMenuLayer;
 import zamn.ui.menu.CritterMenuFactory;
@@ -57,6 +59,7 @@ public class Zamn implements IEventHandler {
 	private JComponent gameScreen;
 	private Menu gameOverMenu;
 	private InGameMenuLayer inGameMenuLayer;
+	private GameInterface gameInterface;
 	private Menu mainMenu;
 	private JPanel screenPanel;
 	private List<JComponent> shownScreens = new ArrayList<JComponent>();
@@ -252,6 +255,14 @@ public class Zamn implements IEventHandler {
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
+	private void doOnBeginRound() {
+		gameInterface.clearCritters();
+		List<Critter> critterSequence = board.getCritterSequence();
+		for (Critter critter : critterSequence) {
+			gameInterface.addCritter(critter);
+		}
+	}
+
 	private void doOnCombatActionMenuRequest() {
 		inGameMenuLayer.pushMenu(critterMenuFactory.getCombatActionMenu(board
 				.getControllingCritter()));
@@ -319,7 +330,7 @@ public class Zamn implements IEventHandler {
 			doOnCombatActionMenuRequest();
 			break;
 		}
-		case END_OF_TURN: {
+		case NEXT_TURN_REQUEST: {
 			doOnEndOfTurn();
 			break;
 		}
@@ -367,12 +378,24 @@ public class Zamn implements IEventHandler {
 			doOnTriggerActionsRequest((List<Action>) arg);
 			break;
 		}
+		case CRITTER_DEATH: {
+			doOnCritterDeath((Critter) arg);
+			break;
+		}
+		case BEGIN_ROUND: {
+			doOnBeginRound();
+			break;
+		}
 
 		default: {
 			break;
 		}
 		}
 		return true;
+	}
+
+	private void doOnCritterDeath(Critter critter) {
+		gameInterface.removeCritter(critter);
 	}
 
 	private void doOnTriggerActionsRequest(List<Action> actions) {
@@ -402,6 +425,11 @@ public class Zamn implements IEventHandler {
 	@Required
 	public void setGameOverMenu(Menu gameOverMenu) {
 		this.gameOverMenu = gameOverMenu;
+	}
+
+	@Required
+	public void setGameInterface(GameInterface gameInterface) {
+		this.gameInterface = gameInterface;
 	}
 
 	public void setGameScreen(JComponent gameScreen) {

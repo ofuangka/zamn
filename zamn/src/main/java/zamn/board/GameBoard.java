@@ -43,7 +43,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	private IEventContext eventContext;
 	private Map<String, String[]> exits = new HashMap<String, String[]>();
 	private List<AbstractGameBoardControlMode> modeHistory = new ArrayList<AbstractGameBoardControlMode>();
-	private List<Critter> sequence = new ArrayList<Critter>();
+	private List<Critter> critterSequence = new ArrayList<Critter>();
 	private List<Tile> tilesInTargetingRange = new ArrayList<Tile>();
 
 	public GameBoard(IEventContext eventContext) {
@@ -102,9 +102,9 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	}
 
 	public void createCritterSequence() {
-		sequence.addAll(critters);
-		Collections.sort(sequence, Critter.SPEED_COMPARATOR);
-		Collections.reverse(sequence);
+		critterSequence.addAll(critters);
+		Collections.sort(critterSequence, Critter.SPEED_COMPARATOR);
+		Collections.reverse(critterSequence);
 	}
 
 	public void disableAllTiles() {
@@ -128,7 +128,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	protected void doOnCritterDeath(Critter deadCritter) {
 		removePiece(deadCritter);
 		critters.remove(deadCritter);
-		sequence.remove(deadCritter);
+		critterSequence.remove(deadCritter);
 	}
 
 	protected void doOnCritterTargetedActionRequest(EventMenuItem menuItem) {
@@ -165,7 +165,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	 */
 	protected void forceClearBoardState() {
 		critters.clear();
-		sequence.clear();
+		critterSequence.clear();
 		disabledTiles.clear();
 		tilesInTargetingRange.clear();
 		modeHistory.clear();
@@ -176,6 +176,10 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 	public Critter getControllingCritter() {
 		return controllingCritter;
+	}
+	
+	public List<Critter> getCritterSequence() {
+		return critterSequence;
 	}
 
 	/**
@@ -246,7 +250,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	@Override
 	public boolean handleEvent(Event event, Object arg) {
 		switch ((GameEventContext.GameEventType) event.getType()) {
-		case END_OF_TURN: {
+		case NEXT_TURN_REQUEST: {
 			doOnEndOfTurn();
 			break;
 		}
@@ -410,13 +414,15 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 					GameEventContext.GameEventType.LOSE_CONDITION);
 		} else {
 
-			if (sequence.isEmpty()) {
+			if (critterSequence.isEmpty()) {
 				LOG.debug("Critter sequence empty, starting new round...");
 				createCritterSequence();
+				eventContext.fire(GameEventContext.GameEventType.BEGIN_ROUND);
 			}
+			
 
 			// figure out who the next controlling piece is
-			assignControl(sequence.remove(0));
+			assignControl(critterSequence.remove(0));
 
 			int beforeMp = controllingCritter.getStat(Critter.Stat.MP);
 			if (controllingCritter.getStat(Critter.Stat.MAXMP) > beforeMp) {

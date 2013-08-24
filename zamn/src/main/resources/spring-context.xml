@@ -29,6 +29,7 @@
 			</bean>
 		</property>
 		<property name="board" ref="board" />
+		<property name="gameInterface" ref="gameInterface" />
 	</bean>
 
 	<bean id="gameScreen" class="zamn.ui.GameScreen">
@@ -43,16 +44,16 @@
 				</constructor-arg>
 			</bean>
 		</constructor-arg>
-		<constructor-arg>
-			<bean class="zamn.ui.GameInterface">
-				<constructor-arg ref="eventContext" />
-			</bean>
-		</constructor-arg>
+		<constructor-arg ref="gameInterface" />
 		<constructor-arg ref="spriteSize" />
 		<constructor-arg value="0.8" />
 	</bean>
 
 	<bean id="inGameMenuLayer" class="zamn.ui.InGameMenuLayer" />
+
+	<bean id="gameInterface" class="zamn.ui.GameInterface">
+		<constructor-arg ref="eventContext" />
+	</bean>
 
 	<bean id="board" class="zamn.board.GameBoard">
 		<constructor-arg ref="eventContext" />

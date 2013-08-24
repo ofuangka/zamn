@@ -11,12 +11,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import zamn.board.piece.Critter;
-import zamn.framework.event.Event;
-import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
-import zamn.framework.event.IEventHandler;
 
-public class GameInterface extends JScrollPane implements IEventHandler {
+public class GameInterface extends JScrollPane {
 
 	private static final long serialVersionUID = 4716145778679751281L;
 
@@ -28,7 +25,6 @@ public class GameInterface extends JScrollPane implements IEventHandler {
 		super(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		setViewportView(new JPanel(new GridBagLayout()));
-		eventContext.onAll(this);
 	}
 
 	public void addCritter(Critter critter) {
@@ -39,10 +35,12 @@ public class GameInterface extends JScrollPane implements IEventHandler {
 		gc.gridy = items.size();
 		getView().add(critterItem, gc);
 		refreshSpacer();
+		repaint();
 	}
 
 	public void removeCritter(Critter critter) {
 		getView().remove(items.remove(critter));
+		repaint();
 	}
 
 	public void clearCritters() {
@@ -51,6 +49,7 @@ public class GameInterface extends JScrollPane implements IEventHandler {
 			getView().remove(items.get(critter));
 		}
 		items.clear();
+		repaint();
 	}
 
 	protected JPanel getView() {
@@ -64,32 +63,7 @@ public class GameInterface extends JScrollPane implements IEventHandler {
 		gc.gridy = items.size() + 1;
 		gc.weighty = 1;
 		getView().add(spacer, gc);
-	}
-
-	@Override
-	public boolean handleEvent(Event event, Object arg) {
-		switch ((GameEventContext.GameEventType) event.getType()) {
-		case CRITTER_ADDED_TO_BOARD: {
-			addCritter((Critter) arg);
-			break;
-		}
-		case CRITTER_DEATH: {
-			removeCritter((Critter) arg);
-			break;
-		}
-		case LOCATION_CHANGE: {
-			clearCritters();
-			break;
-		}
-		case END_OF_TURN: {
-			repaint();
-			break;
-		}
-		default: {
-			break;
-		}
-		}
-		return true;
+		repaint();
 	}
 
 }

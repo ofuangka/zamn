@@ -77,7 +77,7 @@ public class CritterMenuFactory {
 
 			@Override
 			public void execute() {
-				eventContext.fire(GameEventContext.GameEventType.END_OF_TURN);
+				eventContext.fire(GameEventContext.GameEventType.NEXT_TURN_REQUEST);
 			}
 
 		});

@@ -91,7 +91,7 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 				}
 				LOG.debug("Valid tile selection, ending turn");
 				getEventContext().fire(
-						GameEventContext.GameEventType.END_OF_TURN);
+						GameEventContext.GameEventType.NEXT_TURN_REQUEST);
 			} else {
 				LOG.warn("Not enough MP");
 			}
