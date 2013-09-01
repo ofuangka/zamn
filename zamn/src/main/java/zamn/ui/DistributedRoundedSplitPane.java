@@ -10,9 +10,9 @@ public class DistributedRoundedSplitPane extends JSplitPane {
 
 	private static final long serialVersionUID = 7986545220487833886L;
 
+	private double distribution;
 	private JComponent left;
 	private JComponent right;
-	private double distribution;
 	private Dimension spriteSize;
 
 	public DistributedRoundedSplitPane(JComponent left, JComponent right,

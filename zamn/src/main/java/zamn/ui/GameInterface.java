@@ -39,12 +39,6 @@ public class GameInterface extends JScrollPane {
 		repaint();
 	}
 
-	public void removeCritter(Critter critter) {
-		getView().remove(items.remove(critter));
-		revalidate();
-		repaint();
-	}
-
 	public void clearCritters() {
 		Set<Critter> critters = items.keySet();
 		for (Critter critter : critters) {
@@ -66,6 +60,12 @@ public class GameInterface extends JScrollPane {
 		gc.gridy = items.size();
 		gc.weighty = 1;
 		getView().add(spacer, gc);
+	}
+
+	public void removeCritter(Critter critter) {
+		getView().remove(items.remove(critter));
+		revalidate();
+		repaint();
 	}
 
 }

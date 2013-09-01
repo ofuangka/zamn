@@ -19,10 +19,10 @@ import zamn.framework.event.IEventContext;
  */
 public abstract class AbstractStatEffect extends AbstractEffect {
 
-	public static final int STAT_INFINITY = -1;
-
 	private static final Logger LOG = Logger
 			.getLogger(AbstractStatEffect.class);
+
+	public static final int STAT_INFINITY = -1;
 
 	private final Critter.Stat affectedStat;
 	private IEventContext eventContext;

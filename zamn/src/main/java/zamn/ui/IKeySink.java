@@ -9,6 +9,8 @@ public interface IKeySink {
 
 	void esc();
 
+	boolean isListening();
+
 	void left();
 
 	void right();
@@ -16,8 +18,6 @@ public interface IKeySink {
 	void space();
 
 	void up();
-
-	void x();
 	
-	boolean isListening();
+	void x();
 }

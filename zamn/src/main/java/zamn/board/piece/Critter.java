@@ -39,17 +39,6 @@ public class Critter extends AbstractBoardPiece {
 				return null;
 			}
 		},
-		MP {
-			@Override
-			public int getDefaultValue() {
-				return 5;
-			}
-
-			@Override
-			public Stat getMaxStat() {
-				return MAXMP;
-			}
-		},
 		MAXMP {
 			@Override
 			public int getDefaultValue() {
@@ -59,6 +48,17 @@ public class Critter extends AbstractBoardPiece {
 			@Override
 			public Stat getMaxStat() {
 				return null;
+			}
+		},
+		MP {
+			@Override
+			public int getDefaultValue() {
+				return 5;
+			}
+
+			@Override
+			public Stat getMaxStat() {
+				return MAXMP;
 			}
 		},
 		SIGHT {

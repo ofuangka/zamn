@@ -12,10 +12,10 @@ import zamn.board.piece.Critter;
 
 public class CritterSticker extends JLabel {
 
-	private static final long serialVersionUID = -8559163820702667647L;
+	private static final Color FRIENDLY_COLOR = new Color(0, 0, 255, 50);
 
 	private static final Color HOSTILE_COLOR = new Color(255, 0, 0, 50);
-	private static final Color FRIENDLY_COLOR = new Color(0, 0, 255, 50);
+	private static final long serialVersionUID = -8559163820702667647L;
 
 	private Critter critter;
 

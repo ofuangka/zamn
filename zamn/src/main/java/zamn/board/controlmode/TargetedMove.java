@@ -14,9 +14,9 @@ public class TargetedMove {
 	private final TileListFilter actualRangeFilter;
 	private final ITileCollector areaOfEffect;
 	private final AbstractEffect effect;
+	private final int mpCost;
 	private final String name;
 	private final ITileCollector targetingRange;
-	private final int mpCost;
 
 	public TargetedMove(String name, ITileCollector targetingRange,
 			TileListFilter actualRangeFilter, ITileCollector areaOfEffect,

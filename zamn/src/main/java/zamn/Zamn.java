@@ -52,19 +52,19 @@ public class Zamn implements IEventHandler {
 		zamn.bootstrap();
 	}
 
+	private List<Action> animationQueue = new ArrayList<Action>();
+	private Timer animationTimer;
 	private GameBoard board;
 	private CritterMenuFactory critterMenuFactory;
 	private IKeySink currentKeySink;
 	private IEventContext eventContext;
-	private JComponent gameScreen;
-	private Menu gameOverMenu;
-	private InGameMenuLayer inGameMenuLayer;
 	private GameInterface gameInterface;
+	private Menu gameOverMenu;
+	private JComponent gameScreen;
+	private InGameMenuLayer inGameMenuLayer;
 	private Menu mainMenu;
 	private JPanel screenPanel;
 	private List<JComponent> shownScreens = new ArrayList<JComponent>();
-	private Timer animationTimer;
-	private List<Action> animationQueue = new ArrayList<Action>();
 
 	private Menu systemMenu;
 
@@ -255,63 +255,6 @@ public class Zamn implements IEventHandler {
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
-	private void doOnBeginRound(List<Critter> critterSequence) {
-		gameInterface.clearCritters();
-		for (Critter critter : critterSequence) {
-			gameInterface.addCritter(critter);
-		}
-	}
-
-	private void doOnCombatActionMenuRequest() {
-		inGameMenuLayer.pushMenu(critterMenuFactory.getCombatActionMenu(board
-				.getControllingCritter()));
-	}
-
-	private void doOnCritterTargetedActionRequest(EventMenuItem menuItem) {
-		inGameMenuLayer.setVisible(false);
-	}
-
-	private void doOnEndOfTurn() {
-		inGameMenuLayer.clearMenus();
-		inGameMenuLayer.setVisible(true);
-	}
-
-	private void doOnExitRequest() {
-		System.exit(0);
-	}
-
-	private void doOnLoseCondition() {
-		showScreen(gameOverMenu);
-	}
-
-	private void doOnMainMenuRequest() {
-		showScreen(mainMenu);
-	}
-
-	protected void doOnNewGameRequest() {
-		showScreen(gameScreen);
-	}
-
-	private void doOnPreviousInGameMenuRequest() {
-		if (inGameMenuLayer.isVisible()) {
-			inGameMenuLayer.popMenu();
-		} else {
-			inGameMenuLayer.setVisible(true);
-		}
-	}
-
-	private void doOnPushInGameSubMenu(Menu menu) {
-		inGameMenuLayer.pushMenu(menu);
-	}
-
-	private void doOnReturnToGameRequest() {
-		showScreen(gameScreen);
-	}
-
-	private void doOnSystemMenuRequest() {
-		showScreen(systemMenu);
-	}
-
 	/**
 	 * This method gets called before a screen is shown for the first time
 	 * 
@@ -321,68 +264,93 @@ public class Zamn implements IEventHandler {
 		screen.setPreferredSize(windowSize);
 	}
 
+	private void handleBeginRound(List<Critter> critterSequence) {
+		gameInterface.clearCritters();
+		for (Critter critter : critterSequence) {
+			gameInterface.addCritter(critter);
+		}
+	}
+
+	private void handleCombatActionMenuRequest() {
+		inGameMenuLayer.pushMenu(critterMenuFactory.getCombatActionMenu(board
+				.getControllingCritter()));
+	}
+
+	private void handleCritterDeath(Critter critter) {
+		gameInterface.removeCritter(critter);
+	}
+
+	private void handleCritterTargetedActionRequest(EventMenuItem menuItem) {
+		inGameMenuLayer.setVisible(false);
+	}
+
+	private void handleEndOfTurn() {
+		inGameMenuLayer.clearMenus();
+		inGameMenuLayer.setVisible(true);
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean handleEvent(Event event, Object arg) {
 		switch ((GameEventContext.GameEventType) event.getType()) {
 		case COMBAT_ACTION_MENU_REQUEST: {
-			doOnCombatActionMenuRequest();
+			handleCombatActionMenuRequest();
 			break;
 		}
 		case NEXT_TURN_REQUEST: {
-			doOnEndOfTurn();
+			handleEndOfTurn();
 			break;
 		}
 		case EXIT_GAME_REQUEST: {
-			doOnExitRequest();
+			handleExitRequest();
 			break;
 		}
 		case NEW_GAME_REQUEST: {
-			doOnNewGameRequest();
+			handleNewGameRequest();
 			break;
 		}
 		case LOSE_CONDITION: {
-			doOnLoseCondition();
+			handleLoseCondition();
 			break;
 		}
 		case PUSH_IN_GAME_SUBMENU_REQUEST: {
-			doOnPushInGameSubMenu((Menu) arg);
+			handlePushInGameSubMenu((Menu) arg);
 			break;
 		}
 		case PREVIOUS_IN_GAME_MENU_REQUEST: {
-			doOnPreviousInGameMenuRequest();
+			handlePreviousInGameMenuRequest();
 			break;
 		}
 		case RETURN_TO_GAME_REQUEST: {
-			doOnReturnToGameRequest();
+			handleReturnToGameRequest();
 			break;
 		}
 		case MAIN_MENU_REQUEST: {
-			doOnMainMenuRequest();
+			handleMainMenuRequest();
 			break;
 		}
 		case SYSTEM_MENU_REQUEST: {
-			doOnSystemMenuRequest();
+			handleSystemMenuRequest();
 			break;
 		}
 		case CRITTER_TARGETED_ACTION_REQUEST: {
-			doOnCritterTargetedActionRequest((EventMenuItem) arg);
+			handleCritterTargetedActionRequest((EventMenuItem) arg);
 			break;
 		}
 		case LOCATION_CHANGE: {
-			doOnLocationChange();
+			handleLocationChange();
 			break;
 		}
 		case TRIGGER_ACTIONS_REQUEST: {
-			doOnTriggerActionsRequest((List<Action>) arg);
+			handleTriggerActionsRequest((List<Action>) arg);
 			break;
 		}
 		case CRITTER_DEATH: {
-			doOnCritterDeath((Critter) arg);
+			handleCritterDeath((Critter) arg);
 			break;
 		}
 		case BEGIN_ROUND: {
-			doOnBeginRound((List<Critter>) arg);
+			handleBeginRound((List<Critter>) arg);
 			break;
 		}
 
@@ -393,17 +361,49 @@ public class Zamn implements IEventHandler {
 		return true;
 	}
 
-	private void doOnCritterDeath(Critter critter) {
-		gameInterface.removeCritter(critter);
+	private void handleExitRequest() {
+		System.exit(0);
 	}
 
-	private void doOnTriggerActionsRequest(List<Action> actions) {
+	private void handleLocationChange() {
+		showScreen(gameScreen);
+	}
+
+	private void handleLoseCondition() {
+		showScreen(gameOverMenu);
+	}
+
+	private void handleMainMenuRequest() {
+		showScreen(mainMenu);
+	}
+
+	protected void handleNewGameRequest() {
+		showScreen(gameScreen);
+	}
+
+	private void handlePreviousInGameMenuRequest() {
+		if (inGameMenuLayer.isVisible()) {
+			inGameMenuLayer.popMenu();
+		} else {
+			inGameMenuLayer.setVisible(true);
+		}
+	}
+
+	private void handlePushInGameSubMenu(Menu menu) {
+		inGameMenuLayer.pushMenu(menu);
+	}
+
+	private void handleReturnToGameRequest() {
+		showScreen(gameScreen);
+	}
+
+	private void handleSystemMenuRequest() {
+		showScreen(systemMenu);
+	}
+
+	private void handleTriggerActionsRequest(List<Action> actions) {
 		animationQueue.addAll(actions);
 		animationTimer.start();
-	}
-
-	private void doOnLocationChange() {
-		showScreen(gameScreen);
 	}
 
 	@Required
@@ -422,13 +422,13 @@ public class Zamn implements IEventHandler {
 	}
 
 	@Required
-	public void setGameOverMenu(Menu gameOverMenu) {
-		this.gameOverMenu = gameOverMenu;
+	public void setGameInterface(GameInterface gameInterface) {
+		this.gameInterface = gameInterface;
 	}
 
 	@Required
-	public void setGameInterface(GameInterface gameInterface) {
-		this.gameInterface = gameInterface;
+	public void setGameOverMenu(Menu gameOverMenu) {
+		this.gameOverMenu = gameOverMenu;
 	}
 
 	public void setGameScreen(JComponent gameScreen) {

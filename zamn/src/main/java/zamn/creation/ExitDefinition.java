@@ -3,10 +3,10 @@ package zamn.creation;
 public class ExitDefinition {
 	private String boardId;
 	private String dir;
+	private int entryPoint;
 	private int index;
 	private int x;
 	private int y;
-	private int entryPoint;
 
 	public String getBoardId() {
 		return boardId;

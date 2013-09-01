@@ -12,11 +12,11 @@ public abstract class AbstractBoardPiece extends SpriteSheetSprite {
 	public static final int DEFAULT_Y = AbstractBoard.INVALID_Y;
 	public static final int DEFAULT_Z = 0;
 
+	private boolean solid;
 	private int x = DEFAULT_X;
 	private int y = DEFAULT_Y;
-	private int z = DEFAULT_Z;
 
-	private boolean solid;
+	private int z = DEFAULT_Z;
 
 	public int getX() {
 		return x;

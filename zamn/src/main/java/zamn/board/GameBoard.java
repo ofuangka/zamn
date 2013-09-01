@@ -38,17 +38,53 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	private Critter controllingCritter;
 	private CritterFactory critterFactory;
 	private List<Critter> critters = new ArrayList<Critter>();
+	private List<Critter> critterSequence = new ArrayList<Critter>();
 	private List<Tile> crosshairTiles = new ArrayList<Tile>();
 	private List<Tile> disabledTiles = new ArrayList<Tile>();
 	private IEventContext eventContext;
 	private Map<String, String[]> exits = new HashMap<String, String[]>();
 	private List<AbstractGameBoardControlMode> modeHistory = new ArrayList<AbstractGameBoardControlMode>();
-	private List<Critter> critterSequence = new ArrayList<Critter>();
 	private List<Tile> tilesInTargetingRange = new ArrayList<Tile>();
 
 	public GameBoard(IEventContext eventContext) {
 		this.eventContext = eventContext;
 		eventContext.onAll(this);
+	}
+
+	public void addBestMove(int fromX, int fromY, Critter opponent,
+			List<Action> actions) {
+		if (isAdjacent(fromX, fromY, opponent.getX(), opponent.getY())) {
+			actions.add(Action.ENTER);
+			actions.add(Action.ENTER);
+		} else {
+
+			// wait
+			actions.add(Action.UP);
+			actions.add(Action.ENTER);
+		}
+	}
+
+	public int[] addBestPath(int fromX, int fromY, int toX, int toY,
+			List<Action> acc) {
+		int[] ret = addBestPathHelper(fromX, fromY, toX, toY, acc);
+		acc.add(Action.ENTER);
+		return ret;
+	}
+
+	protected int[] addBestPathHelper(int fromX, int fromY, int toX, int toY,
+			List<Action> acc) {
+		if (!isAdjacent(fromX, fromY, toX, toY)) {
+			List<Tile> closerTiles = getCloserTiles(fromX, fromY, toX, toY);
+			for (Tile tile : closerTiles) {
+
+				if (tile.isEnabled() && tile.isWalkable() && !tile.isOccupied()) {
+					acc.add(getDir(fromX, fromY, tile.getX(), tile.getY()));
+					return addBestPathHelper(tile.getX(), tile.getY(), toX,
+							toY, acc);
+				}
+			}
+		}
+		return new int[] { fromX, fromY };
 	}
 
 	public void addExit(int x, int y, Action dir, String[] boardIdAndEntrance) {
@@ -117,37 +153,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		repaint();
 	}
 
-	private void doOnCoordinatesRequest() {
-		LOG.info(controllingCritter.getX() + ", " + controllingCritter.getY());
-	}
-
-	private void doOnCritterAddedToBoard(Critter newCritter) {
-		critters.add(newCritter);
-	}
-
-	protected void doOnCritterDeath(Critter deadCritter) {
-		removePiece(deadCritter);
-		critters.remove(deadCritter);
-		critterSequence.remove(deadCritter);
-	}
-
-	protected void doOnCritterTargetedActionRequest(EventMenuItem menuItem) {
-		pushMode(new TargetingMode(this, getEventContext(),
-				(TargetedMove) menuItem.getArg()));
-	}
-
-	protected void doOnEndOfTurn() {
-		nextTurn();
-	}
-
-	protected void doOnNewGameRequest() {
-		forceClearBoardState();
-		eventContext.fire(GameEventContext.GameEventType.HERO_JOIN_REQUEST,
-				getInitialHero());
-		load(INITIAL_BOARD_ID);
-		nextTurn();
-	}
-
 	public void enableTiles(List<Tile> tilesToEnable) {
 		disableAllTiles();
 		if (tilesToEnable != null) {
@@ -157,6 +162,23 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			}
 		}
 		repaint();
+	}
+
+	private void executeAi() {
+		Critter nearestOpponent = getNearestOpponent(controllingCritter);
+		if (nearestOpponent != null) {
+			List<Action> aiActions = new ArrayList<Action>();
+			int[] finalPosition = addBestPath(controllingCritter.getX(),
+					controllingCritter.getY(), nearestOpponent.getX(),
+					nearestOpponent.getY(), aiActions);
+			addBestMove(finalPosition[0], finalPosition[1], nearestOpponent,
+					aiActions);
+			eventContext.fire(
+					GameEventContext.GameEventType.TRIGGER_ACTIONS_REQUEST,
+					aiActions);
+		} else {
+			throw new IllegalStateException("No nearest opponent found");
+		}
 	}
 
 	/**
@@ -172,22 +194,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		exits.clear();
 		tiles = null;
 		controllingCritter = null;
-	}
-
-	public Critter getControllingCritter() {
-		return controllingCritter;
-	}
-
-	/**
-	 * The Board returns whichever current control mode
-	 */
-	@Override
-	public IKeySink getCurrentKeySink() {
-		return getCurrentControlMode();
-	}
-
-	public AbstractGameBoardControlMode getCurrentControlMode() {
-		return modeHistory.get(modeHistory.size() - 1);
 	}
 
 	public List<Tile> getCloserTiles(int x1, int y1, int x2, int y2) {
@@ -219,6 +225,22 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return ret;
 	}
 
+	public Critter getControllingCritter() {
+		return controllingCritter;
+	}
+
+	public AbstractGameBoardControlMode getCurrentControlMode() {
+		return modeHistory.get(modeHistory.size() - 1);
+	}
+
+	/**
+	 * The Board returns whichever current control mode
+	 */
+	@Override
+	public IKeySink getCurrentKeySink() {
+		return getCurrentControlMode();
+	}
+
 	public Action getDir(int x1, int y1, int x2, int y2) {
 		if (x1 < x2) {
 			return Action.RIGHT;
@@ -231,6 +253,10 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		}
 	}
 
+	protected int getDistance(int x1, int y1, int x2, int y2) {
+		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+	}
+
 	public IEventContext getEventContext() {
 		return eventContext;
 	}
@@ -241,79 +267,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 	protected Critter getInitialHero() {
 		return critterFactory.get(INITIAL_HERO_ID);
-	}
-
-	@Override
-	public boolean handleEvent(Event event, Object arg) {
-		switch ((GameEventContext.GameEventType) event.getType()) {
-		case NEXT_TURN_REQUEST: {
-			doOnEndOfTurn();
-			break;
-		}
-		case NEW_GAME_REQUEST: {
-			doOnNewGameRequest();
-			break;
-		}
-		case CRITTER_DEATH: {
-			doOnCritterDeath((Critter) arg);
-			break;
-		}
-		case CRITTER_TARGETED_ACTION_REQUEST: {
-			doOnCritterTargetedActionRequest((EventMenuItem) arg);
-			break;
-		}
-		case CRITTER_ADDED_TO_BOARD: {
-			doOnCritterAddedToBoard((Critter) arg);
-			break;
-		}
-		case COORDINATES_REQUEST: {
-			doOnCoordinatesRequest();
-			break;
-		}
-		case LOCATION_CHANGE: {
-			doOnLocationChange((String[]) arg);
-			break;
-		}
-		default: {
-			break;
-		}
-		}
-		return true;
-	}
-
-	private void doOnLocationChange(String[] exit) {
-		load(exit[0], Integer.valueOf(exit[1]));
-		nextTurn();
-	}
-
-	private void executeAi() {
-		Critter nearestOpponent = getNearestOpponent(controllingCritter);
-		if (nearestOpponent != null) {
-			List<Action> aiActions = new ArrayList<Action>();
-			int[] finalPosition = addBestPath(controllingCritter.getX(),
-					controllingCritter.getY(), nearestOpponent.getX(),
-					nearestOpponent.getY(), aiActions);
-			addBestMove(finalPosition[0], finalPosition[1], nearestOpponent,
-					aiActions);
-			eventContext.fire(
-					GameEventContext.GameEventType.TRIGGER_ACTIONS_REQUEST,
-					aiActions);
-		} else {
-			throw new IllegalStateException("No nearest opponent found");
-		}
-	}
-
-	public void addBestMove(int fromX, int fromY, Critter opponent,
-			List<Action> actions) {
-		if (isAdjacent(fromX, fromY, opponent.getX(), opponent.getY())) {
-			actions.add(Action.ENTER);
-			actions.add(Action.ENTER);
-		} else {
-
-			// wait
-			actions.add(Action.UP);
-			actions.add(Action.ENTER);
-		}
 	}
 
 	public Critter getNearestOpponent(Critter from) {
@@ -333,31 +286,78 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return ret;
 	}
 
-	protected int getDistance(int x1, int y1, int x2, int y2) {
-		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+	private void handleCoordinatesRequest() {
+		LOG.info(controllingCritter.getX() + ", " + controllingCritter.getY());
 	}
 
-	public int[] addBestPath(int fromX, int fromY, int toX, int toY,
-			List<Action> acc) {
-		int[] ret = addBestPathHelper(fromX, fromY, toX, toY, acc);
-		acc.add(Action.ENTER);
-		return ret;
+	private void handleCritterAddedToBoard(Critter newCritter) {
+		critters.add(newCritter);
 	}
 
-	protected int[] addBestPathHelper(int fromX, int fromY, int toX, int toY,
-			List<Action> acc) {
-		if (!isAdjacent(fromX, fromY, toX, toY)) {
-			List<Tile> closerTiles = getCloserTiles(fromX, fromY, toX, toY);
-			for (Tile tile : closerTiles) {
+	protected void handleCritterDeath(Critter deadCritter) {
+		removePiece(deadCritter);
+		critters.remove(deadCritter);
+		critterSequence.remove(deadCritter);
+	}
 
-				if (tile.isEnabled() && tile.isWalkable() && !tile.isOccupied()) {
-					acc.add(getDir(fromX, fromY, tile.getX(), tile.getY()));
-					return addBestPathHelper(tile.getX(), tile.getY(), toX,
-							toY, acc);
-				}
-			}
+	protected void handleCritterTargetedActionRequest(EventMenuItem menuItem) {
+		pushMode(new TargetingMode(this, getEventContext(),
+				(TargetedMove) menuItem.getArg()));
+	}
+
+	protected void handleEndOfTurn() {
+		nextTurn();
+	}
+
+	@Override
+	public boolean handleEvent(Event event, Object arg) {
+		switch ((GameEventContext.GameEventType) event.getType()) {
+		case NEXT_TURN_REQUEST: {
+			handleEndOfTurn();
+			break;
 		}
-		return new int[] { fromX, fromY };
+		case NEW_GAME_REQUEST: {
+			handleNewGameRequest();
+			break;
+		}
+		case CRITTER_DEATH: {
+			handleCritterDeath((Critter) arg);
+			break;
+		}
+		case CRITTER_TARGETED_ACTION_REQUEST: {
+			handleCritterTargetedActionRequest((EventMenuItem) arg);
+			break;
+		}
+		case CRITTER_ADDED_TO_BOARD: {
+			handleCritterAddedToBoard((Critter) arg);
+			break;
+		}
+		case COORDINATES_REQUEST: {
+			handleCoordinatesRequest();
+			break;
+		}
+		case LOCATION_CHANGE: {
+			handleLocationChange((String[]) arg);
+			break;
+		}
+		default: {
+			break;
+		}
+		}
+		return true;
+	}
+
+	private void handleLocationChange(String[] exit) {
+		load(exit[0], Integer.valueOf(exit[1]));
+		nextTurn();
+	}
+
+	protected void handleNewGameRequest() {
+		forceClearBoardState();
+		eventContext.fire(GameEventContext.GameEventType.HERO_JOIN_REQUEST,
+				getInitialHero());
+		load(INITIAL_BOARD_ID);
+		nextTurn();
 	}
 
 	public boolean isAtLeastOneHeroOnBoard() {
@@ -380,6 +380,11 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public boolean isListening() {
+		return controllingCritter == null || !controllingCritter.isHostile();
 	}
 
 	public void load(String boardId) {
@@ -527,10 +532,5 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	 */
 	public boolean tryMove(Action dir) {
 		return tryMove(controllingCritter, dir);
-	}
-
-	@Override
-	public boolean isListening() {
-		return controllingCritter == null || !controllingCritter.isHostile();
 	}
 }

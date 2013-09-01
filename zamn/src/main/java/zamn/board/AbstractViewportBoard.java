@@ -11,9 +11,9 @@ public abstract class AbstractViewportBoard extends AbstractBoard {
 	public static final int DEFAULT_VIEWPORT_PADDING_X = 2;
 	public static final int DEFAULT_VIEWPORT_PADDING_Y = 2;
 
-	private static final long serialVersionUID = 4713851524702696250L;
 	private static final Logger LOG = Logger
 			.getLogger(AbstractViewportBoard.class);
+	private static final long serialVersionUID = 4713851524702696250L;
 
 	private int viewportPaddingX = DEFAULT_VIEWPORT_PADDING_X;
 	private int viewportPaddingY = DEFAULT_VIEWPORT_PADDING_Y;

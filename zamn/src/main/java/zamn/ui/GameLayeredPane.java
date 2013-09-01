@@ -87,6 +87,11 @@ public class GameLayeredPane extends JLayeredPane implements IDelegatingKeySink 
 	}
 
 	@Override
+	public boolean isListening() {
+		return getCurrentKeySink().isListening();
+	}
+
+	@Override
 	public void left() {
 		getCurrentKeySink().left();
 	}
@@ -122,10 +127,5 @@ public class GameLayeredPane extends JLayeredPane implements IDelegatingKeySink 
 	@Override
 	public void x() {
 		getCurrentKeySink().x();
-	}
-
-	@Override
-	public boolean isListening() {
-		return getCurrentKeySink().isListening();
 	}
 }

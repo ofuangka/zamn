@@ -82,31 +82,23 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 		}
 	}
 
-	protected void doOnCritterDeath(Critter deadCritter) {
+	protected void handleCritterDeath(Critter deadCritter) {
 		heroes.remove(deadCritter);
-	}
-
-	protected void doOnHeroJoinRequest(Critter hero) {
-		heroes.add(hero);
-	}
-
-	protected void doOnNewGameRequest() {
-		heroes.clear();
 	}
 
 	@Override
 	public boolean handleEvent(Event event, Object arg) {
 		switch ((GameEventContext.GameEventType) event.getType()) {
 		case NEW_GAME_REQUEST: {
-			doOnNewGameRequest();
+			handleNewGameRequest();
 			break;
 		}
 		case HERO_JOIN_REQUEST: {
-			doOnHeroJoinRequest((Critter) arg);
+			handleHeroJoinRequest((Critter) arg);
 			break;
 		}
 		case CRITTER_DEATH: {
-			doOnCritterDeath((Critter) arg);
+			handleCritterDeath((Critter) arg);
 			break;
 		}
 		default: {
@@ -114,6 +106,14 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 		}
 		}
 		return true;
+	}
+
+	protected void handleHeroJoinRequest(Critter hero) {
+		heroes.add(hero);
+	}
+
+	protected void handleNewGameRequest() {
+		heroes.clear();
 	}
 
 	@Required

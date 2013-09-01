@@ -5,9 +5,9 @@ public class TargetedMoveDefinition {
 	private String actualRangeFilter;
 	private TileCollectorDefinition areaOfEffect;
 	private EffectDefinition effect;
+	private int mpCost;
 	private String name;
 	private TileCollectorDefinition targetingRange;
-	private int mpCost;
 
 	public String getActualRangeFilter() {
 		return actualRangeFilter;

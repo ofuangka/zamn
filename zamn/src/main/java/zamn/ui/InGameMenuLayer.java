@@ -81,6 +81,11 @@ public class InGameMenuLayer extends JPanel implements ILayer,
 	}
 
 	@Override
+	public boolean isListening() {
+		return getCurrentKeySink().isListening();
+	}
+
+	@Override
 	public void left() {
 		if (menus.size() > 1) {
 			popMenu();
@@ -149,10 +154,5 @@ public class InGameMenuLayer extends JPanel implements ILayer,
 	@Override
 	public void x() {
 		getCurrentKeySink().x();
-	}
-
-	@Override
-	public boolean isListening() {
-		return getCurrentKeySink().isListening();
 	}
 }

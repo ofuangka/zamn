@@ -2,8 +2,8 @@ package zamn.creation;
 
 public class BoardDefinition {
 	private CritterPositionDefinition[] critterPositions;
-	private ExitDefinition[] exits;
 	private Integer[][] entrances;
+	private ExitDefinition[] exits;
 	private String id;
 	private TileDefinition[][] tiles;
 

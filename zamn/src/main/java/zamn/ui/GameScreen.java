@@ -48,6 +48,11 @@ public class GameScreen extends DistributedRoundedSplitPane implements
 	}
 
 	@Override
+	public boolean isListening() {
+		return getCurrentKeySink().isListening();
+	}
+
+	@Override
 	public void left() {
 		getCurrentKeySink().left();
 
@@ -75,10 +80,5 @@ public class GameScreen extends DistributedRoundedSplitPane implements
 	public void x() {
 		getCurrentKeySink().x();
 
-	}
-
-	@Override
-	public boolean isListening() {
-		return getCurrentKeySink().isListening();
 	}
 }
