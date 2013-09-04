@@ -30,6 +30,7 @@
 		</property>
 		<property name="board" ref="board" />
 		<property name="gameInterface" ref="gameInterface" />
+		<property name="mapEditor" ref="mapEditor" />
 	</bean>
 
 	<bean id="gameScreen" class="zamn.ui.GameScreen">
@@ -68,6 +69,9 @@
 			</bean>
 		</property>
 		<property name="critterFactory" ref="critterFactory" />
+		<property name="boardUriResolver">
+			<bean class="zamn.board.ClassPathBoardUriResolver" />
+		</property>
 	</bean>
 
 	<bean id="mainMenu" class="zamn.ui.menu.Menu">
@@ -78,6 +82,13 @@
 					<property name="type">
 						<util:constant
 							static-field="zamn.framework.event.GameEventContext.GameEventType.NEW_GAME_REQUEST" />
+					</property>
+				</bean>
+				<bean parent="eventMenuItem">
+					<property name="text" value="Map editor" />
+					<property name="type">
+						<util:constant
+							static-field="zamn.framework.event.GameEventContext.GameEventType.MAP_EDITOR_REQUEST" />
 					</property>
 				</bean>
 				<bean parent="eventMenuItem">
@@ -146,6 +157,10 @@
 		<constructor-arg value="classpath:sprites/critters.js" />
 		<constructor-arg ref="objectMapper" />
 		<property name="spriteSize" ref="spriteSize" />
+	</bean>
+
+	<bean id="mapEditor" class="zamn.mapeditor.MapEditor">
+
 	</bean>
 
 </beans>

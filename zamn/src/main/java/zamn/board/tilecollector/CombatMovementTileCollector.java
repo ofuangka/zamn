@@ -28,7 +28,7 @@ public class CombatMovementTileCollector extends AbstractDecayingTileCollector {
 
 	@Override
 	protected boolean isTileValid(Tile tile) {
-		return tile != null && tile.isWalkable()
+		return tile != null && !tile.isSolid()
 				&& (!tile.isOccupied() || tile.getOccupant() == critter);
 	}
 

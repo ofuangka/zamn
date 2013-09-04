@@ -64,7 +64,6 @@ public class Tile extends AbstractBoardPiece {
 	private AbstractBoardPiece occupant;
 	private List<AbstractBoardPiece> pieces = new ArrayList<AbstractBoardPiece>();
 	private boolean targeted = false;
-	private boolean walkable = true;
 
 	public Tile(int x, int y) {
 		setXY(x, y);
@@ -195,10 +194,6 @@ public class Tile extends AbstractBoardPiece {
 		return targeted;
 	}
 
-	public boolean isWalkable() {
-		return walkable;
-	}
-
 	public void remove(AbstractBoardPiece piece) {
 		if (piece != null) {
 			pieces.remove(piece);
@@ -239,9 +234,5 @@ public class Tile extends AbstractBoardPiece {
 
 	public void setTop(Tile top) {
 		adjacents[TOP_EDGE] = top;
-	}
-
-	public void setWalkable(boolean walkable) {
-		this.walkable = walkable;
 	}
 }

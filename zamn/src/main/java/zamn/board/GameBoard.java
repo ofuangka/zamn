@@ -20,14 +20,17 @@ import zamn.board.controlmode.TargetingMode;
 import zamn.board.piece.Critter;
 import zamn.creation.BoardLoader;
 import zamn.creation.CritterFactory;
+import zamn.creation.GameBoardLoader;
 import zamn.framework.event.Event;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 import zamn.framework.event.IEventHandler;
+import zamn.ui.IDelegatingKeySink;
 import zamn.ui.IKeySink;
 import zamn.ui.menu.EventMenuItem;
 
-public class GameBoard extends AbstractViewportBoard implements IEventHandler {
+public class GameBoard extends AbstractViewportBoard implements IEventHandler,
+		IDelegatingKeySink {
 
 	private static final String INITIAL_BOARD_ID = "goStraight";
 	private static final String INITIAL_HERO_ID = "mainCharacter";
@@ -35,12 +38,14 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	private static final long serialVersionUID = -6548852244995136036L;
 
 	private BoardLoader boardLoader;
+	private IBoardUriResolver boardUriResolver;
 	private Critter controllingCritter;
 	private CritterFactory critterFactory;
 	private List<Critter> critters = new ArrayList<Critter>();
 	private List<Critter> critterSequence = new ArrayList<Critter>();
 	private List<Tile> crosshairTiles = new ArrayList<Tile>();
 	private List<Tile> disabledTiles = new ArrayList<Tile>();
+	private Integer[][] entrances;
 	private IEventContext eventContext;
 	private Map<String, String[]> exits = new HashMap<String, String[]>();
 	private List<AbstractGameBoardControlMode> modeHistory = new ArrayList<AbstractGameBoardControlMode>();
@@ -77,7 +82,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			List<Tile> closerTiles = getCloserTiles(fromX, fromY, toX, toY);
 			for (Tile tile : closerTiles) {
 
-				if (tile.isEnabled() && tile.isWalkable() && !tile.isOccupied()) {
+				if (tile.isEnabled() && !tile.isSolid() && !tile.isOccupied()) {
 					acc.add(getDir(fromX, fromY, tile.getX(), tile.getY()));
 					return addBestPathHelper(tile.getX(), tile.getY(), toX,
 							toY, acc);
@@ -111,6 +116,11 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 				GameEventContext.GameEventType.CRITTER_ASSIGNED_CONTROL,
 				critter);
 		repaint();
+	}
+
+	@Override
+	public void backspace() {
+		getCurrentKeySink().backspace();
 	}
 
 	public void clearCrosshairUi() {
@@ -153,6 +163,11 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		repaint();
 	}
 
+	@Override
+	public void down() {
+		getCurrentKeySink().down();
+	}
+
 	public void enableTiles(List<Tile> tilesToEnable) {
 		disableAllTiles();
 		if (tilesToEnable != null) {
@@ -162,6 +177,16 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			}
 		}
 		repaint();
+	}
+
+	@Override
+	public void enter() {
+		getCurrentKeySink().enter();
+	}
+
+	@Override
+	public void esc() {
+		getCurrentKeySink().esc();
 	}
 
 	private void executeAi() {
@@ -255,6 +280,10 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 
 	protected int getDistance(int x1, int y1, int x2, int y2) {
 		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
+	}
+
+	public Integer[][] getEntrances() {
+		return entrances;
 	}
 
 	public IEventContext getEventContext() {
@@ -387,6 +416,11 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		return controllingCritter == null || !controllingCritter.isHostile();
 	}
 
+	@Override
+	public void left() {
+		getCurrentKeySink().left();
+	}
+
 	public void load(String boardId) {
 		load(boardId, 0);
 	}
@@ -395,7 +429,8 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		LOG.info("Loading board " + boardId + "[" + entryPoint + "]...");
 		forceClearBoardState();
 		try {
-			boardLoader.load(boardId, entryPoint, this);
+			((GameBoardLoader) boardLoader).load(
+					boardUriResolver.resolve(boardId), this, entryPoint);
 		} catch (IOException e) {
 			LOG.error("Could not load board with ID: '" + boardId + "'", e);
 		}
@@ -419,7 +454,8 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 			if (critterSequence.isEmpty()) {
 				LOG.debug("Critter sequence empty, starting new round...");
 				createCritterSequence();
-				eventContext.fire(GameEventContext.GameEventType.BEGIN_ROUND, critterSequence);
+				eventContext.fire(GameEventContext.GameEventType.BEGIN_ROUND,
+						critterSequence);
 			}
 
 			// figure out who the next controlling piece is
@@ -484,14 +520,28 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		}
 	}
 
+	@Override
+	public void right() {
+		getCurrentKeySink().right();
+	}
+
 	@Required
 	public void setBoardLoader(BoardLoader boardLoader) {
 		this.boardLoader = boardLoader;
 	}
 
 	@Required
+	public void setBoardUriResolver(IBoardUriResolver boardUriResolver) {
+		this.boardUriResolver = boardUriResolver;
+	}
+
+	@Required
 	public void setCritterFactory(CritterFactory critterFactory) {
 		this.critterFactory = critterFactory;
+	}
+
+	public void setEntrances(Integer[][] entrances) {
+		this.entrances = entrances;
 	}
 
 	public void setTargetingRange(List<Tile> targetingRange) {
@@ -505,6 +555,11 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 		} else {
 			LOG.warn("setTargetable called with null Tile List");
 		}
+	}
+
+	@Override
+	public void space() {
+		getCurrentKeySink().space();
 	}
 
 	@Override
@@ -532,5 +587,15 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler {
 	 */
 	public boolean tryMove(Action dir) {
 		return tryMove(controllingCritter, dir);
+	}
+
+	@Override
+	public void up() {
+		getCurrentKeySink().up();
+	}
+
+	@Override
+	public void x() {
+		getCurrentKeySink().x();
 	}
 }

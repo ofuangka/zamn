@@ -1,9 +1,13 @@
 package zamn.creation;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
@@ -34,8 +38,8 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 	}
 
 	@Override
-	protected void doLoad(BoardDefinition boardDefinition, AbstractBoard board,
-			int entryPoint) {
+	protected void doAfterLoad(BoardDefinition boardDefinition,
+			AbstractBoard board) {
 
 		GameBoard gameBoard = ((GameBoard) board);
 
@@ -70,16 +74,7 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 							String.valueOf(exitDefinition.getEntryPoint()) });
 		}
 
-		Integer[][] entrances = boardDefinition.getEntrances();
-		Tile entranceTile = tiles[entrances[entryPoint][0]][entrances[entryPoint][1]];
-
-		for (Critter hero : heroes) {
-			gameBoard.placePieceInGeneralArea(hero, entranceTile.getX(),
-					entranceTile.getY());
-			eventContext
-					.fire(GameEventContext.GameEventType.CRITTER_ADDED_TO_BOARD,
-							hero);
-		}
+		gameBoard.setEntrances(boardDefinition.getEntrances());
 	}
 
 	protected void handleCritterDeath(Critter deadCritter) {
@@ -114,6 +109,24 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 
 	protected void handleNewGameRequest() {
 		heroes.clear();
+	}
+
+	public void load(URI boardId, AbstractBoard board, int entryPoint)
+			throws JsonParseException, JsonMappingException,
+			MalformedURLException, IOException {
+		super.load(boardId, board);
+		GameBoard gameBoard = (GameBoard) board;
+		Tile[][] tiles = gameBoard.getTiles();
+		Integer[][] entrances = gameBoard.getEntrances();
+		Tile entranceTile = tiles[entrances[entryPoint][0]][entrances[entryPoint][1]];
+
+		for (Critter hero : heroes) {
+			gameBoard.placePieceInGeneralArea(hero, entranceTile.getX(),
+					entranceTile.getY());
+			eventContext
+					.fire(GameEventContext.GameEventType.CRITTER_ADDED_TO_BOARD,
+							hero);
+		}
 	}
 
 	@Required

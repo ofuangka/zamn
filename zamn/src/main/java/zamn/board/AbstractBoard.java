@@ -1,6 +1,8 @@
 package zamn.board;
 
 import java.awt.Dimension;
+import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +13,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import zamn.board.controlmode.Action;
-import zamn.ui.IDelegatingKeySink;
+import zamn.creation.BoardLoader;
+import zamn.ui.IKeySink;
 import zamn.ui.ILayer;
 
 /**
@@ -22,13 +25,15 @@ import zamn.ui.ILayer;
  * 
  */
 public abstract class AbstractBoard extends JComponent implements ILayer,
-		IDelegatingKeySink {
+		IKeySink {
 
 	public static final int INVALID_X = -1;
 	public static final int INVALID_Y = -1;
 
 	private static final Logger LOG = Logger.getLogger(AbstractBoard.class);
 	private static final long serialVersionUID = -2949485746939158973L;
+
+	private BoardLoader boardLoader;
 
 	/**
 	 * Convenience method checks if the given coordinates are within the bounds
@@ -50,26 +55,6 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	private Dimension spriteSize;
 
 	protected Tile[][] tiles;
-
-	@Override
-	public void backspace() {
-		getCurrentKeySink().backspace();
-	}
-
-	@Override
-	public void down() {
-		getCurrentKeySink().down();
-	}
-
-	@Override
-	public void enter() {
-		getCurrentKeySink().enter();
-	}
-
-	@Override
-	public void esc() {
-		getCurrentKeySink().esc();
-	}
 
 	public Dimension getSpriteSize() {
 		return spriteSize;
@@ -113,9 +98,8 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 						tiles[x].length);
 	}
 
-	@Override
-	public void left() {
-		getCurrentKeySink().left();
+	public void load(URI id) throws IOException {
+		boardLoader.load(id, this);
 	}
 
 	/**
@@ -156,7 +140,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		while (!queue.isEmpty()) {
 			Tile tile = queue.remove(0);
 			if (tile != null) {
-				if (!tile.isOccupied() && tile.isWalkable()) {
+				if (!tile.isOccupied() && !tile.isSolid()) {
 					placePiece(piece, tile.getX(), tile.getY());
 					return true;
 				} else {
@@ -196,11 +180,6 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		// else do nothing (removing a piece that's not on the board)
 	}
 
-	@Override
-	public void right() {
-		getCurrentKeySink().right();
-	}
-
 	@Required
 	public void setSpriteSize(Dimension spriteSize) {
 		this.spriteSize = spriteSize;
@@ -208,11 +187,6 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	public void setTiles(Tile[][] tiles) {
 		this.tiles = tiles;
-	}
-
-	@Override
-	public void space() {
-		getCurrentKeySink().space();
 	}
 
 	/**
@@ -263,7 +237,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		}
 		if (isInBounds(nextX, nextY)) {
 			Tile nextTile = getTile(nextX, nextY);
-			if (nextTile.isWalkable() && nextTile.isEnabled()
+			if (!nextTile.isSolid() && nextTile.isEnabled()
 					&& !nextTile.isOccupied()) {
 				placePiece(piece, nextX, nextY);
 				return true;
@@ -273,13 +247,9 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		return false;
 	}
 
-	@Override
-	public void up() {
-		getCurrentKeySink().up();
+	@Required
+	public void setBoardLoader(BoardLoader boardLoader) {
+		this.boardLoader = boardLoader;
 	}
 
-	@Override
-	public void x() {
-		getCurrentKeySink().x();
-	}
 }

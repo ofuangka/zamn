@@ -3,10 +3,14 @@ package zamn.creation;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.ClassPathResource;
@@ -17,13 +21,8 @@ import zamn.board.Tile;
 
 public class BoardLoader {
 
-	private static final String DEFAULT_PREFIX = "boards/";
-	private static final String DEFAULT_SUFFIX = ".js";
-
 	private final ObjectMapper objectMapper;
-	private String prefix = DEFAULT_PREFIX;
 	private Dimension spriteSize;
-	private String suffix = DEFAULT_SUFFIX;
 	private Map<String, Integer[]> tileSpriteMap;
 	private BufferedImage tileSpriteSheet;
 
@@ -39,22 +38,23 @@ public class BoardLoader {
 		tileSpriteMap = spriteMapDefinition.getSpriteMap();
 	}
 
-	protected void doLoad(BoardDefinition boardDefinition, AbstractBoard board, int entryPoint) {
+	protected void doAfterLoad(BoardDefinition boardDefinition, AbstractBoard board) {
 		// hook for subclasses
 	}
 
-	public final void load(String boardId, int entryPoint, AbstractBoard board)
-			throws IOException {
+	public void load(URI boardId, AbstractBoard board)
+			throws JsonParseException, JsonMappingException,
+			MalformedURLException, IOException {
+
 		BoardDefinition boardDefinition = objectMapper.readValue(
-				new ClassPathResource(prefix + boardId + suffix).getURI()
-						.toURL(), BoardDefinition.class);
+				boardId.toURL(), BoardDefinition.class);
 		TileDefinition[][] tileDefinitions = boardDefinition.getTiles();
 		Tile[][] ret = new Tile[tileDefinitions.length][];
 		for (int x = 0; x < tileDefinitions.length; x++) {
 			ret[x] = new Tile[tileDefinitions[x].length];
 			for (int y = 0; y < tileDefinitions[x].length; y++) {
 				ret[x][y] = new Tile(x, y);
-				ret[x][y].setWalkable(tileDefinitions[x][y].is_());
+				ret[x][y].setSolid(!tileDefinitions[x][y].is_());
 				if (x != 0) {
 					ret[x - 1][y].setRight(ret[x][y]);
 					ret[x][y].setLeft(ret[x - 1][y]);
@@ -77,7 +77,7 @@ public class BoardLoader {
 
 		board.setTiles(ret);
 
-		doLoad(boardDefinition, board, entryPoint);
+		doAfterLoad(boardDefinition, board);
 	}
 
 	@Required

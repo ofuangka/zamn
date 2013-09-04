@@ -28,6 +28,7 @@ import zamn.framework.event.Event;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 import zamn.framework.event.IEventHandler;
+import zamn.mapeditor.MapEditor;
 import zamn.ui.GameInterface;
 import zamn.ui.IKeySink;
 import zamn.ui.InGameMenuLayer;
@@ -63,6 +64,8 @@ public class Zamn implements IEventHandler {
 	private JComponent gameScreen;
 	private InGameMenuLayer inGameMenuLayer;
 	private Menu mainMenu;
+	private MapEditor mapEditor;
+	private boolean mapEditorInitialized;
 	private JPanel screenPanel;
 	private List<JComponent> shownScreens = new ArrayList<JComponent>();
 
@@ -70,7 +73,6 @@ public class Zamn implements IEventHandler {
 
 	private JFrame window;
 
-	// configuration variables
 	private Dimension windowSize;
 
 	private String windowTitle;
@@ -353,6 +355,10 @@ public class Zamn implements IEventHandler {
 			handleBeginRound((List<Critter>) arg);
 			break;
 		}
+		case MAP_EDITOR_REQUEST: {
+			handleMapEditorRequest();
+			break;
+		}
 
 		default: {
 			break;
@@ -375,6 +381,18 @@ public class Zamn implements IEventHandler {
 
 	private void handleMainMenuRequest() {
 		showScreen(mainMenu);
+	}
+
+	private void handleMapEditorRequest() {
+		hideWindow();
+
+		// we want to do a lazy load of the map editor
+		if (!mapEditorInitialized) {
+			mapEditor.bootstrap();
+			mapEditorInitialized = true;
+		}
+
+		showMapEditor();
 	}
 
 	protected void handleNewGameRequest() {
@@ -404,6 +422,10 @@ public class Zamn implements IEventHandler {
 	private void handleTriggerActionsRequest(List<Action> actions) {
 		animationQueue.addAll(actions);
 		animationTimer.start();
+	}
+
+	private void hideWindow() {
+		window.setVisible(false);
 	}
 
 	@Required
@@ -446,6 +468,11 @@ public class Zamn implements IEventHandler {
 	}
 
 	@Required
+	public void setMapEditor(MapEditor mapEditor) {
+		this.mapEditor = mapEditor;
+	}
+
+	@Required
 	public void setSystemMenu(Menu systemMenu) {
 		this.systemMenu = systemMenu;
 	}
@@ -467,6 +494,13 @@ public class Zamn implements IEventHandler {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		screenPanel.requestFocus();
+	}
+
+	private void showMapEditor() {
+		LOG.debug("Showing and centering mapEditor...");
+		mapEditor.setVisible(true);
+		mapEditor.pack();
+		mapEditor.setLocationRelativeTo(null);
 	}
 
 	/**
