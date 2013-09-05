@@ -33,8 +33,6 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	private static final Logger LOG = Logger.getLogger(AbstractBoard.class);
 	private static final long serialVersionUID = -2949485746939158973L;
 
-	private BoardLoader boardLoader;
-
 	/**
 	 * Convenience method checks if the given coordinates are within the bounds
 	 * also given
@@ -51,6 +49,8 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 			int dy) {
 		return !(x < minX) && !(y < minY) && (x < minX + dx) && (y < minY + dy);
 	}
+
+	private BoardLoader boardLoader;
 
 	private Dimension spriteSize;
 
@@ -96,6 +96,10 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 				&& x < tiles.length
 				&& AbstractBoard.isInBounds(x, y, 0, 0, tiles.length,
 						tiles[x].length);
+	}
+
+	protected boolean isTileOpen(Tile tile) {
+		return true;
 	}
 
 	public void load(URI id) throws IOException {
@@ -181,6 +185,11 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	}
 
 	@Required
+	public void setBoardLoader(BoardLoader boardLoader) {
+		this.boardLoader = boardLoader;
+	}
+
+	@Required
 	public void setSpriteSize(Dimension spriteSize) {
 		this.spriteSize = spriteSize;
 	}
@@ -237,19 +246,13 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		}
 		if (isInBounds(nextX, nextY)) {
 			Tile nextTile = getTile(nextX, nextY);
-			if (!nextTile.isSolid() && nextTile.isEnabled()
-					&& !nextTile.isOccupied()) {
+			if (isTileOpen(nextTile)) {
 				placePiece(piece, nextX, nextY);
 				return true;
 
 			}
 		}
 		return false;
-	}
-
-	@Required
-	public void setBoardLoader(BoardLoader boardLoader) {
-		this.boardLoader = boardLoader;
 	}
 
 }

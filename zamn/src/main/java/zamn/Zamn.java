@@ -392,7 +392,7 @@ public class Zamn implements IEventHandler {
 			mapEditorInitialized = true;
 		}
 
-		showMapEditor();
+		mapEditor.showAndCenter();
 	}
 
 	protected void handleNewGameRequest() {
@@ -494,13 +494,6 @@ public class Zamn implements IEventHandler {
 		window.pack();
 		window.setLocationRelativeTo(null);
 		screenPanel.requestFocus();
-	}
-
-	private void showMapEditor() {
-		LOG.debug("Showing and centering mapEditor...");
-		mapEditor.setVisible(true);
-		mapEditor.pack();
-		mapEditor.setLocationRelativeTo(null);
 	}
 
 	/**

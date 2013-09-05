@@ -417,6 +417,12 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	}
 
 	@Override
+	protected boolean isTileOpen(Tile tile) {
+		return super.isTileOpen(tile) && !tile.isSolid() && tile.isEnabled()
+				&& !tile.isOccupied();
+	}
+
+	@Override
 	public void left() {
 		getCurrentKeySink().left();
 	}

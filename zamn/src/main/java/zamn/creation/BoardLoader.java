@@ -29,16 +29,14 @@ public class BoardLoader {
 	public BoardLoader(ObjectMapper objectMapper, Resource tileSpriteMapResource)
 			throws IOException {
 		this.objectMapper = objectMapper;
-		SpriteMapDefinition spriteMapDefinition = objectMapper.readValue(
-				tileSpriteMapResource.getURI().toURL(),
-				SpriteMapDefinition.class);
-		tileSpriteSheet = ImageIO
-				.read((new ClassPathResource(spriteMapDefinition
-						.getSpriteSheetClassPath()).getURI().toURL()));
+		SpriteMapDefinition spriteMapDefinition = parseSpriteMapDefinition(tileSpriteMapResource);
+		tileSpriteSheet = parseSpriteSheet(new ClassPathResource(
+				spriteMapDefinition.getSpriteSheetClassPath()));
 		tileSpriteMap = spriteMapDefinition.getSpriteMap();
 	}
 
-	protected void doAfterLoad(BoardDefinition boardDefinition, AbstractBoard board) {
+	protected void doAfterLoad(BoardDefinition boardDefinition,
+			AbstractBoard board) {
 		// hook for subclasses
 	}
 
@@ -46,8 +44,7 @@ public class BoardLoader {
 			throws JsonParseException, JsonMappingException,
 			MalformedURLException, IOException {
 
-		BoardDefinition boardDefinition = objectMapper.readValue(
-				boardId.toURL(), BoardDefinition.class);
+		BoardDefinition boardDefinition = parseBoardDefinition(boardId);
 		TileDefinition[][] tileDefinitions = boardDefinition.getTiles();
 		Tile[][] ret = new Tile[tileDefinitions.length][];
 		for (int x = 0; x < tileDefinitions.length; x++) {
@@ -78,6 +75,24 @@ public class BoardLoader {
 		board.setTiles(ret);
 
 		doAfterLoad(boardDefinition, board);
+	}
+
+	protected BoardDefinition parseBoardDefinition(URI boardId)
+			throws JsonParseException, JsonMappingException,
+			MalformedURLException, IOException {
+		return objectMapper.readValue(boardId.toURL(), BoardDefinition.class);
+	}
+
+	protected SpriteMapDefinition parseSpriteMapDefinition(
+			Resource tileSpriteMapResource) throws JsonParseException,
+			JsonMappingException, MalformedURLException, IOException {
+		return objectMapper.readValue(tileSpriteMapResource.getURI().toURL(),
+				SpriteMapDefinition.class);
+	}
+
+	protected BufferedImage parseSpriteSheet(Resource spriteSheetResource)
+			throws MalformedURLException, IOException {
+		return ImageIO.read(spriteSheetResource.getURI().toURL());
 	}
 
 	@Required

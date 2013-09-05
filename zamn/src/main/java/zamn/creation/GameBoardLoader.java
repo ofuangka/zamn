@@ -22,6 +22,12 @@ import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 import zamn.framework.event.IEventHandler;
 
+/**
+ * This BoardLoader also loads Critters, Entrances and Exits
+ * 
+ * @author ofuangka
+ * 
+ */
 public class GameBoardLoader extends BoardLoader implements IEventHandler {
 
 	private CritterFactory critterFactory;

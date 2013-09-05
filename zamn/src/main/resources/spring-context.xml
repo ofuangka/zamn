@@ -160,7 +160,25 @@
 	</bean>
 
 	<bean id="mapEditor" class="zamn.mapeditor.MapEditor">
-
+		<property name="board" ref="mapEditorBoard" />
+		<property name="mapEditorScreen">
+			<bean class="zamn.mapeditor.MapEditorScreen">
+				<constructor-arg ref="mapEditorBoard" />
+				<constructor-arg>
+					<bean class="zamn.mapeditor.MapEditorInterface" />
+				</constructor-arg>
+			</bean>
+		</property>
 	</bean>
 
+	<bean id="mapEditorBoard" class="zamn.mapeditor.MapEditorBoard">
+		<property name="boardLoader">
+			<bean class="zamn.creation.BoardLoader">
+				<constructor-arg ref="objectMapper" />
+				<constructor-arg value="classpath:sprites/tiles.js" />
+				<property name="spriteSize" ref="spriteSize" />
+			</bean>
+		</property>
+		<property name="spriteSize" ref="spriteSize" />
+	</bean>
 </beans>
