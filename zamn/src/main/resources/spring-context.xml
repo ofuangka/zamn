@@ -161,13 +161,14 @@
 
 	<bean id="mapEditor" class="zamn.mapeditor.MapEditor">
 		<property name="board" ref="mapEditorBoard" />
-		<property name="mapEditorScreen">
-			<bean class="zamn.mapeditor.MapEditorScreen">
-				<constructor-arg ref="mapEditorBoard" />
-				<constructor-arg>
-					<bean class="zamn.mapeditor.MapEditorInterface" />
-				</constructor-arg>
-			</bean>
+		<property name="palettes">
+			<list>
+				<bean class="zamn.mapeditor.MapEditorPalette">
+					<constructor-arg value="classpath:spritesheets/tiles.png" />
+					<constructor-arg value="classpath:sprites/tiles.js" />
+					<constructor-arg ref="spriteSize" />
+				</bean>
+			</list>
 		</property>
 	</bean>
 
