@@ -177,7 +177,20 @@
 						<constructor-arg ref="spriteSize" />
 					</bean>
 				</entry>
+				<entry key="decorations">
+					<bean class="zamn.mapeditor.MapEditorPalette">
+						<constructor-arg ref="objectMapper" />
+						<constructor-arg value="classpath:sprites/decorations.js" />
+						<constructor-arg ref="spriteSize" />
+					</bean>
+				</entry>
 			</map>
+		</property>
+		<property name="paletteSize">
+			<bean class="java.awt.Dimension">
+				<constructor-arg value="200" />
+				<constructor-arg value="200" />
+			</bean>
 		</property>
 		<property name="boardSerializer">
 			<bean class="zamn.creation.BoardSerializer">

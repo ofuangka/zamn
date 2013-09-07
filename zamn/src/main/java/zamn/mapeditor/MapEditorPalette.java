@@ -13,7 +13,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.imageio.ImageIO;
-import javax.swing.JPanel;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.core.io.ClassPathResource;
@@ -21,7 +24,7 @@ import org.springframework.core.io.Resource;
 
 import zamn.creation.SpriteMapDefinition;
 
-public class MapEditorPalette extends JPanel implements MouseListener {
+public class MapEditorPalette extends JScrollPane implements MouseListener {
 
 	private static final long serialVersionUID = 5684413780256691006L;
 
@@ -41,9 +44,10 @@ public class MapEditorPalette extends JPanel implements MouseListener {
 		createReverseLookupSpriteMap();
 		spriteSheet = ImageIO.read((new ClassPathResource(spriteMapDefinition
 				.getSpriteSheetClassPath()).getURL()));
-		setPreferredSize(new Dimension(spriteSheet.getWidth(),
-				spriteSheet.getHeight()));
+		JLabel spriteSheetLabel = new JLabel(new ImageIcon(spriteSheet));
+		setViewportView(spriteSheetLabel);
 		addMouseListener(this);
+		setBorder(BorderFactory.createEmptyBorder());
 	}
 
 	protected void createReverseLookupSpriteMap() {

@@ -1,5 +1,6 @@
 package zamn.mapeditor;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -49,6 +50,7 @@ public class MapEditor extends JFrame {
 	private JMenuItem saveMenuItem;
 	private JLabel spacer;
 	private JTextField tileInspector;
+	private Dimension paletteSize;
 
 	public void bootstrap() {
 		LOG.debug("Bootstrapping...");
@@ -287,10 +289,14 @@ public class MapEditor extends JFrame {
 			Iterator<MapEditorPalette> iter = palettes.iterator();
 			int count = 0;
 			while (iter.hasNext()) {
+				MapEditorPalette palette = iter.next();
+				palette.setPreferredSize(paletteSize);
 				gc = new GridBagConstraints();
 				gc.gridx = 0;
 				gc.gridy = count++;
-				interfaze.add(iter.next(), gc);
+				gc.weightx = 1;
+				gc.fill = GridBagConstraints.HORIZONTAL;
+				interfaze.add(palette, gc);
 			}
 			spacer = new JLabel();
 			gc = new GridBagConstraints();
@@ -304,6 +310,7 @@ public class MapEditor extends JFrame {
 			gc.gridx = 0;
 			gc.gridy = numPalettes + 2;
 			gc.fill = GridBagConstraints.HORIZONTAL;
+			gc.weightx = 1;
 			interfaze.add(tileInspector, gc);
 
 			mapEditorScreen.requestFocus();
@@ -335,6 +342,11 @@ public class MapEditor extends JFrame {
 	@Required
 	public void setPaletteMap(Map<String, MapEditorPalette> paletteMap) {
 		this.paletteMap = paletteMap;
+	}
+
+	@Required
+	public void setPaletteSize(Dimension paletteSize) {
+		this.paletteSize = paletteSize;
 	}
 
 	public void showAndCenter() {
