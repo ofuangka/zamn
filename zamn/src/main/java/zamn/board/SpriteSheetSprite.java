@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage;
  */
 public class SpriteSheetSprite extends AbstractSprite {
 
+	private String spriteId;
 	private BufferedImage spriteSheet;
 	private int spriteSheetX;
 	private int spriteSheetY;
@@ -29,6 +30,14 @@ public class SpriteSheetSprite extends AbstractSprite {
 		return spriteSheet.getSubimage(spriteSheetX * spriteSize.width,
 				spriteSheetY * spriteSize.height, spriteSize.width,
 				spriteSize.height);
+	}
+
+	public String getSpriteId() {
+		return spriteId;
+	}
+
+	public void setSpriteId(String spriteId) {
+		this.spriteId = spriteId;
 	}
 
 }

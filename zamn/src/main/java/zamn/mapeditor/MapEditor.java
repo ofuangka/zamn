@@ -6,7 +6,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -28,6 +30,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import zamn.board.controlmode.Action;
+import zamn.creation.BoardSerializer;
 
 public class MapEditor extends JFrame {
 
@@ -35,14 +38,15 @@ public class MapEditor extends JFrame {
 
 	private static final long serialVersionUID = -907502337742442255L;
 
-	private JSplitPane mapEditorScreen;
 	private MapEditorBoard board;
+	private BoardSerializer boardSerializer;
 	private JFileChooser fileChooser;
-	private JMenuItem saveMenuItem;
 	private JPanel interfaze;
-	private JTextField tileInspector;
-	private List<MapEditorPalette> palettes;
+	private JSplitPane mapEditorScreen;
+	private Map<String, MapEditorPalette> paletteMap;
+	private JMenuItem saveMenuItem;
 	private JLabel spacer;
+	private JTextField tileInspector;
 
 	public void bootstrap() {
 		LOG.debug("Bootstrapping...");
@@ -54,40 +58,6 @@ public class MapEditor extends JFrame {
 		createAndAddMapEditorScreen();
 		populateMapEditorInterface();
 		setResizable(false);
-	}
-
-	private void populateMapEditorInterface() {
-		if (palettes != null) {
-			GridBagConstraints gc;
-			int numPalettes = palettes.size();
-			for (int i = 0; i < numPalettes; i++) {
-				gc = new GridBagConstraints();
-				gc.gridx = 0;
-				gc.gridy = i;
-				interfaze.add(palettes.get(i), gc);
-			}
-			spacer = new JLabel();
-			gc = new GridBagConstraints();
-			gc.gridx = 0;
-			gc.gridy = numPalettes + 1;
-			gc.weighty = 1;
-			interfaze.add(spacer, gc);
-
-			tileInspector = new JTextField();
-			gc = new GridBagConstraints();
-			gc.gridx = 0;
-			gc.gridy = numPalettes + 2;
-			gc.fill = GridBagConstraints.HORIZONTAL;
-			interfaze.add(tileInspector, gc);
-
-			mapEditorScreen.requestFocus();
-		} else {
-			throw new IllegalStateException("Palettes cannot be null");
-		}
-	}
-
-	private void createMapEditorInterface() {
-		interfaze = new JPanel(new GridBagLayout());
 	}
 
 	private void createAndAddMapEditorScreen() {
@@ -162,7 +132,8 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				board.enter();
+				System.out.println(paletteMap.get("terrain")
+						.getSelectedSpriteId());
 			}
 
 		});
@@ -259,6 +230,10 @@ public class MapEditor extends JFrame {
 		fileChooser = new JFileChooser();
 	}
 
+	private void createMapEditorInterface() {
+		interfaze = new JPanel(new GridBagLayout());
+	}
+
 	private void disableSaveMenuItem() {
 		saveMenuItem.setEnabled(false);
 	}
@@ -274,6 +249,7 @@ public class MapEditor extends JFrame {
 
 	public void handleOpenRequest() throws IOException {
 		LOG.debug("Handling open request...");
+		disableSaveMenuItem();
 		int returnVal = fileChooser.showOpenDialog(this);
 
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -281,6 +257,7 @@ public class MapEditor extends JFrame {
 		} else {
 			LOG.debug("Open operation canceled by user");
 		}
+		enableSaveMenuItem();
 	}
 
 	public void handleSaveRequest() {
@@ -299,8 +276,45 @@ public class MapEditor extends JFrame {
 		showAndCenter();
 	}
 
-	private void saveFile(File selectedFile) {
+	private void populateMapEditorInterface() {
+		if (paletteMap != null) {
+			Collection<MapEditorPalette> palettes = paletteMap.values();
+			GridBagConstraints gc;
+			int numPalettes = palettes.size();
+			Iterator<MapEditorPalette> iter = palettes.iterator();
+			int count = 0;
+			while (iter.hasNext()) {
+				gc = new GridBagConstraints();
+				gc.gridx = 0;
+				gc.gridy = count++;
+				interfaze.add(iter.next(), gc);
+			}
+			spacer = new JLabel();
+			gc = new GridBagConstraints();
+			gc.gridx = 0;
+			gc.gridy = numPalettes + 1;
+			gc.weighty = 1;
+			interfaze.add(spacer, gc);
 
+			tileInspector = new JTextField();
+			gc = new GridBagConstraints();
+			gc.gridx = 0;
+			gc.gridy = numPalettes + 2;
+			gc.fill = GridBagConstraints.HORIZONTAL;
+			interfaze.add(tileInspector, gc);
+
+			mapEditorScreen.requestFocus();
+		} else {
+			throw new IllegalStateException("Palettes cannot be null");
+		}
+	}
+
+	private void saveFile(File selectedFile) {
+		try {
+			System.out.println(boardSerializer.serialize(board));
+		} catch (IOException e) {
+			LOG.error(e);
+		}
 	}
 
 	@Required
@@ -309,8 +323,13 @@ public class MapEditor extends JFrame {
 	}
 
 	@Required
-	public void setPalettes(List<MapEditorPalette> palettes) {
-		this.palettes = palettes;
+	public void setBoardSerializer(BoardSerializer boardSerializer) {
+		this.boardSerializer = boardSerializer;
+	}
+
+	@Required
+	public void setPaletteMap(Map<String, MapEditorPalette> paletteMap) {
+		this.paletteMap = paletteMap;
 	}
 
 	public void showAndCenter() {

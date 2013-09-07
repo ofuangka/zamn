@@ -161,14 +161,28 @@
 
 	<bean id="mapEditor" class="zamn.mapeditor.MapEditor">
 		<property name="board" ref="mapEditorBoard" />
-		<property name="palettes">
-			<list>
-				<bean class="zamn.mapeditor.MapEditorPalette">
-					<constructor-arg value="classpath:spritesheets/tiles.png" />
-					<constructor-arg value="classpath:sprites/tiles.js" />
-					<constructor-arg ref="spriteSize" />
-				</bean>
-			</list>
+		<property name="paletteMap">
+			<map>
+				<entry key="tiles">
+					<bean class="zamn.mapeditor.MapEditorPalette">
+						<constructor-arg ref="objectMapper" />
+						<constructor-arg value="classpath:sprites/tiles.js" />
+						<constructor-arg ref="spriteSize" />
+					</bean>
+				</entry>
+				<entry key="critters">
+					<bean class="zamn.mapeditor.MapEditorPalette">
+						<constructor-arg ref="objectMapper" />
+						<constructor-arg value="classpath:sprites/critters.js" />
+						<constructor-arg ref="spriteSize" />
+					</bean>
+				</entry>
+			</map>
+		</property>
+		<property name="boardSerializer">
+			<bean class="zamn.creation.BoardSerializer">
+				<constructor-arg ref="objectMapper" />
+			</bean>
 		</property>
 	</bean>
 
@@ -177,6 +191,7 @@
 			<bean class="zamn.creation.BoardLoader">
 				<constructor-arg ref="objectMapper" />
 				<constructor-arg value="classpath:sprites/tiles.js" />
+				<property name="critterFactory" ref="critterFactory" />
 				<property name="spriteSize" ref="spriteSize" />
 			</bean>
 		</property>

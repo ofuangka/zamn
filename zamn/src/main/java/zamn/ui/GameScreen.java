@@ -4,7 +4,7 @@ import java.awt.Dimension;
 
 import zamn.framework.event.IEventContext;
 
-public class GameScreen extends DistributedRoundedSplitPane implements
+public class GameScreen extends DistributedSplitPane implements
 		IDelegatingKeySink {
 
 	private static final long serialVersionUID = 1535542436102660670L;

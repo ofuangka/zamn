@@ -1,16 +1,16 @@
 {
 	"critterPositions" : [ {
-		"id" : "blob0",
+		"critterId" : "blob0",
 		"seedX" : 4,
 		"seedY" : 4
 	},
 	{
-		"id" : "blob0",
+		"critterId" : "blob0",
 		"seedX" : 7,
 		"seedY" : 7
 	},
 	{
-		"id" : "gbln0",
+		"critterId" : "gbln0",
 		"seedX" : 10,
 		"seedY" : 10
 	}],

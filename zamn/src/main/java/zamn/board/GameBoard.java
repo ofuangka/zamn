@@ -3,9 +3,7 @@ package zamn.board;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -41,13 +39,10 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	private IBoardUriResolver boardUriResolver;
 	private Critter controllingCritter;
 	private CritterFactory critterFactory;
-	private List<Critter> critters = new ArrayList<Critter>();
 	private List<Critter> critterSequence = new ArrayList<Critter>();
 	private List<Tile> crosshairTiles = new ArrayList<Tile>();
 	private List<Tile> disabledTiles = new ArrayList<Tile>();
-	private Integer[][] entrances;
 	private IEventContext eventContext;
-	private Map<String, String[]> exits = new HashMap<String, String[]>();
 	private List<AbstractGameBoardControlMode> modeHistory = new ArrayList<AbstractGameBoardControlMode>();
 	private List<Tile> tilesInTargetingRange = new ArrayList<Tile>();
 
@@ -92,8 +87,11 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		return new int[] { fromX, fromY };
 	}
 
-	public void addExit(int x, int y, Action dir, String[] boardIdAndEntrance) {
-		exits.put(getExitKey(x, y, dir), boardIdAndEntrance);
+	@Override
+	public void addCritter(Critter critter) {
+		super.addCritter(critter);
+		eventContext.fire(
+				GameEventContext.GameEventType.CRITTER_ADDED_TO_BOARD, critter);
 	}
 
 	/**
@@ -282,16 +280,8 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		return Math.abs(x1 - x2) + Math.abs(y1 - y2);
 	}
 
-	public Integer[][] getEntrances() {
-		return entrances;
-	}
-
 	public IEventContext getEventContext() {
 		return eventContext;
-	}
-
-	public String getExitKey(int x, int y, Action dir) {
-		return x + "," + y + "," + dir.toString();
 	}
 
 	protected Critter getInitialHero() {
@@ -317,10 +307,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 
 	private void handleCoordinatesRequest() {
 		LOG.info(controllingCritter.getX() + ", " + controllingCritter.getY());
-	}
-
-	private void handleCritterAddedToBoard(Critter newCritter) {
-		critters.add(newCritter);
 	}
 
 	protected void handleCritterDeath(Critter deadCritter) {
@@ -355,10 +341,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		}
 		case CRITTER_TARGETED_ACTION_REQUEST: {
 			handleCritterTargetedActionRequest((EventMenuItem) arg);
-			break;
-		}
-		case CRITTER_ADDED_TO_BOARD: {
-			handleCritterAddedToBoard((Critter) arg);
 			break;
 		}
 		case COORDINATES_REQUEST: {
@@ -544,10 +526,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	@Required
 	public void setCritterFactory(CritterFactory critterFactory) {
 		this.critterFactory = critterFactory;
-	}
-
-	public void setEntrances(Integer[][] entrances) {
-		this.entrances = entrances;
 	}
 
 	public void setTargetingRange(List<Tile> targetingRange) {

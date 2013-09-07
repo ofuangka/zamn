@@ -66,7 +66,7 @@ public class Critter extends AbstractBoardPiece {
 			public int getDefaultValue() {
 				return 5;
 			}
-			
+
 			@Override
 			public Stat getMaxStat() {
 				return null;
@@ -119,6 +119,7 @@ public class Critter extends AbstractBoardPiece {
 
 	};
 
+	private String critterId;
 	private boolean hostile;
 	private boolean selected;
 
@@ -133,9 +134,17 @@ public class Critter extends AbstractBoardPiece {
 		return DEFAULT_ATTACK_ID;
 	}
 
+	public String getCritterId() {
+		return critterId;
+	}
+
 	public int getStat(Stat stat) {
 		Integer ret = stats.get(stat);
 		return (ret == null) ? stat.getDefaultValue() : ret;
+	}
+
+	public Map<Stat, Integer> getStats() {
+		return stats;
 	}
 
 	public List<String> getTalents() {
@@ -148,6 +157,10 @@ public class Critter extends AbstractBoardPiece {
 
 	public boolean isSelected() {
 		return selected;
+	}
+
+	public void setCritterId(String critterId) {
+		this.critterId = critterId;
 	}
 
 	public void setHostile(boolean hostile) {

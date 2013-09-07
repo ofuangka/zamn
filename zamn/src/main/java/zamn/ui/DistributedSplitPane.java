@@ -6,7 +6,7 @@ import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JSplitPane;
 
-public class DistributedRoundedSplitPane extends JSplitPane {
+public class DistributedSplitPane extends JSplitPane {
 
 	private static final long serialVersionUID = 7986545220487833886L;
 
@@ -15,7 +15,7 @@ public class DistributedRoundedSplitPane extends JSplitPane {
 	private JComponent right;
 	private Dimension spriteSize;
 
-	public DistributedRoundedSplitPane(JComponent left, JComponent right,
+	public DistributedSplitPane(JComponent left, JComponent right,
 			Dimension spriteSize, double distribution) {
 		super(JSplitPane.HORIZONTAL_SPLIT, left, right);
 		this.left = left;

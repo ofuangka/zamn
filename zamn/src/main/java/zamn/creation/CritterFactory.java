@@ -42,15 +42,18 @@ public class CritterFactory {
 		}
 	}
 
-	public Critter get(String id) {
+	public Critter get(String critterId) {
 		Critter ret = new Critter();
-		CritterDefinition critterDefinition = critterDefinitions.get(id);
+		ret.setCritterId(critterId);
+		CritterDefinition critterDefinition = critterDefinitions.get(critterId);
 		if (critterDefinition == null) {
 			throw new IllegalArgumentException(
-					"Could not find CritterDefinition with ID: '" + id + "'");
+					"Could not find CritterDefinition with ID: '" + critterId
+							+ "'");
 		}
-		Integer[] spriteSheetXY = critterSpriteMap.get(critterDefinition
-				.getSpriteId());
+		String critterSpriteId = critterDefinition.getSpriteId();
+		Integer[] spriteSheetXY = critterSpriteMap.get(critterSpriteId);
+		ret.setSpriteId(critterSpriteId);
 		ret.applySprite(critterSpriteSheet, spriteSheetXY[0], spriteSheetXY[1],
 				spriteSize);
 		ret.setHostile(critterDefinition.isHostile());

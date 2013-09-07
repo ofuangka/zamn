@@ -18,12 +18,16 @@ import org.springframework.core.io.Resource;
 
 import zamn.board.AbstractBoard;
 import zamn.board.Tile;
+import zamn.board.controlmode.Action;
+import zamn.board.piece.Critter;
 
 public class BoardLoader {
 
+	private CritterFactory critterFactory;
 	private final ObjectMapper objectMapper;
 	private Dimension spriteSize;
 	private Map<String, Integer[]> tileSpriteMap;
+
 	private BufferedImage tileSpriteSheet;
 
 	public BoardLoader(ObjectMapper objectMapper, Resource tileSpriteMapResource)
@@ -46,19 +50,19 @@ public class BoardLoader {
 
 		BoardDefinition boardDefinition = parseBoardDefinition(boardId);
 		TileDefinition[][] tileDefinitions = boardDefinition.getTiles();
-		Tile[][] ret = new Tile[tileDefinitions.length][];
+		Tile[][] tiles = new Tile[tileDefinitions.length][];
 		for (int x = 0; x < tileDefinitions.length; x++) {
-			ret[x] = new Tile[tileDefinitions[x].length];
+			tiles[x] = new Tile[tileDefinitions[x].length];
 			for (int y = 0; y < tileDefinitions[x].length; y++) {
-				ret[x][y] = new Tile(x, y);
-				ret[x][y].setSolid(!tileDefinitions[x][y].is_());
+				tiles[x][y] = new Tile(x, y);
+				tiles[x][y].setSolid(!tileDefinitions[x][y].is_());
 				if (x != 0) {
-					ret[x - 1][y].setRight(ret[x][y]);
-					ret[x][y].setLeft(ret[x - 1][y]);
+					tiles[x - 1][y].setRight(tiles[x][y]);
+					tiles[x][y].setLeft(tiles[x - 1][y]);
 				}
 				if (y != 0) {
-					ret[x][y - 1].setBottom(ret[x][y]);
-					ret[x][y].setTop(ret[x][y - 1]);
+					tiles[x][y - 1].setBottom(tiles[x][y]);
+					tiles[x][y].setTop(tiles[x][y - 1]);
 				}
 
 				String tileId = tileDefinitions[x][y].getSpriteId();
@@ -67,12 +71,42 @@ public class BoardLoader {
 					throw new IllegalArgumentException(
 							"Could not retrieve tile with ID: '" + tileId + "'");
 				}
-				ret[x][y].applySprite(tileSpriteSheet, spriteSheetXY[0],
+				tiles[x][y].setSpriteId(tileId);
+				tiles[x][y].applySprite(tileSpriteSheet, spriteSheetXY[0],
 						spriteSheetXY[1], spriteSize);
 			}
 		}
 
-		board.setTiles(ret);
+		CritterPositionDefinition[] critterPositionDefinitions = boardDefinition
+				.getCritters();
+		for (int i = 0; i < critterPositionDefinitions.length; i++) {
+			CritterPositionDefinition critterPositionDefinition = critterPositionDefinitions[i];
+			Critter critter = critterFactory.get(critterPositionDefinition
+					.getCritterId());
+			int seedX = critterPositionDefinition.getSeedX();
+			int seedY = critterPositionDefinition.getSeedY();
+			if (tiles[seedX] != null && tiles[seedX][seedY] != null
+					&& !tiles[seedX][seedY].isOccupied()) {
+				tiles[seedX][seedY].add(critter);
+				critter.setXY(seedX, seedY);
+			}
+			board.addCritter(critter);
+		}
+
+		ExitDefinition[] exitDefinitions = boardDefinition.getExits();
+		for (int i = 0; i < exitDefinitions.length; i++) {
+			ExitDefinition exitDefinition = exitDefinitions[i];
+			board.addExit(
+					exitDefinition.getX(),
+					exitDefinition.getY(),
+					Action.valueOf(exitDefinition.getDir().toUpperCase()),
+					new String[] { exitDefinition.getBoardId(),
+							String.valueOf(exitDefinition.getEntryPoint()) });
+		}
+
+		board.setEntrances(boardDefinition.getEntrances());
+
+		board.setTiles(tiles);
 
 		doAfterLoad(boardDefinition, board);
 	}
@@ -93,6 +127,11 @@ public class BoardLoader {
 	protected BufferedImage parseSpriteSheet(Resource spriteSheetResource)
 			throws MalformedURLException, IOException {
 		return ImageIO.read(spriteSheetResource.getURI().toURL());
+	}
+
+	@Required
+	public void setCritterFactory(CritterFactory critterFactory) {
+		this.critterFactory = critterFactory;
 	}
 
 	@Required

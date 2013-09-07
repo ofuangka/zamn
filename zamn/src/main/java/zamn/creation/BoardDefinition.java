@@ -4,7 +4,7 @@ public class BoardDefinition {
 	private CritterPositionDefinition[] critterPositions;
 	private Integer[][] entrances;
 	private ExitDefinition[] exits;
-	private String id;
+	private String boardId;
 	private TileDefinition[][] tiles;
 
 	public CritterPositionDefinition[] getCritters() {
@@ -19,8 +19,8 @@ public class BoardDefinition {
 		return exits;
 	}
 
-	public String getId() {
-		return id;
+	public String getBoardId() {
+		return boardId;
 	}
 
 	public TileDefinition[][] getTiles() {
@@ -39,8 +39,8 @@ public class BoardDefinition {
 		this.exits = exits.clone();
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setBoardId(String boardId) {
+		this.boardId = boardId;
 	}
 
 	public void setTiles(TileDefinition[][] tiles) {

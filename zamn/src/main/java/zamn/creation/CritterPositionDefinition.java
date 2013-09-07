@@ -1,12 +1,12 @@
 package zamn.creation;
 
 public class CritterPositionDefinition {
-	private String id;
+	private String critterId;
 	private int seedX;
 	private int seedY;
 
-	public String getId() {
-		return id;
+	public String getCritterId() {
+		return critterId;
 	}
 
 	public int getSeedX() {
@@ -17,8 +17,8 @@ public class CritterPositionDefinition {
 		return seedY;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setCritterId(String critterId) {
+		this.critterId = critterId;
 	}
 
 	public void setSeedX(int seedX) {

@@ -40,6 +40,8 @@ public class Zamn implements IEventHandler {
 
 	private static final String APP_CTX_PATH = "spring-context.xml";
 
+	private static final int DEFAULT_ANIMATION_SPEED = 250;
+
 	private static final Logger LOG = Logger.getLogger(Zamn.class);
 	private static final String ZAMN_BEAN_ID = "zamn";
 
@@ -54,6 +56,7 @@ public class Zamn implements IEventHandler {
 	}
 
 	private List<Action> animationQueue = new ArrayList<Action>();
+	private int animationSpeed = DEFAULT_ANIMATION_SPEED;
 	private Timer animationTimer;
 	private GameBoard board;
 	private CritterMenuFactory critterMenuFactory;
@@ -90,7 +93,7 @@ public class Zamn implements IEventHandler {
 	}
 
 	private void createAnimationTimer() {
-		animationTimer = new Timer(250, new ActionListener() {
+		animationTimer = new Timer(animationSpeed, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -426,6 +429,10 @@ public class Zamn implements IEventHandler {
 
 	private void hideWindow() {
 		window.setVisible(false);
+	}
+
+	public void setAnimationSpeed(int animationSpeed) {
+		this.animationSpeed = animationSpeed;
 	}
 
 	@Required

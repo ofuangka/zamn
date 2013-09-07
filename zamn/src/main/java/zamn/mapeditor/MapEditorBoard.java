@@ -4,10 +4,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import java.beans.Transient;
 import java.io.IOException;
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
 
@@ -16,9 +19,7 @@ import zamn.board.AbstractBoardPiece;
 import zamn.board.Tile;
 import zamn.board.controlmode.Action;
 
-public class MapEditorBoard extends AbstractBoard {
-
-	private static final long serialVersionUID = 8159431301832393440L;
+public class MapEditorBoard extends AbstractBoard implements MouseListener {
 
 	private static final AbstractBoardPiece CURSOR = new AbstractBoardPiece() {
 		@Override
@@ -33,9 +34,20 @@ public class MapEditorBoard extends AbstractBoard {
 		}
 	};
 
+	private static final long serialVersionUID = 8159431301832393440L;
+
+	public MapEditorBoard() {
+		addMouseListener(this);
+	}
+
 	@Override
 	public void backspace() {
 		// remove a piece from the currently selected tile
+		Tile currentTile = getCurrentTile();
+		List<AbstractBoardPiece> pieces = currentTile.getPieces();
+		if (!pieces.isEmpty()) {
+			pieces.remove(pieces.size());
+		}
 	}
 
 	@Override
@@ -53,18 +65,22 @@ public class MapEditorBoard extends AbstractBoard {
 		// do nothing
 	}
 
-	@Override
-	@Transient
-	public Dimension getPreferredSize() {
-		Dimension spriteSize = getSpriteSize();
-		return (tiles == null) ? new Dimension() : new Dimension(tiles.length
-				* spriteSize.width, tiles[0].length * spriteSize.height);
+	protected Tile getCurrentTile() {
+		return getTile(CURSOR.getX(), CURSOR.getY());
 	}
 
 	@Override
 	@Transient
 	public Dimension getMinimumSize() {
 		return getPreferredSize();
+	}
+
+	@Override
+	@Transient
+	public Dimension getPreferredSize() {
+		Dimension spriteSize = getSpriteSize();
+		return (tiles == null) ? new Dimension() : new Dimension(tiles.length
+				* spriteSize.width, tiles[0].length * spriteSize.height);
 	}
 
 	@Override
@@ -84,6 +100,37 @@ public class MapEditorBoard extends AbstractBoard {
 	}
 
 	@Override
+	public void mouseClicked(MouseEvent e) {
+		Dimension spriteSize = getSpriteSize();
+		int tileX = e.getX() / spriteSize.width;
+		int tileY = e.getY() / spriteSize.height;
+
+		if (isInBounds(tileX, tileY)) {
+			placePiece(CURSOR, tileX, tileY);
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+
+	}
+
+	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 
@@ -99,6 +146,12 @@ public class MapEditorBoard extends AbstractBoard {
 					int dy2 = dy1 + tileSize.height;
 					g2d.drawImage(tile.getImage(), dx1, dy1, dx2, dy2, 0, 0,
 							tileSize.width, tileSize.height, null);
+					if (tile.isSolid()) {
+						g2d.setColor(Color.red);
+						g2d.drawLine(dx1, dy1, dx2 - 1, dy2 - 1);
+						g2d.drawLine(dx2 - 1, dy1, dx1, dy2 - 1);
+					}
+
 				}
 			}
 		}
@@ -128,6 +181,9 @@ public class MapEditorBoard extends AbstractBoard {
 
 	@Override
 	public void x() {
-		// toggle the tile's walkability
+		// toggle the solidity of the tile
+		Tile currentTile = getCurrentTile();
+		currentTile.setSolid(!currentTile.isSolid());
+		repaint();
 	}
 }

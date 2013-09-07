@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JComponent;
 
@@ -13,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import zamn.board.controlmode.Action;
+import zamn.board.piece.Critter;
 import zamn.creation.BoardLoader;
 import zamn.ui.IKeySink;
 import zamn.ui.ILayer;
@@ -51,10 +54,37 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	}
 
 	private BoardLoader boardLoader;
+	protected List<Critter> critters = new ArrayList<Critter>();
+	protected Integer[][] entrances;
+	protected Map<String, String[]> exits = new HashMap<String, String[]>();
 
 	private Dimension spriteSize;
 
 	protected Tile[][] tiles;
+
+	public void addCritter(Critter critter) {
+		critters.add(critter);
+	}
+
+	public void addExit(int x, int y, Action dir, String[] boardIdAndEntrance) {
+		exits.put(getExitKey(x, y, dir), boardIdAndEntrance);
+	}
+
+	public List<Critter> getCritters() {
+		return critters;
+	}
+
+	public Integer[][] getEntrances() {
+		return entrances;
+	}
+
+	public String getExitKey(int x, int y, Action dir) {
+		return x + "," + y + "," + dir.toString();
+	}
+
+	public Map<String, String[]> getExits() {
+		return exits;
+	}
 
 	public Dimension getSpriteSize() {
 		return spriteSize;
@@ -187,6 +217,10 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	@Required
 	public void setBoardLoader(BoardLoader boardLoader) {
 		this.boardLoader = boardLoader;
+	}
+
+	public void setEntrances(Integer[][] entrances) {
+		this.entrances = entrances;
 	}
 
 	@Required
