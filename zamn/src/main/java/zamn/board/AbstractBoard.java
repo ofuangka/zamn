@@ -136,6 +136,11 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		boardLoader.load(id, this);
 	}
 
+	public void applyTerrainToTile(String terrainSpriteId, Tile tile) {
+		boardLoader.applyTerrainToTile(terrainSpriteId, tile);
+		repaint();
+	}
+
 	/**
 	 * This method calls repaint
 	 * 
@@ -143,7 +148,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	 * @param x
 	 * @param y
 	 */
-	public void placePiece(AbstractBoardPiece piece, int x, int y) {
+	public void placePiece(BoardPiece piece, int x, int y) {
 		removePiece(piece);
 		if (tiles[x][y] == null) {
 			throwNullTileException(x, y);
@@ -155,7 +160,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	}
 
-	public void placePieceInGeneralArea(AbstractBoardPiece piece, int x, int y) {
+	public void placePieceInGeneralArea(BoardPiece piece, int x, int y) {
 		if (tiles[x][y] == null) {
 			throwNullTileException(x, y);
 		} else {
@@ -169,7 +174,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		}
 	}
 
-	protected boolean placePieceInGeneralAreaHelper(AbstractBoardPiece piece,
+	protected boolean placePieceInGeneralAreaHelper(BoardPiece piece,
 			List<Tile> queue, List<Tile> consumed) {
 		while (!queue.isEmpty()) {
 			Tile tile = queue.remove(0);
@@ -197,7 +202,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	 * 
 	 * @param piece
 	 */
-	public void removePiece(AbstractBoardPiece piece) {
+	public void removePiece(BoardPiece piece) {
 		int x = piece.getX();
 		int y = piece.getY();
 
@@ -253,7 +258,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	 * @param piece
 	 * @param dir
 	 */
-	public boolean tryMove(AbstractBoardPiece piece, Action dir) {
+	public boolean tryMove(BoardPiece piece, Action dir) {
 		LOG.debug("Attempting to move piece " + piece + " " + dir);
 		int nextX = piece.getX();
 		int nextY = piece.getY();

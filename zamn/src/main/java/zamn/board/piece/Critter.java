@@ -5,10 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import zamn.board.AbstractBoardPiece;
+import zamn.board.BoardPiece;
 import zamn.util.NullSafeCompare;
 
-public class Critter extends AbstractBoardPiece {
+public class Critter extends BoardPiece {
 
 	public interface IStat {
 		public int getDefaultValue();

@@ -5,6 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
@@ -29,6 +30,7 @@ import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
+import zamn.board.Tile;
 import zamn.board.controlmode.Action;
 import zamn.creation.BoardSerializer;
 
@@ -132,8 +134,6 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println(paletteMap.get("terrain")
-						.getSelectedSpriteId());
 			}
 
 		});
@@ -163,7 +163,10 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				board.space();
+				Tile currentTile = board.getCurrentTile();
+				board.applyTerrainToTile(paletteMap.get("tiles")
+						.getSelectedSpriteId(), currentTile);
+
 			}
 
 		});
@@ -305,13 +308,15 @@ public class MapEditor extends JFrame {
 
 			mapEditorScreen.requestFocus();
 		} else {
-			throw new IllegalStateException("Palettes cannot be null");
+			throw new IllegalStateException("Palette map cannot be null");
 		}
 	}
 
 	private void saveFile(File selectedFile) {
 		try {
-			System.out.println(boardSerializer.serialize(board));
+			FileWriter fileWriter = new FileWriter(selectedFile);
+			fileWriter.write(boardSerializer.serialize(board));
+			fileWriter.close();
 		} catch (IOException e) {
 			LOG.error(e);
 		}
@@ -333,7 +338,7 @@ public class MapEditor extends JFrame {
 	}
 
 	public void showAndCenter() {
-		LOG.debug("Showing and centering mapEditor...");
+		LOG.debug("Showing and centering map editor...");
 		setVisible(true);
 		pack();
 		setLocationRelativeTo(null);

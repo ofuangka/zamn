@@ -7,7 +7,7 @@ public class BoardDefinition {
 	private String boardId;
 	private TileDefinition[][] tiles;
 
-	public CritterPositionDefinition[] getCritters() {
+	public CritterPositionDefinition[] getCritterPositions() {
 		return critterPositions;
 	}
 

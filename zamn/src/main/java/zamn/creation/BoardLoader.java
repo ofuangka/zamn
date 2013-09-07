@@ -67,22 +67,15 @@ public class BoardLoader {
 					tile.setTop(tiles[x][y - 1]);
 				}
 
-				String tileId = tileDefinitions[x][y].getSpriteId();
-				Integer[] spriteSheetXY = tileSpriteMap.get(tileId);
-				if (spriteSheetXY == null) {
-					throw new IllegalArgumentException(
-							"Could not retrieve tile with ID: '" + tileId + "'");
-				}
-				tile.setSpriteId(tileId);
-				tile.applySprite(tileSpriteSheet, spriteSheetXY[0],
-						spriteSheetXY[1], spriteSize);
+				String spriteId = tileDefinitions[x][y].getSpriteId();
+				applyTerrainToTile(spriteId, tile);
 				tiles[x][y] = tile;
 			}
 		}
 
 		// add the critters
 		CritterPositionDefinition[] critterPositionDefinitions = boardDefinition
-				.getCritters();
+				.getCritterPositions();
 		for (int i = 0; i < critterPositionDefinitions.length; i++) {
 			CritterPositionDefinition critterPositionDefinition = critterPositionDefinitions[i];
 			Critter critter = critterFactory.get(critterPositionDefinition
@@ -116,6 +109,17 @@ public class BoardLoader {
 
 		// add a hook for subclasses
 		doAfterLoad(boardDefinition, board);
+	}
+
+	public void applyTerrainToTile(String spriteId, Tile tile) {
+		tile.setSpriteId(spriteId);
+		Integer[] spriteSheetXY = tileSpriteMap.get(spriteId);
+		if (spriteSheetXY == null) {
+			throw new IllegalArgumentException(
+					"Could not retrieve sprite with ID: '" + spriteId + "'");
+		}
+		tile.applySprite(tileSpriteSheet, spriteSheetXY[0], spriteSheetXY[1],
+				spriteSize);
 	}
 
 	protected BoardDefinition parseBoardDefinition(URI boardId)

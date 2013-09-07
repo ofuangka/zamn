@@ -4,7 +4,7 @@ import java.util.Random;
 
 import org.apache.log4j.Logger;
 
-import zamn.board.AbstractBoardPiece;
+import zamn.board.BoardPiece;
 import zamn.board.Tile;
 import zamn.board.piece.Critter;
 import zamn.board.piece.Critter.Stat;
@@ -62,7 +62,7 @@ public abstract class AbstractStatEffect extends AbstractEffect {
 
 		if (targetTile.isOccupied()) {
 
-			AbstractBoardPiece targetPiece = targetTile.getOccupant();
+			BoardPiece targetPiece = targetTile.getOccupant();
 
 			if (Critter.class.isAssignableFrom(targetPiece.getClass())) {
 

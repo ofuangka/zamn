@@ -16,7 +16,7 @@ import java.util.List;
  * @author ofuangka
  * 
  */
-public class Tile extends AbstractBoardPiece {
+public class Tile extends BoardPiece {
 
 	public static final int BOTTOM_EDGE = 2;
 
@@ -61,8 +61,8 @@ public class Tile extends AbstractBoardPiece {
 	private boolean inTargetingRange = false;
 	private int movementCost = DEFAULT_MOVEMENT_COST;
 
-	private AbstractBoardPiece occupant;
-	private List<AbstractBoardPiece> pieces = new ArrayList<AbstractBoardPiece>();
+	private BoardPiece occupant;
+	private List<BoardPiece> pieces = new ArrayList<BoardPiece>();
 	private boolean targeted = false;
 
 	public Tile(int x, int y) {
@@ -74,7 +74,7 @@ public class Tile extends AbstractBoardPiece {
 	 * 
 	 * @param piece
 	 */
-	public void add(AbstractBoardPiece piece) {
+	public void add(BoardPiece piece) {
 		if (piece != null) {
 			if (!piece.isSolid() || (piece.isSolid() && !isOccupied())) {
 				if (pieces.isEmpty()) {
@@ -128,7 +128,7 @@ public class Tile extends AbstractBoardPiece {
 			g2d.fillRect(0, 0, spriteSize.width, spriteSize.height);
 		}
 
-		for (AbstractBoardPiece piece : pieces) {
+		for (BoardPiece piece : pieces) {
 			g2d.drawImage(piece.getImage(), 0, 0, spriteSize.width,
 					spriteSize.height, 0, 0, spriteSize.width,
 					spriteSize.height, null);
@@ -170,11 +170,11 @@ public class Tile extends AbstractBoardPiece {
 		return movementCost;
 	}
 
-	public AbstractBoardPiece getOccupant() {
+	public BoardPiece getOccupant() {
 		return occupant;
 	}
 
-	public List<AbstractBoardPiece> getPieces() {
+	public List<BoardPiece> getPieces() {
 		return pieces;
 	}
 
@@ -194,7 +194,7 @@ public class Tile extends AbstractBoardPiece {
 		return targeted;
 	}
 
-	public void remove(AbstractBoardPiece piece) {
+	public void remove(BoardPiece piece) {
 		if (piece != null) {
 			pieces.remove(piece);
 

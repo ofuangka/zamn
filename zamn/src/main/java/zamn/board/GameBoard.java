@@ -547,7 +547,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	}
 
 	@Override
-	public boolean tryMove(AbstractBoardPiece piece, Action dir) {
+	public boolean tryMove(BoardPiece piece, Action dir) {
 		if (!isInCombat()) {
 			String exitKey = getExitKey(piece.getX(), piece.getY(), dir);
 			if (exits.containsKey(exitKey)) {

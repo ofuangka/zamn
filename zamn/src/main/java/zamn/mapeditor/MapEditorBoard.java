@@ -15,13 +15,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Required;
 
 import zamn.board.AbstractBoard;
-import zamn.board.AbstractBoardPiece;
+import zamn.board.BoardPiece;
 import zamn.board.Tile;
 import zamn.board.controlmode.Action;
 
 public class MapEditorBoard extends AbstractBoard implements MouseListener {
 
-	private static final AbstractBoardPiece CURSOR = new AbstractBoardPiece() {
+	private static final BoardPiece CURSOR = new BoardPiece() {
 		@Override
 		public BufferedImage getImage() {
 			Dimension spriteSize = getSpriteSize();
@@ -44,7 +44,7 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 	public void backspace() {
 		// remove a piece from the currently selected tile
 		Tile currentTile = getCurrentTile();
-		List<AbstractBoardPiece> pieces = currentTile.getPieces();
+		List<BoardPiece> pieces = currentTile.getPieces();
 		if (!pieces.isEmpty()) {
 			pieces.remove(pieces.size());
 		}
@@ -65,7 +65,7 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 		// do nothing
 	}
 
-	protected Tile getCurrentTile() {
+	public Tile getCurrentTile() {
 		return getTile(CURSOR.getX(), CURSOR.getY());
 	}
 
