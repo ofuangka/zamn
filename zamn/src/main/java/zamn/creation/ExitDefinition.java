@@ -4,7 +4,6 @@ public class ExitDefinition {
 	private String boardId;
 	private String dir;
 	private int entryPoint;
-	private int index;
 	private int x;
 	private int y;
 
@@ -18,10 +17,6 @@ public class ExitDefinition {
 
 	public int getEntryPoint() {
 		return entryPoint;
-	}
-
-	public int getIndex() {
-		return index;
 	}
 
 	public int getX() {
@@ -42,10 +37,6 @@ public class ExitDefinition {
 
 	public void setEntryPoint(int entryPoint) {
 		this.entryPoint = entryPoint;
-	}
-
-	public void setIndex(int index) {
-		this.index = index;
 	}
 
 	public void setX(int x) {

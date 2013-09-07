@@ -49,20 +49,22 @@ public class BoardLoader {
 			MalformedURLException, IOException {
 
 		BoardDefinition boardDefinition = parseBoardDefinition(boardId);
+
+		// create the tiles 2d array
 		TileDefinition[][] tileDefinitions = boardDefinition.getTiles();
 		Tile[][] tiles = new Tile[tileDefinitions.length][];
 		for (int x = 0; x < tileDefinitions.length; x++) {
 			tiles[x] = new Tile[tileDefinitions[x].length];
 			for (int y = 0; y < tileDefinitions[x].length; y++) {
-				tiles[x][y] = new Tile(x, y);
-				tiles[x][y].setSolid(!tileDefinitions[x][y].is_());
+				Tile tile = new Tile(x, y);
+				tile.setSolid(!tileDefinitions[x][y].is_());
 				if (x != 0) {
-					tiles[x - 1][y].setRight(tiles[x][y]);
-					tiles[x][y].setLeft(tiles[x - 1][y]);
+					tiles[x - 1][y].setRight(tile);
+					tile.setLeft(tiles[x - 1][y]);
 				}
 				if (y != 0) {
-					tiles[x][y - 1].setBottom(tiles[x][y]);
-					tiles[x][y].setTop(tiles[x][y - 1]);
+					tiles[x][y - 1].setBottom(tile);
+					tile.setTop(tiles[x][y - 1]);
 				}
 
 				String tileId = tileDefinitions[x][y].getSpriteId();
@@ -71,12 +73,14 @@ public class BoardLoader {
 					throw new IllegalArgumentException(
 							"Could not retrieve tile with ID: '" + tileId + "'");
 				}
-				tiles[x][y].setSpriteId(tileId);
-				tiles[x][y].applySprite(tileSpriteSheet, spriteSheetXY[0],
+				tile.setSpriteId(tileId);
+				tile.applySprite(tileSpriteSheet, spriteSheetXY[0],
 						spriteSheetXY[1], spriteSize);
+				tiles[x][y] = tile;
 			}
 		}
 
+		// add the critters
 		CritterPositionDefinition[] critterPositionDefinitions = boardDefinition
 				.getCritters();
 		for (int i = 0; i < critterPositionDefinitions.length; i++) {
@@ -93,6 +97,7 @@ public class BoardLoader {
 			board.addCritter(critter);
 		}
 
+		// add the exit definitions
 		ExitDefinition[] exitDefinitions = boardDefinition.getExits();
 		for (int i = 0; i < exitDefinitions.length; i++) {
 			ExitDefinition exitDefinition = exitDefinitions[i];
@@ -104,10 +109,12 @@ public class BoardLoader {
 							String.valueOf(exitDefinition.getEntryPoint()) });
 		}
 
+		// add the entrances
 		board.setEntrances(boardDefinition.getEntrances());
 
 		board.setTiles(tiles);
 
+		// add a hook for subclasses
 		doAfterLoad(boardDefinition, board);
 	}
 

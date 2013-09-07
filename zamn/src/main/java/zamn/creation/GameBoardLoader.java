@@ -28,14 +28,12 @@ import zamn.framework.event.IEventHandler;
  */
 public class GameBoardLoader extends BoardLoader implements IEventHandler {
 
-	private IEventContext eventContext;
 	private List<Critter> heroes = new ArrayList<Critter>();
 
 	public GameBoardLoader(ObjectMapper objectMapper,
 			Resource tileSpriteMapResource, IEventContext eventContext)
 			throws IOException {
 		super(objectMapper, tileSpriteMapResource);
-		this.eventContext = eventContext;
 		eventContext.onAll(this);
 	}
 
@@ -43,7 +41,6 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 	protected void doAfterLoad(BoardDefinition boardDefinition,
 			AbstractBoard board) {
 
-		GameBoard gameBoard = ((GameBoard) board);
 	}
 
 	protected void handleCritterDeath(Critter deadCritter) {

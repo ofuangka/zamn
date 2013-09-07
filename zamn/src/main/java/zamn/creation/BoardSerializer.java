@@ -1,7 +1,10 @@
 package zamn.creation;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -23,6 +26,8 @@ public class BoardSerializer {
 
 	public String serialize(AbstractBoard board) throws IOException {
 		BoardDefinition boardDefinition = getBoardDefinition();
+
+		// add tiles
 		Tile[][] tiles = board.getTiles();
 		int widthInTiles = tiles.length;
 		TileDefinition[][] tileDefinitions = new TileDefinition[widthInTiles][];
@@ -36,6 +41,7 @@ public class BoardSerializer {
 			}
 		}
 
+		// add critters
 		List<Critter> critters = board.getCritters();
 		if (critters != null) {
 			int numCritters = critters.size();
@@ -50,8 +56,43 @@ public class BoardSerializer {
 			boardDefinition.setCritterPositions(critterPositions);
 		}
 
-		boardDefinition.setTiles(tileDefinitions);
+		// add exit definitions
+		Map<String, String[]> exits = board.getExits();
+		if (exits != null) {
+			Set<String> exitKeys = exits.keySet();
+			int numExits = exitKeys.size();
+			ExitDefinition[] exitDefinitions = new ExitDefinition[numExits];
+			Iterator<String> iter = exitKeys.iterator();
+			int count = 0;
+			while (iter.hasNext()) {
+				String key = iter.next();
+				ExitDefinition exitDefinition = new ExitDefinition();
+				exitDefinition.setBoardId(exits.get(key)[0]);
+				exitDefinition.setDir(getDir(key));
+				exitDefinition
+						.setEntryPoint(Integer.valueOf(exits.get(key)[1]));
+				exitDefinition.setX(getX(key));
+				exitDefinition.setY(getY(key));
+				exitDefinitions[count++] = exitDefinition;
+			}
+			boardDefinition.setExits(exitDefinitions);
+		}
+
+		// add entrances
 		boardDefinition.setEntrances(board.getEntrances());
+		boardDefinition.setTiles(tileDefinitions);
 		return objectMapper.writeValueAsString(boardDefinition);
+	}
+
+	protected String getDir(String key) {
+		return key.split(",")[2].toLowerCase();
+	}
+
+	protected int getX(String key) {
+		return Integer.valueOf(key.split(",")[0]);
+	}
+
+	protected int getY(String key) {
+		return Integer.valueOf(key.split(",")[1]);
 	}
 }
