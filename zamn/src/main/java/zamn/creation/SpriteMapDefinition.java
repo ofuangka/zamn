@@ -3,10 +3,10 @@ package zamn.creation;
 import java.util.Map;
 
 public class SpriteMapDefinition {
-	private Map<String, Integer[]> spriteMap;
+	private Map<String, int[]> spriteMap;
 	private String spriteSheetClassPath;
 
-	public Map<String, Integer[]> getSpriteMap() {
+	public Map<String, int[]> getSpriteMap() {
 		return spriteMap;
 	}
 
@@ -14,7 +14,7 @@ public class SpriteMapDefinition {
 		return spriteSheetClassPath;
 	}
 
-	public void setSpriteMap(Map<String, Integer[]> spriteMap) {
+	public void setSpriteMap(Map<String, int[]> spriteMap) {
 		this.spriteMap = spriteMap;
 	}
 

@@ -9,7 +9,17 @@ import java.awt.image.BufferedImage;
  * @author ofuangka
  * 
  */
-public class SpriteSheetSprite extends AbstractSprite {
+public class Sprite {
+
+	private Dimension spriteSize;
+
+	public Dimension getSpriteSize() {
+		return spriteSize;
+	}
+
+	public void setSpriteSize(Dimension spriteSize) {
+		this.spriteSize = spriteSize;
+	}
 
 	private String spriteId;
 	private BufferedImage spriteSheet;
@@ -24,7 +34,6 @@ public class SpriteSheetSprite extends AbstractSprite {
 		setSpriteSize(spriteSize);
 	}
 
-	@Override
 	public BufferedImage getImage() {
 		Dimension spriteSize = getSpriteSize();
 		return spriteSheet.getSubimage(spriteSheetX * spriteSize.width,

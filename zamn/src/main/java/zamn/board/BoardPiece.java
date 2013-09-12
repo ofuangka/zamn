@@ -6,7 +6,7 @@ package zamn.board;
  * @author ofuangka
  * 
  */
-public class BoardPiece extends SpriteSheetSprite {
+public class BoardPiece extends Sprite {
 
 	public static final int DEFAULT_X = AbstractBoard.INVALID_X;
 	public static final int DEFAULT_Y = AbstractBoard.INVALID_Y;

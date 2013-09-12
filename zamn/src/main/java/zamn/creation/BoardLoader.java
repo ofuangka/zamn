@@ -26,7 +26,7 @@ public class BoardLoader {
 	private CritterFactory critterFactory;
 	private final ObjectMapper objectMapper;
 	private Dimension spriteSize;
-	private Map<String, Integer[]> tileSpriteMap;
+	private Map<String, int[]> tileSpriteMap;
 
 	private BufferedImage tileSpriteSheet;
 
@@ -41,7 +41,7 @@ public class BoardLoader {
 
 	public void applyTerrainToTile(String spriteId, Tile tile) {
 		tile.setSpriteId(spriteId);
-		Integer[] spriteSheetXY = tileSpriteMap.get(spriteId);
+		int[] spriteSheetXY = tileSpriteMap.get(spriteId);
 		if (spriteSheetXY == null) {
 			throw new IllegalArgumentException(
 					"Could not retrieve sprite with ID: '" + spriteId + "'");
@@ -89,9 +89,8 @@ public class BoardLoader {
 				.getCritterDefinitions();
 		for (int i = 0; i < critterPositionDefinitions.length; i++) {
 			CritterDefinition critterPositionDefinition = critterPositionDefinitions[i];
-			Critter critter = critterFactory.get(
-					critterPositionDefinition.getSpriteId(),
-					critterPositionDefinition);
+			Critter critter = (Critter) critterFactory
+					.get(critterPositionDefinition);
 			int[] xy = critterPositionDefinition.getCoords();
 			int seedX = xy[0];
 			int seedY = xy[1];

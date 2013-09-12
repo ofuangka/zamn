@@ -119,7 +119,6 @@ public class Critter extends BoardPiece {
 
 	};
 
-	private String critterId;
 	private boolean hostile;
 	private boolean selected;
 
@@ -132,10 +131,6 @@ public class Critter extends BoardPiece {
 
 	public String getAttack() {
 		return DEFAULT_ATTACK_ID;
-	}
-
-	public String getCritterId() {
-		return critterId;
 	}
 
 	public int getStat(Stat stat) {
@@ -157,10 +152,6 @@ public class Critter extends BoardPiece {
 
 	public boolean isSelected() {
 		return selected;
-	}
-
-	public void setCritterId(String critterId) {
-		this.critterId = critterId;
 	}
 
 	public void setHostile(boolean hostile) {

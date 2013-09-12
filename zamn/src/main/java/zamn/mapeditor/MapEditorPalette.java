@@ -40,6 +40,7 @@ public class MapEditorPalette extends JScrollPane implements MouseListener {
 		this.spriteSize = spriteSize;
 		SpriteMapDefinition spriteMapDefinition = objectMapper.readValue(
 				spriteResource.getURL(), SpriteMapDefinition.class);
+		/*
 		spriteMap = spriteMapDefinition.getSpriteMap();
 		createReverseLookupSpriteMap();
 		spriteSheet = ImageIO.read((new ClassPathResource(spriteMapDefinition
@@ -48,6 +49,7 @@ public class MapEditorPalette extends JScrollPane implements MouseListener {
 		setViewportView(spriteSheetLabel);
 		addMouseListener(this);
 		setBorder(BorderFactory.createEmptyBorder());
+		*/
 	}
 
 	protected void createReverseLookupSpriteMap() {

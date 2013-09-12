@@ -287,8 +287,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	}
 
 	protected Critter getInitialHero() {
-		return critterFactory.get(initialHeroDefinition.getSpriteId(),
-				initialHeroDefinition);
+		return (Critter) critterFactory.get(initialHeroDefinition);
 	}
 
 	public Critter getNearestOpponent(Critter from) {
