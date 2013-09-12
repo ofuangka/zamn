@@ -9,7 +9,6 @@ import java.util.Set;
 import javax.imageio.ImageIO;
 
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -17,19 +16,14 @@ import org.springframework.core.io.Resource;
 import zamn.board.piece.Critter;
 
 public class CritterFactory {
-	private Map<String, CritterDefinition> critterDefinitions;
 	private Map<String, Integer[]> critterSpriteMap;
 	private BufferedImage critterSpriteSheet;
 	private Dimension spriteSize;
 
-	public CritterFactory(Resource critterDefinitionResource,
-			Resource critterSpriteMapResource, ObjectMapper objectMapper) {
+	public CritterFactory(ObjectMapper objectMapper,
+			Resource critterSpriteMapResource) {
 
 		try {
-			critterDefinitions = objectMapper.readValue(
-					critterDefinitionResource.getURI().toURL(),
-					new TypeReference<Map<String, CritterDefinition>>() {
-					});
 			SpriteMapDefinition spriteMapDefinition = objectMapper.readValue(
 					critterSpriteMapResource.getURI().toURL(),
 					SpriteMapDefinition.class);
@@ -42,19 +36,13 @@ public class CritterFactory {
 		}
 	}
 
-	public Critter get(String critterId) {
+	public Critter get(String critterId, CritterDefinition critterDefinition) {
 		Critter ret = new Critter();
 		ret.setCritterId(critterId);
-		CritterDefinition critterDefinition = critterDefinitions.get(critterId);
-		if (critterDefinition == null) {
-			throw new IllegalArgumentException(
-					"Could not find CritterDefinition with ID: '" + critterId
-							+ "'");
-		}
 		String critterSpriteId = critterDefinition.getSpriteId();
 		Integer[] spriteSheetXY = critterSpriteMap.get(critterSpriteId);
 		ret.setSpriteId(critterSpriteId);
-		ret.applySprite(critterSpriteSheet, spriteSheetXY[0], spriteSheetXY[1],
+		ret.drawSprite(critterSpriteSheet, spriteSheetXY[0], spriteSheetXY[1],
 				spriteSize);
 		ret.setHostile(critterDefinition.isHostile());
 		ret.setTalents(critterDefinition.getTalents());
@@ -65,10 +53,6 @@ public class CritterFactory {
 					statDefinitions.get(statKey));
 		}
 		return ret;
-	}
-
-	public Set<String> idSet() {
-		return critterDefinitions.keySet();
 	}
 
 	@Required

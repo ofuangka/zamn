@@ -45,15 +45,15 @@ public class BoardSerializer {
 		List<Critter> critters = board.getCritters();
 		if (critters != null) {
 			int numCritters = critters.size();
-			CritterPositionDefinition[] critterPositions = new CritterPositionDefinition[numCritters];
+			CritterDefinition[] critterPositions = new CritterDefinition[numCritters];
 			for (int i = 0; i < numCritters; i++) {
 				Critter critter = critters.get(i);
-				critterPositions[i] = new CritterPositionDefinition();
-				critterPositions[i].setCritterId(critter.getCritterId());
+				critterPositions[i] = new CritterDefinition();
+				critterPositions[i].setSpriteId(critter.getSpriteId());
 				critterPositions[i].setSeedX(critter.getX());
 				critterPositions[i].setSeedY(critter.getY());
 			}
-			boardDefinition.setCritterPositions(critterPositions);
+			boardDefinition.setCritterDefinitions(critterPositions);
 		}
 
 		// add exit definitions

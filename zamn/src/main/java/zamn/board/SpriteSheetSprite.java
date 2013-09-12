@@ -16,7 +16,7 @@ public class SpriteSheetSprite extends AbstractSprite {
 	private int spriteSheetX;
 	private int spriteSheetY;
 
-	public void applySprite(BufferedImage spriteSheet, int spriteSheetX,
+	public void drawSprite(BufferedImage spriteSheet, int spriteSheetX,
 			int spriteSheetY, Dimension spriteSize) {
 		this.spriteSheet = spriteSheet;
 		this.spriteSheetX = spriteSheetX;

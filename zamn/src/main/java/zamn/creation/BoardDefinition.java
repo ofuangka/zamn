@@ -1,14 +1,14 @@
 package zamn.creation;
 
 public class BoardDefinition {
-	private CritterPositionDefinition[] critterPositions;
+	private CritterDefinition[] critterDefinitions;
 	private Integer[][] entrances;
 	private ExitDefinition[] exits;
 	private String boardId;
 	private TileDefinition[][] tiles;
 
-	public CritterPositionDefinition[] getCritterPositions() {
-		return critterPositions;
+	public CritterDefinition[] getCritterDefinitions() {
+		return critterDefinitions;
 	}
 
 	public Integer[][] getEntrances() {
@@ -27,8 +27,8 @@ public class BoardDefinition {
 		return tiles;
 	}
 
-	public void setCritterPositions(CritterPositionDefinition[] critterPositions) {
-		this.critterPositions = critterPositions.clone();
+	public void setCritterDefinitions(CritterDefinition[] critterDefinitions) {
+		this.critterDefinitions = critterDefinitions.clone();
 	}
 
 	public void setEntrances(Integer[][] entrances) {

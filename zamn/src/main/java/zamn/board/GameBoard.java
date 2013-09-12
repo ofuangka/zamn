@@ -17,6 +17,7 @@ import zamn.board.controlmode.TargetedMove;
 import zamn.board.controlmode.TargetingMode;
 import zamn.board.piece.Critter;
 import zamn.creation.BoardLoader;
+import zamn.creation.CritterDefinition;
 import zamn.creation.CritterFactory;
 import zamn.creation.GameBoardLoader;
 import zamn.framework.event.Event;
@@ -30,8 +31,7 @@ import zamn.ui.menu.EventMenuItem;
 public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		IDelegatingKeySink {
 
-	private static final String INITIAL_BOARD_ID = "goStraight";
-	private static final String INITIAL_HERO_ID = "mainCharacter";
+	private static final String DEFAULT_INITIAL_BOARD_ID = "goStraight";
 	private static final Logger LOG = Logger.getLogger(GameBoard.class);
 	private static final long serialVersionUID = -6548852244995136036L;
 
@@ -43,6 +43,8 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	private List<Tile> crosshairTiles = new ArrayList<Tile>();
 	private List<Tile> disabledTiles = new ArrayList<Tile>();
 	private IEventContext eventContext;
+	private String initialBoardId = DEFAULT_INITIAL_BOARD_ID;
+	private CritterDefinition initialHeroDefinition;
 	private List<AbstractGameBoardControlMode> modeHistory = new ArrayList<AbstractGameBoardControlMode>();
 	private List<Tile> tilesInTargetingRange = new ArrayList<Tile>();
 
@@ -285,7 +287,8 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	}
 
 	protected Critter getInitialHero() {
-		return critterFactory.get(INITIAL_HERO_ID);
+		return critterFactory.get(initialHeroDefinition.getSpriteId(),
+				initialHeroDefinition);
 	}
 
 	public Critter getNearestOpponent(Critter from) {
@@ -367,7 +370,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		forceClearBoardState();
 		eventContext.fire(GameEventContext.GameEventType.HERO_JOIN_REQUEST,
 				getInitialHero());
-		load(INITIAL_BOARD_ID);
+		load(initialBoardId);
 		nextTurn();
 	}
 
@@ -526,6 +529,10 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	@Required
 	public void setCritterFactory(CritterFactory critterFactory) {
 		this.critterFactory = critterFactory;
+	}
+
+	public void setInitialHeroDefinition(CritterDefinition initialHeroDefinition) {
+		this.initialHeroDefinition = initialHeroDefinition;
 	}
 
 	public void setTargetingRange(List<Tile> targetingRange) {

@@ -882,17 +882,23 @@
 		"_" : false,
 		"spriteId" : "stone"
 	} ] ],
-	"critterPositions" : [ {
-		"critterId" : "blob0",
+	"critterDefinitions" : [ {
+		"spriteId" : "blobb",
 		"seedX" : 4,
-		"seedY" : 4
+		"seedY" : 4,
+		"stats" : {},
+		"hostile" : true
 	}, {
-		"critterId" : "blob0",
+		"spriteId" : "blobb",
 		"seedX" : 7,
-		"seedY" : 7
+		"seedY" : 7,
+		"stats" : {},
+		"hostile" : true
 	}, {
-		"critterId" : "gbln0",
+		"spriteId" : "gobln",
 		"seedX" : 10,
-		"seedY" : 10
+		"seedY" : 10,
+		"stats" : {},
+		"hostile" : true
 	} ]
 }

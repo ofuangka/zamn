@@ -74,12 +74,12 @@ public class BoardLoader {
 		}
 
 		// add the critters
-		CritterPositionDefinition[] critterPositionDefinitions = boardDefinition
-				.getCritterPositions();
+		CritterDefinition[] critterPositionDefinitions = boardDefinition
+				.getCritterDefinitions();
 		for (int i = 0; i < critterPositionDefinitions.length; i++) {
-			CritterPositionDefinition critterPositionDefinition = critterPositionDefinitions[i];
+			CritterDefinition critterPositionDefinition = critterPositionDefinitions[i];
 			Critter critter = critterFactory.get(critterPositionDefinition
-					.getCritterId());
+					.getSpriteId(), critterPositionDefinition);
 			int seedX = critterPositionDefinition.getSeedX();
 			int seedY = critterPositionDefinition.getSeedY();
 			if (tiles[seedX] != null && tiles[seedX][seedY] != null
@@ -118,7 +118,7 @@ public class BoardLoader {
 			throw new IllegalArgumentException(
 					"Could not retrieve sprite with ID: '" + spriteId + "'");
 		}
-		tile.applySprite(tileSpriteSheet, spriteSheetXY[0], spriteSheetXY[1],
+		tile.drawSprite(tileSpriteSheet, spriteSheetXY[0], spriteSheetXY[1],
 				spriteSize);
 	}
 

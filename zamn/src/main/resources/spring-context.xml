@@ -72,6 +72,27 @@
 		<property name="boardUriResolver">
 			<bean class="zamn.board.ClassPathBoardUriResolver" />
 		</property>
+		<property name="initialHeroDefinition">
+			<bean class="zamn.creation.CritterDefinition">
+				<property name="hostile" value="false" />
+				<property name="seedX" value="1" />
+				<property name="seedY" value="1" />
+				<property name="spriteId" value="thief" />
+				<property name="stats">
+					<map>
+						<entry key="HP" value="20" />
+						<entry key="MAXHP" value="20" />
+						<entry key="SPEED" value="4" />
+					</map>
+				</property>
+				<property name="talents">
+					<array>
+						<value>fire_bomb</value>
+						<value>throw_rock</value>
+					</array>
+				</property>
+			</bean>
+		</property>
 	</bean>
 
 	<bean id="mainMenu" class="zamn.ui.menu.Menu">
@@ -153,9 +174,8 @@
 	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
 
 	<bean id="critterFactory" class="zamn.creation.CritterFactory">
-		<constructor-arg value="classpath:definitions/critters.js" />
-		<constructor-arg value="classpath:sprites/critters.js" />
 		<constructor-arg ref="objectMapper" />
+		<constructor-arg value="classpath:sprites/critters.js" />
 		<property name="spriteSize" ref="spriteSize" />
 	</bean>
 
