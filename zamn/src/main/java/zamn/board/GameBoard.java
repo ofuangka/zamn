@@ -553,6 +553,16 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		getCurrentKeySink().space();
 	}
 
+	/**
+	 * Moves the controlling critter in the direction provided
+	 * 
+	 * @param dir
+	 * @return
+	 */
+	public boolean tryMove(Action dir) {
+		return tryMove(controllingCritter, dir);
+	}
+
 	@Override
 	public boolean tryMove(BoardPiece piece, Action dir) {
 		if (!isInCombat()) {
@@ -568,16 +578,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		} else {
 			return super.tryMove(piece, dir);
 		}
-	}
-
-	/**
-	 * Moves the controlling critter in the direction provided
-	 * 
-	 * @param dir
-	 * @return
-	 */
-	public boolean tryMove(Action dir) {
-		return tryMove(controllingCritter, dir);
 	}
 
 	@Override

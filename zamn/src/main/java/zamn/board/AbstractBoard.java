@@ -70,6 +70,11 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		exits.put(getExitKey(x, y, dir), boardIdAndEntrance);
 	}
 
+	public void applyTerrainToTile(String terrainSpriteId, Tile tile) {
+		boardLoader.applyTerrainToTile(terrainSpriteId, tile);
+		repaint();
+	}
+
 	public List<Critter> getCritters() {
 		return critters;
 	}
@@ -134,11 +139,6 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	public void load(URI id) throws IOException {
 		boardLoader.load(id, this);
-	}
-
-	public void applyTerrainToTile(String terrainSpriteId, Tile tile) {
-		boardLoader.applyTerrainToTile(terrainSpriteId, tile);
-		repaint();
 	}
 
 	/**

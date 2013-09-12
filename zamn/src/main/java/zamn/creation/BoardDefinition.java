@@ -1,11 +1,15 @@
 package zamn.creation;
 
 public class BoardDefinition {
+	private String boardId;
 	private CritterDefinition[] critterDefinitions;
 	private Integer[][] entrances;
 	private ExitDefinition[] exits;
-	private String boardId;
 	private TileDefinition[][] tiles;
+
+	public String getBoardId() {
+		return boardId;
+	}
 
 	public CritterDefinition[] getCritterDefinitions() {
 		return critterDefinitions;
@@ -19,12 +23,12 @@ public class BoardDefinition {
 		return exits;
 	}
 
-	public String getBoardId() {
-		return boardId;
-	}
-
 	public TileDefinition[][] getTiles() {
 		return tiles;
+	}
+
+	public void setBoardId(String boardId) {
+		this.boardId = boardId;
 	}
 
 	public void setCritterDefinitions(CritterDefinition[] critterDefinitions) {
@@ -37,10 +41,6 @@ public class BoardDefinition {
 
 	public void setExits(ExitDefinition[] exits) {
 		this.exits = exits.clone();
-	}
-
-	public void setBoardId(String boardId) {
-		this.boardId = boardId;
 	}
 
 	public void setTiles(TileDefinition[][] tiles) {

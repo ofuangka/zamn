@@ -39,6 +39,17 @@ public class BoardLoader {
 		tileSpriteMap = spriteMapDefinition.getSpriteMap();
 	}
 
+	public void applyTerrainToTile(String spriteId, Tile tile) {
+		tile.setSpriteId(spriteId);
+		Integer[] spriteSheetXY = tileSpriteMap.get(spriteId);
+		if (spriteSheetXY == null) {
+			throw new IllegalArgumentException(
+					"Could not retrieve sprite with ID: '" + spriteId + "'");
+		}
+		tile.drawSprite(tileSpriteSheet, spriteSheetXY[0], spriteSheetXY[1],
+				spriteSize);
+	}
+
 	protected void doAfterLoad(BoardDefinition boardDefinition,
 			AbstractBoard board) {
 		// hook for subclasses
@@ -78,10 +89,12 @@ public class BoardLoader {
 				.getCritterDefinitions();
 		for (int i = 0; i < critterPositionDefinitions.length; i++) {
 			CritterDefinition critterPositionDefinition = critterPositionDefinitions[i];
-			Critter critter = critterFactory.get(critterPositionDefinition
-					.getSpriteId(), critterPositionDefinition);
-			int seedX = critterPositionDefinition.getSeedX();
-			int seedY = critterPositionDefinition.getSeedY();
+			Critter critter = critterFactory.get(
+					critterPositionDefinition.getSpriteId(),
+					critterPositionDefinition);
+			int[] xy = critterPositionDefinition.getCoords();
+			int seedX = xy[0];
+			int seedY = xy[1];
 			if (tiles[seedX] != null && tiles[seedX][seedY] != null
 					&& !tiles[seedX][seedY].isOccupied()) {
 				tiles[seedX][seedY].add(critter);
@@ -109,17 +122,6 @@ public class BoardLoader {
 
 		// add a hook for subclasses
 		doAfterLoad(boardDefinition, board);
-	}
-
-	public void applyTerrainToTile(String spriteId, Tile tile) {
-		tile.setSpriteId(spriteId);
-		Integer[] spriteSheetXY = tileSpriteMap.get(spriteId);
-		if (spriteSheetXY == null) {
-			throw new IllegalArgumentException(
-					"Could not retrieve sprite with ID: '" + spriteId + "'");
-		}
-		tile.drawSprite(tileSpriteSheet, spriteSheetXY[0], spriteSheetXY[1],
-				spriteSize);
 	}
 
 	protected BoardDefinition parseBoardDefinition(URI boardId)

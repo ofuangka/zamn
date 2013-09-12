@@ -47,10 +47,10 @@ public class MapEditor extends JFrame {
 	private JPanel interfaze;
 	private JSplitPane mapEditorScreen;
 	private Map<String, MapEditorPalette> paletteMap;
+	private Dimension paletteSize;
 	private JMenuItem saveMenuItem;
 	private JLabel spacer;
 	private JTextField tileInspector;
-	private Dimension paletteSize;
 
 	public void bootstrap() {
 		LOG.debug("Bootstrapping...");

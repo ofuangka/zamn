@@ -75,8 +75,12 @@
 		<property name="initialHeroDefinition">
 			<bean class="zamn.creation.CritterDefinition">
 				<property name="hostile" value="false" />
-				<property name="seedX" value="1" />
-				<property name="seedY" value="1" />
+				<property name="coords">
+					<array>
+						<value>1</value>
+						<value>1</value>
+					</array>
+				</property>
 				<property name="spriteId" value="thief" />
 				<property name="stats">
 					<map>

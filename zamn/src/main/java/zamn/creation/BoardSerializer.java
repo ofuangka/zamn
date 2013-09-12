@@ -24,6 +24,18 @@ public class BoardSerializer {
 		return new BoardDefinition();
 	}
 
+	protected String getDir(String key) {
+		return key.split(",")[2].toLowerCase();
+	}
+
+	protected int getX(String key) {
+		return Integer.valueOf(key.split(",")[0]);
+	}
+
+	protected int getY(String key) {
+		return Integer.valueOf(key.split(",")[1]);
+	}
+
 	public String serialize(AbstractBoard board) throws IOException {
 		BoardDefinition boardDefinition = getBoardDefinition();
 
@@ -50,8 +62,8 @@ public class BoardSerializer {
 				Critter critter = critters.get(i);
 				critterPositions[i] = new CritterDefinition();
 				critterPositions[i].setSpriteId(critter.getSpriteId());
-				critterPositions[i].setSeedX(critter.getX());
-				critterPositions[i].setSeedY(critter.getY());
+				critterPositions[i].setCoords(new int[] { critter.getX(),
+						critter.getY() });
 			}
 			boardDefinition.setCritterDefinitions(critterPositions);
 		}
@@ -82,17 +94,5 @@ public class BoardSerializer {
 		boardDefinition.setEntrances(board.getEntrances());
 		boardDefinition.setTiles(tileDefinitions);
 		return objectMapper.writeValueAsString(boardDefinition);
-	}
-
-	protected String getDir(String key) {
-		return key.split(",")[2].toLowerCase();
-	}
-
-	protected int getX(String key) {
-		return Integer.valueOf(key.split(",")[0]);
-	}
-
-	protected int getY(String key) {
-		return Integer.valueOf(key.split(",")[1]);
 	}
 }

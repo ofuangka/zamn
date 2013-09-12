@@ -884,20 +884,17 @@
 	} ] ],
 	"critterDefinitions" : [ {
 		"spriteId" : "blobb",
-		"seedX" : 4,
-		"seedY" : 4,
+		"coords" : [ 4, 4 ],
 		"stats" : {},
 		"hostile" : true
 	}, {
 		"spriteId" : "blobb",
-		"seedX" : 7,
-		"seedY" : 7,
+		"coords" : [ 7, 7 ],
 		"stats" : {},
 		"hostile" : true
 	}, {
 		"spriteId" : "gobln",
-		"seedX" : 10,
-		"seedY" : 10,
+		"coords" : [ 10, 10 ],
 		"stats" : {},
 		"hostile" : true
 	} ]

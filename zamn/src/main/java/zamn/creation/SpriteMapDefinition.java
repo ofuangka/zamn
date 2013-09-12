@@ -12,7 +12,6 @@ public class SpriteMapDefinition {
 
 	public String getSpriteSheetClassPath() {
 		return spriteSheetClassPath;
-
 	}
 
 	public void setSpriteMap(Map<String, Integer[]> spriteMap) {
