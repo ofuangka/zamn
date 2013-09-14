@@ -55,7 +55,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	private BoardLoader boardLoader;
 	protected List<Critter> critters = new ArrayList<Critter>();
-	protected Integer[][] entrances;
+	protected int[][] entrances;
 	protected Map<String, String[]> exits = new HashMap<String, String[]>();
 
 	private Dimension spriteSize;
@@ -70,16 +70,11 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		exits.put(getExitKey(x, y, dir), boardIdAndEntrance);
 	}
 
-	public void applyTerrainToTile(String terrainSpriteId, Tile tile) {
-		boardLoader.applyTerrainToTile(terrainSpriteId, tile);
-		repaint();
-	}
-
 	public List<Critter> getCritters() {
 		return critters;
 	}
 
-	public Integer[][] getEntrances() {
+	public int[][] getEntrances() {
 		return entrances;
 	}
 
@@ -224,7 +219,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		this.boardLoader = boardLoader;
 	}
 
-	public void setEntrances(Integer[][] entrances) {
+	public void setEntrances(int[][] entrances) {
 		this.entrances = entrances;
 	}
 

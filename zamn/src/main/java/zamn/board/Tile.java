@@ -65,8 +65,8 @@ public class Tile extends BoardPiece {
 	private List<BoardPiece> pieces = new ArrayList<BoardPiece>();
 	private boolean targeted = false;
 
-	public Tile(int x, int y) {
-		setXY(x, y);
+	public Tile() {
+
 	}
 
 	/**

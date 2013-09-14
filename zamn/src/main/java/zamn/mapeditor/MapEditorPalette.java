@@ -7,74 +7,69 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import java.beans.Transient;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
-import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
+import javax.swing.JPanel;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
+import zamn.creation.SpriteFactory;
 
-import zamn.creation.SpriteMapDefinition;
-
-public class MapEditorPalette extends JScrollPane implements MouseListener {
+public class MapEditorPalette extends JPanel implements MouseListener {
 
 	private static final long serialVersionUID = 5684413780256691006L;
 
+	private static final int DISABLED_CURSOR_XY = -1;
+
 	private int cursorX;
 	private int cursorY;
-	private Map<String, String> reverseLookupSpriteMap;
-	private Map<String, Integer[]> spriteMap;
-	private BufferedImage spriteSheet;
+	private SpriteFactory spriteFactory;
 	private Dimension spriteSize;
 
-	public MapEditorPalette(ObjectMapper objectMapper, Resource spriteResource,
-			Dimension spriteSize) throws IOException {
+	public MapEditorPalette(SpriteFactory spriteFactory, Dimension spriteSize)
+			throws IOException {
+		this.spriteFactory = spriteFactory;
 		this.spriteSize = spriteSize;
-		SpriteMapDefinition spriteMapDefinition = objectMapper.readValue(
-				spriteResource.getURL(), SpriteMapDefinition.class);
-		/*
-		spriteMap = spriteMapDefinition.getSpriteMap();
-		createReverseLookupSpriteMap();
-		spriteSheet = ImageIO.read((new ClassPathResource(spriteMapDefinition
-				.getSpriteSheetClassPath()).getURL()));
-		JLabel spriteSheetLabel = new JLabel(new ImageIcon(spriteSheet));
-		setViewportView(spriteSheetLabel);
 		addMouseListener(this);
-		setBorder(BorderFactory.createEmptyBorder());
-		*/
 	}
 
-	protected void createReverseLookupSpriteMap() {
-		reverseLookupSpriteMap = new HashMap<String, String>();
-		Set<String> spriteKeys = spriteMap.keySet();
-		for (String key : spriteKeys) {
-			reverseLookupSpriteMap.put(getReverseLookupKey(spriteMap.get(key)),
-					key);
-		}
+	public int getCursorX() {
+		return cursorX;
 	}
 
-	protected String getReverseLookupKey(Integer[] xy) {
-		return xy[0] + "," + xy[1];
+	public int getCursorY() {
+		return cursorY;
 	}
 
-	public String getSelectedSpriteId() {
-		return reverseLookupSpriteMap.get(getReverseLookupKey(new Integer[] {
-				cursorX, cursorY }));
+	@Override
+	@Transient
+	public Dimension getPreferredSize() {
+		BufferedImage spriteSheet = spriteFactory.getSpriteSheet();
+		return new Dimension(spriteSheet.getWidth(), spriteSheet.getHeight());
 	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		cursorX = e.getX() / spriteSize.width;
-		cursorY = e.getY() / spriteSize.height;
+		int x = e.getX() / spriteSize.width;
+		int y = e.getY() / spriteSize.height;
+		if (isCursorEnabled() && x == cursorX && y == cursorY) {
+			disableCursor();
+		} else {
+			setCursorXY(x, y);
+		}
 		repaint();
+	}
+
+	private void setCursorXY(int x, int y) {
+		cursorX = x;
+		cursorY = y;
+	}
+
+	private void disableCursor() {
+		cursorX = cursorY = DISABLED_CURSOR_XY;
+	}
+
+	private boolean isCursorEnabled() {
+		return cursorX != DISABLED_CURSOR_XY;
 	}
 
 	@Override
@@ -100,15 +95,19 @@ public class MapEditorPalette extends JScrollPane implements MouseListener {
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
+		BufferedImage spriteSheet = spriteFactory.getSpriteSheet();
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.drawImage(spriteSheet, 0, 0, spriteSheet.getWidth(),
 				spriteSheet.getHeight(), 0, 0, spriteSheet.getWidth(),
 				spriteSheet.getHeight(), null);
 
 		// draw the cursor
-		g2d.setColor(Color.red);
-		g2d.drawRect(cursorX * spriteSize.width, cursorY * spriteSize.height,
-				spriteSize.width - 1, spriteSize.height - 1);
+		if (isCursorEnabled()) {
+			g2d.setColor(Color.red);
+			g2d.drawRect(cursorX * spriteSize.width, cursorY
+					* spriteSize.height, spriteSize.width - 1,
+					spriteSize.height - 1);
+		}
 	}
 
 }

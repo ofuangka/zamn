@@ -1,11 +1,9 @@
 package zamn.creation;
 
-import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
-import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -13,7 +11,6 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Required;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import zamn.board.AbstractBoard;
@@ -23,52 +20,31 @@ import zamn.board.piece.Critter;
 
 public class BoardLoader {
 
+	private ObjectMapper objectMapper;
+
+	private TileFactory tileFactory;
 	private CritterFactory critterFactory;
-	private final ObjectMapper objectMapper;
-	private Dimension spriteSize;
-	private Map<String, int[]> tileSpriteMap;
 
-	private BufferedImage tileSpriteSheet;
-
-	public BoardLoader(ObjectMapper objectMapper, Resource tileSpriteMapResource)
-			throws IOException {
-		this.objectMapper = objectMapper;
-		SpriteMapDefinition spriteMapDefinition = parseSpriteMapDefinition(tileSpriteMapResource);
-		tileSpriteSheet = parseSpriteSheet(new ClassPathResource(
-				spriteMapDefinition.getSpriteSheetClassPath()));
-		tileSpriteMap = spriteMapDefinition.getSpriteMap();
-	}
-
-	public void applyTerrainToTile(String spriteId, Tile tile) {
-		tile.setSpriteId(spriteId);
-		int[] spriteSheetXY = tileSpriteMap.get(spriteId);
-		if (spriteSheetXY == null) {
-			throw new IllegalArgumentException(
-					"Could not retrieve sprite with ID: '" + spriteId + "'");
-		}
-		tile.drawSprite(tileSpriteSheet, spriteSheetXY[0], spriteSheetXY[1],
-				spriteSize);
-	}
-
-	protected void doAfterLoad(BoardDefinition boardDefinition,
-			AbstractBoard board) {
-		// hook for subclasses
+	public Class<? extends BoardDefinition> getBoardDefinitionClass() {
+		return BoardDefinition.class;
 	}
 
 	public void load(URI boardId, AbstractBoard board)
 			throws JsonParseException, JsonMappingException,
 			MalformedURLException, IOException {
 
-		BoardDefinition boardDefinition = parseBoardDefinition(boardId);
+		BoardDefinition boardDefinition = objectMapper.readValue(
+				boardId.toURL(), getBoardDefinitionClass());
 
 		// create the tiles 2d array
-		TileDefinition[][] tileDefinitions = boardDefinition.getTiles();
+		BoardPieceDefinition[][] tileDefinitions = boardDefinition.getTiles();
 		Tile[][] tiles = new Tile[tileDefinitions.length][];
 		for (int x = 0; x < tileDefinitions.length; x++) {
 			tiles[x] = new Tile[tileDefinitions[x].length];
 			for (int y = 0; y < tileDefinitions[x].length; y++) {
-				Tile tile = new Tile(x, y);
-				tile.setSolid(!tileDefinitions[x][y].is_());
+				BoardPieceDefinition tileDefinition = tileDefinitions[x][y];
+				tileDefinition.setCoords(new int[] { x, y });
+				Tile tile = (Tile) tileFactory.get(tileDefinition);
 				if (x != 0) {
 					tiles[x - 1][y].setRight(tile);
 					tile.setLeft(tiles[x - 1][y]);
@@ -77,9 +53,6 @@ public class BoardLoader {
 					tiles[x][y - 1].setBottom(tile);
 					tile.setTop(tiles[x][y - 1]);
 				}
-
-				String spriteId = tileDefinitions[x][y].getSpriteId();
-				applyTerrainToTile(spriteId, tile);
 				tiles[x][y] = tile;
 			}
 		}
@@ -118,22 +91,6 @@ public class BoardLoader {
 		board.setEntrances(boardDefinition.getEntrances());
 
 		board.setTiles(tiles);
-
-		// add a hook for subclasses
-		doAfterLoad(boardDefinition, board);
-	}
-
-	protected BoardDefinition parseBoardDefinition(URI boardId)
-			throws JsonParseException, JsonMappingException,
-			MalformedURLException, IOException {
-		return objectMapper.readValue(boardId.toURL(), BoardDefinition.class);
-	}
-
-	protected SpriteMapDefinition parseSpriteMapDefinition(
-			Resource tileSpriteMapResource) throws JsonParseException,
-			JsonMappingException, MalformedURLException, IOException {
-		return objectMapper.readValue(tileSpriteMapResource.getURI().toURL(),
-				SpriteMapDefinition.class);
 	}
 
 	protected BufferedImage parseSpriteSheet(Resource spriteSheetResource)
@@ -142,12 +99,17 @@ public class BoardLoader {
 	}
 
 	@Required
+	public void setTileFactory(TileFactory tileFactory) {
+		this.tileFactory = tileFactory;
+	}
+
+	@Required
 	public void setCritterFactory(CritterFactory critterFactory) {
 		this.critterFactory = critterFactory;
 	}
 
 	@Required
-	public void setSpriteSize(Dimension spriteSize) {
-		this.spriteSize = spriteSize;
+	public void setObjectMapper(ObjectMapper objectMapper) {
+		this.objectMapper = objectMapper;
 	}
 }

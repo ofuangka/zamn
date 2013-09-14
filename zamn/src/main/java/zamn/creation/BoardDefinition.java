@@ -3,9 +3,9 @@ package zamn.creation;
 public class BoardDefinition {
 	private String boardId;
 	private CritterDefinition[] critterDefinitions;
-	private Integer[][] entrances;
+	private int[][] entrances;
 	private ExitDefinition[] exits;
-	private TileDefinition[][] tiles;
+	private BoardPieceDefinition[][] tiles;
 
 	public String getBoardId() {
 		return boardId;
@@ -15,7 +15,7 @@ public class BoardDefinition {
 		return critterDefinitions;
 	}
 
-	public Integer[][] getEntrances() {
+	public int[][] getEntrances() {
 		return entrances;
 	}
 
@@ -23,7 +23,7 @@ public class BoardDefinition {
 		return exits;
 	}
 
-	public TileDefinition[][] getTiles() {
+	public BoardPieceDefinition[][] getTiles() {
 		return tiles;
 	}
 
@@ -35,7 +35,7 @@ public class BoardDefinition {
 		this.critterDefinitions = critterDefinitions.clone();
 	}
 
-	public void setEntrances(Integer[][] entrances) {
+	public void setEntrances(int[][] entrances) {
 		this.entrances = entrances;
 	}
 
@@ -43,7 +43,7 @@ public class BoardDefinition {
 		this.exits = exits.clone();
 	}
 
-	public void setTiles(TileDefinition[][] tiles) {
+	public void setTiles(BoardPieceDefinition[][] tiles) {
 		this.tiles = tiles.clone();
 	}
 

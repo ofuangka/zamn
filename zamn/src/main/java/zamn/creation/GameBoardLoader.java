@@ -8,8 +8,6 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.springframework.core.io.Resource;
 
 import zamn.board.AbstractBoard;
 import zamn.board.GameBoard;
@@ -30,17 +28,8 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 
 	private List<Critter> heroes = new ArrayList<Critter>();
 
-	public GameBoardLoader(ObjectMapper objectMapper,
-			Resource tileSpriteMapResource, IEventContext eventContext)
-			throws IOException {
-		super(objectMapper, tileSpriteMapResource);
+	public GameBoardLoader(IEventContext eventContext) {
 		eventContext.onAll(this);
-	}
-
-	@Override
-	protected void doAfterLoad(BoardDefinition boardDefinition,
-			AbstractBoard board) {
-
 	}
 
 	protected void handleCritterDeath(Critter deadCritter) {
@@ -83,7 +72,7 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 		super.load(boardId, board);
 		GameBoard gameBoard = (GameBoard) board;
 		Tile[][] tiles = gameBoard.getTiles();
-		Integer[][] entrances = gameBoard.getEntrances();
+		int[][] entrances = gameBoard.getEntrances();
 		Tile entranceTile = tiles[entrances[entryPoint][0]][entrances[entryPoint][1]];
 
 		for (Critter hero : heroes) {

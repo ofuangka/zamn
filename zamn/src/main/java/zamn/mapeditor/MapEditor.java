@@ -24,14 +24,13 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
-import javax.swing.JTextField;
 import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
-import zamn.board.Tile;
 import zamn.board.controlmode.Action;
 import zamn.creation.BoardSerializer;
 
@@ -50,7 +49,6 @@ public class MapEditor extends JFrame {
 	private Dimension paletteSize;
 	private JMenuItem saveMenuItem;
 	private JLabel spacer;
-	private JTextField tileInspector;
 
 	public void bootstrap() {
 		LOG.debug("Bootstrapping...");
@@ -69,6 +67,7 @@ public class MapEditor extends JFrame {
 				interfaze);
 		mapEditorScreen.setDividerSize(0);
 		mapEditorScreen.setBorder(BorderFactory.createEmptyBorder());
+
 		// create input and action maps
 		InputMap inputMap = new InputMap();
 		ActionMap actionMap = new ActionMap();
@@ -96,7 +95,7 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				board.up();
+				handleUp();
 			}
 
 		});
@@ -106,7 +105,7 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				board.right();
+				handleRight();
 			}
 
 		});
@@ -116,7 +115,7 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				board.down();
+				handleDown();
 			}
 
 		});
@@ -126,7 +125,7 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				board.left();
+				handleLeft();
 			}
 
 		});
@@ -136,6 +135,7 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				handleEnter();
 			}
 
 		});
@@ -145,7 +145,7 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				board.esc();
+				handleEsc();
 			}
 
 		});
@@ -155,7 +155,7 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				board.backspace();
+				handleBackspace();
 			}
 
 		});
@@ -165,10 +165,7 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				Tile currentTile = board.getCurrentTile();
-				board.applyTerrainToTile(paletteMap.get("tiles")
-						.getSelectedSpriteId(), currentTile);
-
+				handleSpace();
 			}
 
 		});
@@ -178,7 +175,7 @@ public class MapEditor extends JFrame {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				board.x();
+				handleX();
 			}
 
 		});
@@ -247,9 +244,29 @@ public class MapEditor extends JFrame {
 		saveMenuItem.setEnabled(true);
 	}
 
+	public void handleBackspace() {
+		board.backspace();
+	}
+
+	public void handleDown() {
+		board.down();
+	}
+
+	public void handleEnter() {
+
+	}
+
+	public void handleEsc() {
+		board.esc();
+	}
+
 	public void handleExitRequest() {
 		LOG.debug("Bye");
 		System.exit(0);
+	}
+
+	public void handleLeft() {
+		board.left();
 	}
 
 	public void handleOpenRequest() throws IOException {
@@ -265,6 +282,10 @@ public class MapEditor extends JFrame {
 		enableSaveMenuItem();
 	}
 
+	public void handleRight() {
+		board.right();
+	}
+
 	public void handleSaveRequest() {
 		LOG.debug("Handling save request...");
 		int returnVal = fileChooser.showSaveDialog(this);
@@ -274,6 +295,18 @@ public class MapEditor extends JFrame {
 		} else {
 			LOG.debug("Save operation canceled by user");
 		}
+	}
+
+	public void handleSpace() {
+		board.getSelectedTile();
+	}
+
+	public void handleUp() {
+		board.up();
+	}
+
+	public void handleX() {
+		board.x();
 	}
 
 	private void openFile(File selectedFile) throws IOException {
@@ -290,13 +323,14 @@ public class MapEditor extends JFrame {
 			int count = 0;
 			while (iter.hasNext()) {
 				MapEditorPalette palette = iter.next();
-				palette.setPreferredSize(paletteSize);
+				JScrollPane scrollPane = new JScrollPane(palette);
+				scrollPane.setPreferredSize(paletteSize);
 				gc = new GridBagConstraints();
 				gc.gridx = 0;
 				gc.gridy = count++;
 				gc.weightx = 1;
 				gc.fill = GridBagConstraints.HORIZONTAL;
-				interfaze.add(palette, gc);
+				interfaze.add(scrollPane, gc);
 			}
 			spacer = new JLabel();
 			gc = new GridBagConstraints();
@@ -304,14 +338,6 @@ public class MapEditor extends JFrame {
 			gc.gridy = numPalettes + 1;
 			gc.weighty = 1;
 			interfaze.add(spacer, gc);
-
-			tileInspector = new JTextField();
-			gc = new GridBagConstraints();
-			gc.gridx = 0;
-			gc.gridy = numPalettes + 2;
-			gc.fill = GridBagConstraints.HORIZONTAL;
-			gc.weightx = 1;
-			interfaze.add(tileInspector, gc);
 
 			mapEditorScreen.requestFocus();
 		} else {

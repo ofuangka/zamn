@@ -42,13 +42,13 @@ public class BoardSerializer {
 		// add tiles
 		Tile[][] tiles = board.getTiles();
 		int widthInTiles = tiles.length;
-		TileDefinition[][] tileDefinitions = new TileDefinition[widthInTiles][];
+		BoardPieceDefinition[][] tileDefinitions = new BoardPieceDefinition[widthInTiles][];
 		for (int x = 0; x < widthInTiles; x++) {
 			int heightInTiles = tiles[x].length;
-			tileDefinitions[x] = new TileDefinition[heightInTiles];
+			tileDefinitions[x] = new BoardPieceDefinition[heightInTiles];
 			for (int y = 0; y < heightInTiles; y++) {
-				tileDefinitions[x][y] = new TileDefinition();
-				tileDefinitions[x][y].set_(!tiles[x][y].isSolid());
+				tileDefinitions[x][y] = new BoardPieceDefinition();
+				tileDefinitions[x][y].setSolid(tiles[x][y].isSolid());
 				tileDefinitions[x][y].setSpriteId(tiles[x][y].getSpriteId());
 			}
 		}

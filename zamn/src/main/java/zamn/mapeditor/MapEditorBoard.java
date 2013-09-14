@@ -43,7 +43,7 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 	@Override
 	public void backspace() {
 		// remove a piece from the currently selected tile
-		Tile currentTile = getCurrentTile();
+		Tile currentTile = getSelectedTile();
 		List<BoardPiece> pieces = currentTile.getPieces();
 		if (!pieces.isEmpty()) {
 			pieces.remove(pieces.size());
@@ -65,7 +65,7 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 		// do nothing
 	}
 
-	public Tile getCurrentTile() {
+	public Tile getSelectedTile() {
 		return getTile(CURSOR.getX(), CURSOR.getY());
 	}
 
@@ -171,7 +171,7 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 
 	@Override
 	public void space() {
-		// add the piece to the currently selected tile
+
 	}
 
 	@Override
@@ -182,7 +182,7 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 	@Override
 	public void x() {
 		// toggle the solidity of the tile
-		Tile currentTile = getCurrentTile();
+		Tile currentTile = getSelectedTile();
 		currentTile.setSolid(!currentTile.isSolid());
 		repaint();
 	}
