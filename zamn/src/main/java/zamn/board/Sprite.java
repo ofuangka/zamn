@@ -11,21 +11,14 @@ import java.awt.image.BufferedImage;
  */
 public class Sprite {
 
-	private Dimension spriteSize;
-
-	public Dimension getSpriteSize() {
-		return spriteSize;
-	}
-
-	public void setSpriteSize(Dimension spriteSize) {
-		this.spriteSize = spriteSize;
-	}
-
 	private String spriteId;
-	private BufferedImage spriteSheet;
-	private int spriteSheetX;
-	private int spriteSheetY;
 
+	private BufferedImage spriteSheet;
+
+	private int spriteSheetX;
+
+	private int spriteSheetY;
+	private Dimension spriteSize;
 	public void drawSprite(BufferedImage spriteSheet, int spriteSheetX,
 			int spriteSheetY, Dimension spriteSize) {
 		this.spriteSheet = spriteSheet;
@@ -33,7 +26,6 @@ public class Sprite {
 		this.spriteSheetY = spriteSheetY;
 		setSpriteSize(spriteSize);
 	}
-
 	public BufferedImage getImage() {
 		Dimension spriteSize = getSpriteSize();
 		return spriteSheet.getSubimage(spriteSheetX * spriteSize.width,
@@ -45,8 +37,16 @@ public class Sprite {
 		return spriteId;
 	}
 
+	public Dimension getSpriteSize() {
+		return spriteSize;
+	}
+
 	public void setSpriteId(String spriteId) {
 		this.spriteId = spriteId;
+	}
+
+	public void setSpriteSize(Dimension spriteSize) {
+		this.spriteSize = spriteSize;
 	}
 
 }

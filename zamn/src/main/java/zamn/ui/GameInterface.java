@@ -10,7 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import zamn.board.piece.Critter;
+import zamn.board.Critter;
 import zamn.framework.event.IEventContext;
 
 public class GameInterface extends JScrollPane {

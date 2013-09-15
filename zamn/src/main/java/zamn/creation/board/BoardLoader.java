@@ -1,4 +1,4 @@
-package zamn.creation;
+package zamn.creation.board;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -14,16 +14,18 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.core.io.Resource;
 
 import zamn.board.AbstractBoard;
+import zamn.board.Critter;
+import zamn.board.Decoration;
 import zamn.board.Tile;
 import zamn.board.controlmode.Action;
-import zamn.board.piece.Critter;
 
 public class BoardLoader {
 
-	private ObjectMapper objectMapper;
-
-	private TileFactory tileFactory;
 	private CritterFactory critterFactory;
+
+	private DecorationFactory decorationFactory;
+	private ObjectMapper objectMapper;
+	private TileFactory tileFactory;
 
 	public Class<? extends BoardDefinition> getBoardDefinitionClass() {
 		return BoardDefinition.class;
@@ -37,7 +39,8 @@ public class BoardLoader {
 				boardId.toURL(), getBoardDefinitionClass());
 
 		// create the tiles 2d array
-		BoardPieceDefinition[][] tileDefinitions = boardDefinition.getTiles();
+		BoardPieceDefinition[][] tileDefinitions = boardDefinition
+				.getTileDefinitions();
 		Tile[][] tiles = new Tile[tileDefinitions.length][];
 		for (int x = 0; x < tileDefinitions.length; x++) {
 			tiles[x] = new Tile[tileDefinitions[x].length];
@@ -57,14 +60,28 @@ public class BoardLoader {
 			}
 		}
 
+		// add the decorations
+		DecorationDefinition[] decorationDefinitions = boardDefinition
+				.getDecorationDefinitions();
+		for (int i = 0; i < decorationDefinitions.length; i++) {
+			DecorationDefinition decorationDefinition = decorationDefinitions[i];
+			Decoration decoration = (Decoration) decorationFactory
+					.get(decorationDefinition);
+			int[] xy = decorationDefinition.getCoords();
+			int x = xy[0];
+			int y = xy[1];
+			decoration.setXY(x, y);
+			Tile tile = board.getTile(x, y);
+			tile.add(decoration);
+		}
+
 		// add the critters
-		CritterDefinition[] critterPositionDefinitions = boardDefinition
+		CritterDefinition[] critterDefinitions = boardDefinition
 				.getCritterDefinitions();
-		for (int i = 0; i < critterPositionDefinitions.length; i++) {
-			CritterDefinition critterPositionDefinition = critterPositionDefinitions[i];
-			Critter critter = (Critter) critterFactory
-					.get(critterPositionDefinition);
-			int[] xy = critterPositionDefinition.getCoords();
+		for (int i = 0; i < critterDefinitions.length; i++) {
+			CritterDefinition critterDefinition = critterDefinitions[i];
+			Critter critter = (Critter) critterFactory.get(critterDefinition);
+			int[] xy = critterDefinition.getCoords();
 			int seedX = xy[0];
 			int seedY = xy[1];
 			if (tiles[seedX] != null && tiles[seedX][seedY] != null
@@ -76,7 +93,7 @@ public class BoardLoader {
 		}
 
 		// add the exit definitions
-		ExitDefinition[] exitDefinitions = boardDefinition.getExits();
+		ExitDefinition[] exitDefinitions = boardDefinition.getExitDefinitions();
 		for (int i = 0; i < exitDefinitions.length; i++) {
 			ExitDefinition exitDefinition = exitDefinitions[i];
 			board.addExit(
@@ -88,7 +105,7 @@ public class BoardLoader {
 		}
 
 		// add the entrances
-		board.setEntrances(boardDefinition.getEntrances());
+		board.setEntrances(boardDefinition.getEntranceDefinitions());
 
 		board.setTiles(tiles);
 	}
@@ -99,17 +116,22 @@ public class BoardLoader {
 	}
 
 	@Required
-	public void setTileFactory(TileFactory tileFactory) {
-		this.tileFactory = tileFactory;
-	}
-
-	@Required
 	public void setCritterFactory(CritterFactory critterFactory) {
 		this.critterFactory = critterFactory;
 	}
 
 	@Required
+	public void setDecorationFactory(DecorationFactory decorationFactory) {
+		this.decorationFactory = decorationFactory;
+	}
+
+	@Required
 	public void setObjectMapper(ObjectMapper objectMapper) {
 		this.objectMapper = objectMapper;
+	}
+
+	@Required
+	public void setTileFactory(TileFactory tileFactory) {
+		this.tileFactory = tileFactory;
 	}
 }

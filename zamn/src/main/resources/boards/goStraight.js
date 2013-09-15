@@ -1,6 +1,6 @@
 {
-	"entrances" : [ [ 2, 3 ] ],
-	"exits" : [ {
+	"entranceDefinitions" : [ [ 2, 3 ] ],
+	"exitDefinitions" : [ {
 		"boardId" : "neverReturnAlive",
 		"dir" : "down",
 		"entryPoint" : 1,
@@ -26,7 +26,8 @@
 		"y" : 4
 	} ],
 	"boardId" : null,
-	"tiles" : [ [ {
+	"decorationDefinitions" : [],
+	"tileDefinitions" : [ [ {
 		"solid" : true,
 		"spriteId" : "stone"
 	}, {

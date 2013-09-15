@@ -65,10 +65,6 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 		// do nothing
 	}
 
-	public Tile getSelectedTile() {
-		return getTile(CURSOR.getX(), CURSOR.getY());
-	}
-
 	@Override
 	@Transient
 	public Dimension getMinimumSize() {
@@ -81,6 +77,10 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 		Dimension spriteSize = getSpriteSize();
 		return (tiles == null) ? new Dimension() : new Dimension(tiles.length
 				* spriteSize.width, tiles[0].length * spriteSize.height);
+	}
+
+	public Tile getSelectedTile() {
+		return getTile(CURSOR.getX(), CURSOR.getY());
 	}
 
 	@Override

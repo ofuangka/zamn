@@ -1,4 +1,4 @@
-package zamn.creation;
+package zamn.creation.board;
 
 import java.io.IOException;
 import java.util.Map;
@@ -7,8 +7,8 @@ import java.util.Set;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.core.io.Resource;
 
+import zamn.board.Critter;
 import zamn.board.Sprite;
-import zamn.board.piece.Critter;
 
 public class CritterFactory extends BoardPieceFactory {
 

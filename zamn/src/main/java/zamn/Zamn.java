@@ -21,9 +21,9 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import zamn.board.Critter;
 import zamn.board.GameBoard;
 import zamn.board.controlmode.Action;
-import zamn.board.piece.Critter;
 import zamn.framework.event.Event;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;

@@ -15,8 +15,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import zamn.board.controlmode.Action;
-import zamn.board.piece.Critter;
-import zamn.creation.BoardLoader;
+import zamn.creation.board.BoardLoader;
 import zamn.ui.IKeySink;
 import zamn.ui.ILayer;
 

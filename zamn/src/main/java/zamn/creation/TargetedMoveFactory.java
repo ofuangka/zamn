@@ -7,12 +7,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.springframework.core.io.Resource;
 
+import zamn.board.Critter;
 import zamn.board.Tile;
+import zamn.board.Critter.Stat;
 import zamn.board.controlmode.AbstractEffect;
 import zamn.board.controlmode.StatDrivenStatEffect;
 import zamn.board.controlmode.TargetedMove;
-import zamn.board.piece.Critter;
-import zamn.board.piece.Critter.Stat;
 import zamn.board.tilecollector.AbstractDecayingTileCollector;
 import zamn.board.tilecollector.ITileCollector;
 import zamn.board.tilecollector.TileCollectorType;

@@ -1,11 +1,10 @@
-package zamn.board.piece;
+package zamn.board;
 
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import zamn.board.BoardPiece;
 import zamn.util.NullSafeCompare;
 
 public class Critter extends BoardPiece {

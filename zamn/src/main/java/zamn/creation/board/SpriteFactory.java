@@ -1,4 +1,4 @@
-package zamn.creation;
+package zamn.creation.board;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -18,9 +18,9 @@ import zamn.board.Sprite;
 
 public class SpriteFactory {
 
-	private BufferedImage spriteSheet;
-	private Map<String, int[]> spriteMap;
 	private Map<String, String> reverseLookupMap;
+	private Map<String, int[]> spriteMap;
+	private BufferedImage spriteSheet;
 	private Dimension spriteSize;
 
 	public SpriteFactory(ObjectMapper objectMapper, Resource spriteMapResource)
@@ -59,32 +59,32 @@ public class SpriteFactory {
 		return ret;
 	}
 
-	public String getReverseLookupKey(int[] xy) {
-		return xy[0] + "," + xy[1];
+	protected Sprite getNewSprite() {
+		return new Sprite();
 	}
 
-	public BufferedImage getSpriteSheet() {
-		return spriteSheet;
+	public String getReverseLookupKey(int[] xy) {
+		return xy[0] + "," + xy[1];
 	}
 
 	public Map<String, int[]> getSpriteMap() {
 		return spriteMap;
 	}
 
-	@Required
-	public void setSpriteSize(Dimension spriteSize) {
-		this.spriteSize = spriteSize;
+	public BufferedImage getSpriteSheet() {
+		return spriteSheet;
 	}
 
 	public Dimension getSpriteSize() {
 		return spriteSize;
 	}
 
-	protected Sprite getNewSprite() {
-		return new Sprite();
-	}
-
 	public String reverseLookup(int x, int y) {
 		return reverseLookupMap.get(getReverseLookupKey(new int[] { x, y }));
+	}
+
+	@Required
+	public void setSpriteSize(Dimension spriteSize) {
+		this.spriteSize = spriteSize;
 	}
 }

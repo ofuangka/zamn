@@ -8,7 +8,7 @@ import java.awt.Graphics2D;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 
-import zamn.board.piece.Critter;
+import zamn.board.Critter;
 
 public class CritterSticker extends JLabel {
 

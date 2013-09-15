@@ -12,13 +12,13 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
-import zamn.creation.SpriteFactory;
+import zamn.creation.board.SpriteFactory;
 
 public class MapEditorPalette extends JPanel implements MouseListener {
 
-	private static final long serialVersionUID = 5684413780256691006L;
-
 	private static final int DISABLED_CURSOR_XY = -1;
+
+	private static final long serialVersionUID = 5684413780256691006L;
 
 	private int cursorX;
 	private int cursorY;
@@ -30,6 +30,10 @@ public class MapEditorPalette extends JPanel implements MouseListener {
 		this.spriteFactory = spriteFactory;
 		this.spriteSize = spriteSize;
 		addMouseListener(this);
+	}
+
+	private void disableCursor() {
+		cursorX = cursorY = DISABLED_CURSOR_XY;
 	}
 
 	public int getCursorX() {
@@ -47,6 +51,10 @@ public class MapEditorPalette extends JPanel implements MouseListener {
 		return new Dimension(spriteSheet.getWidth(), spriteSheet.getHeight());
 	}
 
+	private boolean isCursorEnabled() {
+		return cursorX != DISABLED_CURSOR_XY;
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		int x = e.getX() / spriteSize.width;
@@ -57,19 +65,6 @@ public class MapEditorPalette extends JPanel implements MouseListener {
 			setCursorXY(x, y);
 		}
 		repaint();
-	}
-
-	private void setCursorXY(int x, int y) {
-		cursorX = x;
-		cursorY = y;
-	}
-
-	private void disableCursor() {
-		cursorX = cursorY = DISABLED_CURSOR_XY;
-	}
-
-	private boolean isCursorEnabled() {
-		return cursorX != DISABLED_CURSOR_XY;
 	}
 
 	@Override
@@ -108,6 +103,11 @@ public class MapEditorPalette extends JPanel implements MouseListener {
 					* spriteSize.height, spriteSize.width - 1,
 					spriteSize.height - 1);
 		}
+	}
+
+	private void setCursorXY(int x, int y) {
+		cursorX = x;
+		cursorY = y;
 	}
 
 }

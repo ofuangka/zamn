@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Required;
 
+import zamn.board.Critter;
 import zamn.board.controlmode.TargetedMove;
-import zamn.board.piece.Critter;
 import zamn.creation.TargetedMoveFactory;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;

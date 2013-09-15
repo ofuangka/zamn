@@ -1,4 +1,4 @@
-package zamn.creation;
+package zamn.creation.board;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -10,9 +10,9 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 
 import zamn.board.AbstractBoard;
+import zamn.board.Critter;
 import zamn.board.GameBoard;
 import zamn.board.Tile;
-import zamn.board.piece.Critter;
 import zamn.framework.event.Event;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;

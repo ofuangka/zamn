@@ -2,9 +2,9 @@ package zamn.board.controlmode;
 
 import java.util.List;
 
+import zamn.board.Critter;
 import zamn.board.GameBoard;
 import zamn.board.Tile;
-import zamn.board.piece.Critter;
 import zamn.board.tilecollector.CombatMovementTileCollector;
 import zamn.board.tilecollector.TileListFilter;
 import zamn.framework.event.GameEventContext;

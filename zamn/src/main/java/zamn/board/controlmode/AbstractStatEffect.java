@@ -5,9 +5,9 @@ import java.util.Random;
 import org.apache.log4j.Logger;
 
 import zamn.board.BoardPiece;
+import zamn.board.Critter;
 import zamn.board.Tile;
-import zamn.board.piece.Critter;
-import zamn.board.piece.Critter.Stat;
+import zamn.board.Critter.Stat;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
 

@@ -1,7 +1,7 @@
 package zamn.board.controlmode;
 
+import zamn.board.Critter;
 import zamn.board.Tile;
-import zamn.board.piece.Critter;
 
 public abstract class AbstractEffect {
 

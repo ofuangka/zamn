@@ -1,6 +1,6 @@
 package zamn.board.controlmode;
 
-import zamn.board.piece.Critter;
+import zamn.board.Critter;
 import zamn.framework.event.IEventContext;
 
 /**

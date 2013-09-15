@@ -1,4 +1,4 @@
-package zamn.creation;
+package zamn.creation.board;
 
 import java.util.Map;
 

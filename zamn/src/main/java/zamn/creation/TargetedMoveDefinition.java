@@ -1,5 +1,6 @@
 package zamn.creation;
 
+
 public class TargetedMoveDefinition {
 
 	private String actualRangeFilter;

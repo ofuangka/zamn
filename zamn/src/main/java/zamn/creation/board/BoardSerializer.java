@@ -1,4 +1,4 @@
-package zamn.creation;
+package zamn.creation.board;
 
 import java.io.IOException;
 import java.util.Iterator;
@@ -9,8 +9,8 @@ import java.util.Set;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import zamn.board.AbstractBoard;
+import zamn.board.Critter;
 import zamn.board.Tile;
-import zamn.board.piece.Critter;
 
 public class BoardSerializer {
 
@@ -42,12 +42,12 @@ public class BoardSerializer {
 		// add tiles
 		Tile[][] tiles = board.getTiles();
 		int widthInTiles = tiles.length;
-		BoardPieceDefinition[][] tileDefinitions = new BoardPieceDefinition[widthInTiles][];
+		TileDefinition[][] tileDefinitions = new TileDefinition[widthInTiles][];
 		for (int x = 0; x < widthInTiles; x++) {
 			int heightInTiles = tiles[x].length;
-			tileDefinitions[x] = new BoardPieceDefinition[heightInTiles];
+			tileDefinitions[x] = new TileDefinition[heightInTiles];
 			for (int y = 0; y < heightInTiles; y++) {
-				tileDefinitions[x][y] = new BoardPieceDefinition();
+				tileDefinitions[x][y] = new TileDefinition();
 				tileDefinitions[x][y].setSolid(tiles[x][y].isSolid());
 				tileDefinitions[x][y].setSpriteId(tiles[x][y].getSpriteId());
 			}
@@ -87,12 +87,12 @@ public class BoardSerializer {
 				exitDefinition.setY(getY(key));
 				exitDefinitions[count++] = exitDefinition;
 			}
-			boardDefinition.setExits(exitDefinitions);
+			boardDefinition.setExitDefinitions(exitDefinitions);
 		}
 
 		// add entrances
-		boardDefinition.setEntrances(board.getEntrances());
-		boardDefinition.setTiles(tileDefinitions);
+		boardDefinition.setEntranceDefinitions(board.getEntrances());
+		boardDefinition.setTileDefinitions(tileDefinitions);
 		return objectMapper.writeValueAsString(boardDefinition);
 	}
 }

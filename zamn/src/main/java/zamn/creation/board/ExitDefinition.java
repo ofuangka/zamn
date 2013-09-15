@@ -1,4 +1,4 @@
-package zamn.creation;
+package zamn.creation.board;
 
 public class ExitDefinition {
 	private String boardId;

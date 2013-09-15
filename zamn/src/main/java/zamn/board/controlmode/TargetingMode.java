@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 
+import zamn.board.Critter;
 import zamn.board.GameBoard;
 import zamn.board.Tile;
-import zamn.board.piece.Critter;
 import zamn.board.tilecollector.ITileCollector;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;

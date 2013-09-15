@@ -3,8 +3,8 @@ package zamn.board.tilecollector;
 import java.util.ArrayList;
 import java.util.List;
 
+import zamn.board.Critter;
 import zamn.board.Tile;
-import zamn.board.piece.Critter;
 
 public enum TileListFilter implements ITileListFilter {
 

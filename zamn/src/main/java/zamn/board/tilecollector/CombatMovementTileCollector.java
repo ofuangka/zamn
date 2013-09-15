@@ -1,7 +1,7 @@
 package zamn.board.tilecollector;
 
+import zamn.board.Critter;
 import zamn.board.Tile;
-import zamn.board.piece.Critter;
 
 public class CombatMovementTileCollector extends AbstractDecayingTileCollector {
 

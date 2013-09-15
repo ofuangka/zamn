@@ -60,10 +60,11 @@
 		<constructor-arg ref="eventContext" />
 		<property name="spriteSize" ref="spriteSize" />
 		<property name="boardLoader">
-			<bean class="zamn.creation.GameBoardLoader">
+			<bean class="zamn.creation.board.GameBoardLoader">
 				<constructor-arg ref="eventContext" />
 				<property name="objectMapper" ref="objectMapper" />
 				<property name="critterFactory" ref="critterFactory" />
+				<property name="decorationFactory" ref="decorationFactory" />
 				<property name="tileFactory" ref="tileFactory" />
 			</bean>
 		</property>
@@ -72,7 +73,7 @@
 			<bean class="zamn.board.ClassPathBoardUriResolver" />
 		</property>
 		<property name="initialHeroDefinition">
-			<bean class="zamn.creation.CritterDefinition">
+			<bean class="zamn.creation.board.CritterDefinition">
 				<property name="hostile" value="false" />
 				<property name="coords">
 					<array>
@@ -176,7 +177,7 @@
 	</bean>
 	<bean id="objectMapper" class="org.codehaus.jackson.map.ObjectMapper" />
 
-	<bean id="critterFactory" class="zamn.creation.CritterFactory">
+	<bean id="critterFactory" class="zamn.creation.board.CritterFactory">
 		<constructor-arg ref="objectMapper" />
 		<constructor-arg value="classpath:sprites/critters.js" />
 		<property name="spriteSize" ref="spriteSize" />
@@ -207,7 +208,7 @@
 			</bean>
 		</property>
 		<property name="boardSerializer">
-			<bean class="zamn.creation.BoardSerializer">
+			<bean class="zamn.creation.board.BoardSerializer">
 				<constructor-arg ref="objectMapper" />
 			</bean>
 		</property>
@@ -215,18 +216,25 @@
 
 	<bean id="mapEditorBoard" class="zamn.mapeditor.MapEditorBoard">
 		<property name="boardLoader">
-			<bean class="zamn.creation.BoardLoader">
+			<bean class="zamn.creation.board.BoardLoader">
 				<property name="objectMapper" ref="objectMapper" />
 				<property name="critterFactory" ref="critterFactory" />
+				<property name="decorationFactory" ref="decorationFactory" />
 				<property name="tileFactory" ref="tileFactory" />
 			</bean>
 		</property>
 		<property name="spriteSize" ref="spriteSize" />
 	</bean>
 
-	<bean id="tileFactory" class="zamn.creation.TileFactory">
+	<bean id="tileFactory" class="zamn.creation.board.TileFactory">
 		<constructor-arg ref="objectMapper" />
 		<constructor-arg value="classpath:sprites/tiles.js" />
+		<property name="spriteSize" ref="spriteSize" />
+	</bean>
+
+	<bean id="decorationFactory" class="zamn.creation.board.DecorationFactory">
+		<constructor-arg ref="objectMapper" />
+		<constructor-arg value="classpath:sprites/decorations.js" />
 		<property name="spriteSize" ref="spriteSize" />
 	</bean>
 </beans>

@@ -32,7 +32,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import zamn.board.controlmode.Action;
-import zamn.creation.BoardSerializer;
+import zamn.creation.board.BoardSerializer;
 
 public class MapEditor extends JFrame {
 
