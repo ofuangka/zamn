@@ -185,26 +185,28 @@
 
 	<bean id="mapEditor" class="zamn.mapeditor.MapEditor">
 		<property name="board" ref="mapEditorBoard" />
-		<property name="paletteMap">
-			<map>
-				<entry key="tiles">
-					<bean class="zamn.mapeditor.MapEditorPalette">
-						<constructor-arg ref="tileFactory" />
-						<constructor-arg ref="spriteSize" />
-					</bean>
-				</entry>
-				<entry key="critters">
-					<bean class="zamn.mapeditor.MapEditorPalette">
-						<constructor-arg ref="critterFactory" />
-						<constructor-arg ref="spriteSize" />
-					</bean>
-				</entry>
-			</map>
+		<property name="tilePalette">
+			<bean class="zamn.mapeditor.MapEditorPalette">
+				<constructor-arg ref="tileFactory" />
+				<constructor-arg ref="spriteSize" />
+			</bean>
+		</property>
+		<property name="decorationPalette">
+			<bean class="zamn.mapeditor.MapEditorPalette">
+				<constructor-arg ref="decorationFactory" />
+				<constructor-arg ref="spriteSize" />
+			</bean>
+		</property>
+		<property name="critterPalette">
+			<bean class="zamn.mapeditor.MapEditorPalette">
+				<constructor-arg ref="critterFactory" />
+				<constructor-arg ref="spriteSize" />
+			</bean>
 		</property>
 		<property name="paletteSize">
 			<bean class="java.awt.Dimension">
-				<constructor-arg value="200" />
-				<constructor-arg value="200" />
+				<constructor-arg value="256" />
+				<constructor-arg value="256" />
 			</bean>
 		</property>
 		<property name="boardSerializer">
@@ -212,6 +214,7 @@
 				<constructor-arg ref="objectMapper" />
 			</bean>
 		</property>
+		<property name="tileFactory" ref="tileFactory" />
 	</bean>
 
 	<bean id="mapEditorBoard" class="zamn.mapeditor.MapEditorBoard">

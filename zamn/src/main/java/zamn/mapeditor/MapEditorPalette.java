@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import javax.swing.JPanel;
 
+import zamn.board.Sprite;
 import zamn.creation.board.SpriteFactory;
 
 public class MapEditorPalette extends JPanel implements MouseListener {
@@ -51,7 +52,23 @@ public class MapEditorPalette extends JPanel implements MouseListener {
 		return new Dimension(spriteSheet.getWidth(), spriteSheet.getHeight());
 	}
 
-	private boolean isCursorEnabled() {
+	public String getSelectedSpriteId() {
+		String ret = null;
+		if (isCursorEnabled()) {
+			ret = spriteFactory.reverseLookup(cursorX, cursorY);
+		}
+		return ret;
+	}
+
+	public Sprite getSelectedSprite() {
+		Sprite ret = null;
+		if (isCursorEnabled()) {
+			ret = spriteFactory.get(getSelectedSpriteId());
+		}
+		return ret;
+	}
+
+	public boolean isCursorEnabled() {
 		return cursorX != DISABLED_CURSOR_XY;
 	}
 

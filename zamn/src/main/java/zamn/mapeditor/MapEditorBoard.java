@@ -21,6 +21,8 @@ import zamn.board.controlmode.Action;
 
 public class MapEditorBoard extends AbstractBoard implements MouseListener {
 
+	private static final int CURSOR_Z = 9999;
+
 	private static final BoardPiece CURSOR = new BoardPiece() {
 		@Override
 		public BufferedImage getImage() {
@@ -32,6 +34,10 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 			g2d.drawRect(0, 0, spriteSize.width - 1, spriteSize.height - 1);
 			return ret;
 		}
+
+		public int getZ() {
+			return CURSOR_Z;
+		};
 	};
 
 	private static final long serialVersionUID = 8159431301832393440L;
@@ -42,12 +48,16 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 
 	@Override
 	public void backspace() {
+
 		// remove a piece from the currently selected tile
 		Tile currentTile = getSelectedTile();
 		List<BoardPiece> pieces = currentTile.getPieces();
-		if (!pieces.isEmpty()) {
-			pieces.remove(pieces.size());
+
+		// count the cursor as a piece that we never want to remove
+		if (!pieces.isEmpty() && pieces.size() > 1) {
+			pieces.remove(pieces.size() - 2);
 		}
+		repaint();
 	}
 
 	@Override

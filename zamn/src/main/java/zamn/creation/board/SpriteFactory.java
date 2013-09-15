@@ -43,20 +43,23 @@ public class SpriteFactory {
 		}
 	}
 
-	public void drawSprite(SpriteDefinition spriteDefinition, Sprite sprite) {
+	public void drawSprite(String spriteId, Sprite sprite) {
 
 		// get the sprite information
-		int[] spriteSheetXY = getSpriteMap()
-				.get(spriteDefinition.getSpriteId());
+		int[] spriteSheetXY = getSpriteMap().get(spriteId);
 
 		sprite.drawSprite(getSpriteSheet(), spriteSheetXY[0], spriteSheetXY[1],
 				getSpriteSize());
 	}
 
-	public Sprite get(SpriteDefinition spriteDefinition) {
+	public Sprite get(String spriteId) {
 		Sprite ret = getNewSprite();
-		drawSprite(spriteDefinition, ret);
+		drawSprite(spriteId, ret);
 		return ret;
+	}
+
+	public Sprite get(SpriteDefinition spriteDefinition) {
+		return get(spriteDefinition.getSpriteId());
 	}
 
 	protected Sprite getNewSprite() {

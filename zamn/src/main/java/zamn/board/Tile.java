@@ -82,7 +82,7 @@ public class Tile extends BoardPiece {
 				} else {
 					int i = 0;
 					while (i < pieces.size()
-							&& piece.getZ() < pieces.get(i).getZ()) {
+							&& pieces.get(i).getZ() < piece.getZ()) {
 						i++;
 					}
 					pieces.add(i, piece);

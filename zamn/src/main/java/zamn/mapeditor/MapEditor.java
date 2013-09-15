@@ -8,9 +8,6 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
 
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
@@ -19,7 +16,6 @@ import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -31,8 +27,12 @@ import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
+import zamn.board.Critter;
+import zamn.board.Decoration;
+import zamn.board.Tile;
 import zamn.board.controlmode.Action;
 import zamn.creation.board.BoardSerializer;
+import zamn.creation.board.TileFactory;
 
 public class MapEditor extends JFrame {
 
@@ -45,10 +45,22 @@ public class MapEditor extends JFrame {
 	private JFileChooser fileChooser;
 	private JPanel interfaze;
 	private JSplitPane mapEditorScreen;
-	private Map<String, MapEditorPalette> paletteMap;
 	private Dimension paletteSize;
 	private JMenuItem saveMenuItem;
-	private JLabel spacer;
+	private MapEditorPalette tilePalette;
+	private MapEditorPalette decorationPalette;
+	private MapEditorPalette critterPalette;
+	private TileFactory tileFactory;
+
+	public void addCritter() {
+		Tile tile = board.getSelectedTile();
+		tile.add((Critter) critterPalette.getSelectedSprite());
+	}
+
+	public void addDecoration() {
+		Tile tile = board.getSelectedTile();
+		tile.add((Decoration) decorationPalette.getSelectedSprite());
+	}
 
 	public void bootstrap() {
 		LOG.debug("Bootstrapping...");
@@ -240,6 +252,13 @@ public class MapEditor extends JFrame {
 		saveMenuItem.setEnabled(false);
 	}
 
+	private void drawTile() {
+		if (tilePalette.isCursorEnabled()) {
+			tileFactory.drawSprite(tilePalette.getSelectedSpriteId(),
+					board.getSelectedTile());
+		}
+	}
+
 	private void enableSaveMenuItem() {
 		saveMenuItem.setEnabled(true);
 	}
@@ -253,7 +272,10 @@ public class MapEditor extends JFrame {
 	}
 
 	public void handleEnter() {
-
+		drawTile();
+		addDecoration();
+		addCritter();
+		board.repaint();
 	}
 
 	public void handleEsc() {
@@ -298,7 +320,7 @@ public class MapEditor extends JFrame {
 	}
 
 	public void handleSpace() {
-		board.getSelectedTile();
+		LOG.info(board.getSelectedTile());
 	}
 
 	public void handleUp() {
@@ -314,35 +336,30 @@ public class MapEditor extends JFrame {
 		showAndCenter();
 	}
 
-	private void populateMapEditorInterface() {
-		if (paletteMap != null) {
-			Collection<MapEditorPalette> palettes = paletteMap.values();
-			GridBagConstraints gc;
-			int numPalettes = palettes.size();
-			Iterator<MapEditorPalette> iter = palettes.iterator();
-			int count = 0;
-			while (iter.hasNext()) {
-				MapEditorPalette palette = iter.next();
-				JScrollPane scrollPane = new JScrollPane(palette);
-				scrollPane.setPreferredSize(paletteSize);
-				gc = new GridBagConstraints();
-				gc.gridx = 0;
-				gc.gridy = count++;
-				gc.weightx = 1;
-				gc.fill = GridBagConstraints.HORIZONTAL;
-				interfaze.add(scrollPane, gc);
-			}
-			spacer = new JLabel();
-			gc = new GridBagConstraints();
-			gc.gridx = 0;
-			gc.gridy = numPalettes + 1;
-			gc.weighty = 1;
-			interfaze.add(spacer, gc);
+	protected void addPalette(MapEditorPalette palette) {
+		JScrollPane scrollPane = new JScrollPane(palette);
+		scrollPane.setPreferredSize(paletteSize);
+		GridBagConstraints gc = new GridBagConstraints();
+		gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = getNumberOfPalettes();
+		gc.weightx = 1;
+		gc.weighty = 1;
+		gc.fill = GridBagConstraints.BOTH;
+		interfaze.add(scrollPane, gc);
+	}
 
-			mapEditorScreen.requestFocus();
-		} else {
-			throw new IllegalStateException("Palette map cannot be null");
-		}
+	private int getNumberOfPalettes() {
+		return interfaze.getComponents().length;
+	}
+
+	private void populateMapEditorInterface() {
+
+		addPalette(tilePalette);
+		addPalette(decorationPalette);
+		addPalette(critterPalette);
+
+		mapEditorScreen.requestFocus();
 	}
 
 	private void saveFile(File selectedFile) {
@@ -366,13 +383,28 @@ public class MapEditor extends JFrame {
 	}
 
 	@Required
-	public void setPaletteMap(Map<String, MapEditorPalette> paletteMap) {
-		this.paletteMap = paletteMap;
+	public void setCritterPalette(MapEditorPalette critterPalette) {
+		this.critterPalette = critterPalette;
+	}
+
+	@Required
+	public void setDecorationPalette(MapEditorPalette decorationPalette) {
+		this.decorationPalette = decorationPalette;
 	}
 
 	@Required
 	public void setPaletteSize(Dimension paletteSize) {
 		this.paletteSize = paletteSize;
+	}
+
+	@Required
+	public void setTileFactory(TileFactory tileFactory) {
+		this.tileFactory = tileFactory;
+	}
+
+	@Required
+	public void setTilePalette(MapEditorPalette tilePalette) {
+		this.tilePalette = tilePalette;
 	}
 
 	public void showAndCenter() {
