@@ -54,6 +54,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	private BoardLoader boardLoader;
 	protected List<Critter> critters = new ArrayList<Critter>();
+	protected List<Decoration> decorations = new ArrayList<Decoration>();
 	protected int[][] entrances;
 	protected Map<String, String[]> exits = new HashMap<String, String[]>();
 
@@ -61,8 +62,25 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	protected Tile[][] tiles;
 
-	public void addCritter(Critter critter) {
+	public void addBoardPiece(BoardPiece boardPiece, int x, int y) {
+		Class<?> boardPieceClass = boardPiece.getClass();
+		if (Critter.class.isAssignableFrom(boardPieceClass)) {
+			placePieceInGeneralArea(boardPiece, x, y);
+			addCritter((Critter) boardPiece);
+		} else {
+			movePiece(boardPiece, x, y);
+			if (Decoration.class.isAssignableFrom(boardPieceClass)) {
+				addDecoration((Decoration) boardPiece);
+			}
+		}
+	}
+
+	protected void addCritter(Critter critter) {
 		critters.add(critter);
+	}
+
+	protected void addDecoration(Decoration decoration) {
+		decorations.add(decoration);
 	}
 
 	public void addExit(int x, int y, Action dir, String[] boardIdAndEntrance) {
@@ -71,6 +89,10 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	public List<Critter> getCritters() {
 		return critters;
+	}
+
+	public List<Decoration> getDecorations() {
+		return decorations;
 	}
 
 	public int[][] getEntrances() {
@@ -95,6 +117,13 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	public Tile[][] getTiles() {
 		return tiles;
+	}
+
+	protected void forceClearBoardState() {
+		critters.clear();
+		decorations.clear();
+		exits.clear();
+		tiles = null;
 	}
 
 	public boolean isAdjacent(int x1, int y1, int x2, int y2) {
@@ -136,13 +165,13 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	}
 
 	/**
-	 * This method calls repaint
+	 * This method moves a piece without affecting the board state
 	 * 
 	 * @param piece
 	 * @param x
 	 * @param y
 	 */
-	public void placePiece(BoardPiece piece, int x, int y) {
+	public void movePiece(BoardPiece piece, int x, int y) {
 		removePiece(piece);
 		if (tiles[x][y] == null) {
 			throwNullTileException(x, y);
@@ -154,7 +183,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	}
 
-	public void placePieceInGeneralArea(BoardPiece piece, int x, int y) {
+	protected void placePieceInGeneralArea(BoardPiece piece, int x, int y) {
 		if (tiles[x][y] == null) {
 			throwNullTileException(x, y);
 		} else {
@@ -174,7 +203,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 			Tile tile = queue.remove(0);
 			if (tile != null) {
 				if (!tile.isOccupied() && !tile.isSolid()) {
-					placePiece(piece, tile.getX(), tile.getY());
+					movePiece(piece, tile.getX(), tile.getY());
 					return true;
 				} else {
 					consumed.add(tile);
@@ -192,11 +221,12 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	}
 
 	/**
-	 * This method calls repaint
+	 * This method removes a piece from the board without affecting the board
+	 * state
 	 * 
 	 * @param piece
 	 */
-	public void removePiece(BoardPiece piece) {
+	protected void removePiece(BoardPiece piece) {
 		int x = piece.getX();
 		int y = piece.getY();
 
@@ -211,6 +241,12 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 			repaint();
 		}
 		// else do nothing (removing a piece that's not on the board)
+	}
+
+	public void removeBoardPiece(BoardPiece piece) {
+		removePiece(piece);
+		critters.remove(piece);
+		decorations.remove(piece);
 	}
 
 	@Required
@@ -280,7 +316,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		if (isInBounds(nextX, nextY)) {
 			Tile nextTile = getTile(nextX, nextY);
 			if (isTileOpen(nextTile)) {
-				placePiece(piece, nextX, nextY);
+				movePiece(piece, nextX, nextY);
 				return true;
 
 			}

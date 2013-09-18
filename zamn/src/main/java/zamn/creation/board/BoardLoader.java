@@ -60,6 +60,8 @@ public class BoardLoader {
 			}
 		}
 
+		board.setTiles(tiles);
+
 		// add the decorations
 		DecorationDefinition[] decorationDefinitions = boardDefinition
 				.getDecorationDefinitions();
@@ -70,9 +72,7 @@ public class BoardLoader {
 			int[] xy = decorationDefinition.getCoords();
 			int x = xy[0];
 			int y = xy[1];
-			decoration.setXY(x, y);
-			Tile tile = board.getTile(x, y);
-			tile.add(decoration);
+			board.addBoardPiece(decoration, x, y);
 		}
 
 		// add the critters
@@ -86,10 +86,8 @@ public class BoardLoader {
 			int seedY = xy[1];
 			if (tiles[seedX] != null && tiles[seedX][seedY] != null
 					&& !tiles[seedX][seedY].isOccupied()) {
-				tiles[seedX][seedY].add(critter);
-				critter.setXY(seedX, seedY);
+				board.addBoardPiece(critter, seedX, seedY);
 			}
-			board.addCritter(critter);
 		}
 
 		// add the exit definitions
@@ -106,8 +104,6 @@ public class BoardLoader {
 
 		// add the entrances
 		board.setEntrances(boardDefinition.getEntranceDefinitions());
-
-		board.setTiles(tiles);
 	}
 
 	protected BufferedImage parseSpriteSheet(Resource spriteSheetResource)

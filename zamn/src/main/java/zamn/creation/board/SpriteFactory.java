@@ -50,6 +50,8 @@ public class SpriteFactory {
 
 		sprite.drawSprite(getSpriteSheet(), spriteSheetXY[0], spriteSheetXY[1],
 				getSpriteSize());
+
+		sprite.setSpriteId(spriteId);
 	}
 
 	public Sprite get(String spriteId) {

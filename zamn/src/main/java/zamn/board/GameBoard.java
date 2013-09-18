@@ -89,7 +89,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	}
 
 	@Override
-	public void addCritter(Critter critter) {
+	protected void addCritter(Critter critter) {
 		super.addCritter(critter);
 		eventContext.fire(
 				GameEventContext.GameEventType.CRITTER_ADDED_TO_BOARD, critter);
@@ -209,14 +209,13 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	 * Clears the board state without clearing the game state, ignoring the UI
 	 * state
 	 */
+	@Override
 	protected void forceClearBoardState() {
-		critters.clear();
+		super.forceClearBoardState();
 		critterSequence.clear();
 		disabledTiles.clear();
 		tilesInTargetingRange.clear();
 		modeHistory.clear();
-		exits.clear();
-		tiles = null;
 		controllingCritter = null;
 	}
 

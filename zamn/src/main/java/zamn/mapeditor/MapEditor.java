@@ -27,9 +27,7 @@ import javax.swing.KeyStroke;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
-import zamn.board.Critter;
-import zamn.board.Decoration;
-import zamn.board.Tile;
+import zamn.board.BoardPiece;
 import zamn.board.controlmode.Action;
 import zamn.creation.board.BoardSerializer;
 import zamn.creation.board.TileFactory;
@@ -52,14 +50,16 @@ public class MapEditor extends JFrame {
 	private MapEditorPalette critterPalette;
 	private TileFactory tileFactory;
 
-	public void addCritter() {
-		Tile tile = board.getSelectedTile();
-		tile.add((Critter) critterPalette.getSelectedSprite());
+	private void addBoardPiece(BoardPiece boardPiece) {
+		board.addBoardPiece(boardPiece, board.getCursorX(), board.getCursorY());
 	}
 
-	public void addDecoration() {
-		Tile tile = board.getSelectedTile();
-		tile.add((Decoration) decorationPalette.getSelectedSprite());
+	private void addCritter() {
+		addBoardPiece((BoardPiece) critterPalette.getSelectedSprite());
+	}
+
+	private void addDecoration() {
+		addBoardPiece((BoardPiece) decorationPalette.getSelectedSprite());
 	}
 
 	public void bootstrap() {
@@ -255,7 +255,7 @@ public class MapEditor extends JFrame {
 	private void drawTile() {
 		if (tilePalette.isCursorEnabled()) {
 			tileFactory.drawSprite(tilePalette.getSelectedSpriteId(),
-					board.getSelectedTile());
+					board.getTile(board.getCursorX(), board.getCursorY()));
 		}
 	}
 
@@ -320,7 +320,7 @@ public class MapEditor extends JFrame {
 	}
 
 	public void handleSpace() {
-		LOG.info(board.getSelectedTile());
+
 	}
 
 	public void handleUp() {

@@ -74,7 +74,7 @@ public class CombatMovementMode extends AbstractGameBoardControlMode {
 
 		Critter me = board.getControllingCritter();
 
-		board.placePiece(me, origX, origY);
+		board.movePiece(me, origX, origY);
 
 		board.alignViewport();
 	}

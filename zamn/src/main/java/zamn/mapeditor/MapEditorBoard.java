@@ -55,7 +55,7 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 
 		// count the cursor as a piece that we never want to remove
 		if (!pieces.isEmpty() && pieces.size() > 1) {
-			pieces.remove(pieces.size() - 2);
+			removeBoardPiece(pieces.get(pieces.size() - 2));
 		}
 		repaint();
 	}
@@ -89,8 +89,16 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 				* spriteSize.width, tiles[0].length * spriteSize.height);
 	}
 
-	public Tile getSelectedTile() {
+	private Tile getSelectedTile() {
 		return getTile(CURSOR.getX(), CURSOR.getY());
+	}
+
+	public int getCursorX() {
+		return CURSOR.getX();
+	}
+
+	public int getCursorY() {
+		return CURSOR.getY();
 	}
 
 	@Override
@@ -106,7 +114,7 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 	@Override
 	public void load(URI id) throws IOException {
 		super.load(id);
-		placePiece(CURSOR, 0, 0);
+		movePiece(CURSOR, 0, 0);
 	}
 
 	@Override
@@ -116,7 +124,7 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 		int tileY = e.getY() / spriteSize.height;
 
 		if (isInBounds(tileX, tileY)) {
-			placePiece(CURSOR, tileX, tileY);
+			movePiece(CURSOR, tileX, tileY);
 		}
 	}
 

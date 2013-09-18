@@ -12,7 +12,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import zamn.board.AbstractBoard;
 import zamn.board.Critter;
 import zamn.board.GameBoard;
-import zamn.board.Tile;
 import zamn.framework.event.Event;
 import zamn.framework.event.GameEventContext;
 import zamn.framework.event.IEventContext;
@@ -71,14 +70,11 @@ public class GameBoardLoader extends BoardLoader implements IEventHandler {
 			MalformedURLException, IOException {
 		super.load(boardId, board);
 		GameBoard gameBoard = (GameBoard) board;
-		Tile[][] tiles = gameBoard.getTiles();
 		int[][] entrances = gameBoard.getEntrances();
-		Tile entranceTile = tiles[entrances[entryPoint][0]][entrances[entryPoint][1]];
 
 		for (Critter hero : heroes) {
-			gameBoard.placePieceInGeneralArea(hero, entranceTile.getX(),
-					entranceTile.getY());
-			gameBoard.addCritter(hero);
+			gameBoard.addBoardPiece(hero, entrances[entryPoint][0],
+					entrances[entryPoint][1]);
 		}
 	}
 }
