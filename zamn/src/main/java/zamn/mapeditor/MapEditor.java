@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 
 import zamn.board.BoardPiece;
+import zamn.board.Sprite;
 import zamn.board.controlmode.Action;
 import zamn.creation.board.BoardSerializer;
 import zamn.creation.board.TileFactory;
@@ -50,16 +51,19 @@ public class MapEditor extends JFrame {
 	private MapEditorPalette critterPalette;
 	private TileFactory tileFactory;
 
-	private void addBoardPiece(BoardPiece boardPiece) {
-		board.addBoardPiece(boardPiece, board.getCursorX(), board.getCursorY());
+	private void addSpriteAsBoardPiece(Sprite sprite) {
+		if (sprite != null) {
+			board.addBoardPiece((BoardPiece) sprite, board.getCursorX(),
+					board.getCursorY());
+		}
 	}
 
 	private void addCritter() {
-		addBoardPiece((BoardPiece) critterPalette.getSelectedSprite());
+		addSpriteAsBoardPiece(critterPalette.getSelectedSprite());
 	}
 
 	private void addDecoration() {
-		addBoardPiece((BoardPiece) decorationPalette.getSelectedSprite());
+		addSpriteAsBoardPiece(decorationPalette.getSelectedSprite());
 	}
 
 	public void bootstrap() {

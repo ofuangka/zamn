@@ -84,7 +84,12 @@ public class BoardSerializer {
 				critterDefinition.setCoords(new int[] { critter.getX(),
 						critter.getY() });
 				critterDefinition.setHostile(true);
-				critterDefinition.setStats(new HashMap<String, Integer>());
+				Map<String, Integer> stats = new HashMap<String, Integer>();
+				Critter.Stat[] statKeys = Critter.Stat.values();
+				for (Critter.Stat key : statKeys) {
+					stats.put(key.toString(), key.getDefaultValue());
+				}
+				critterDefinition.setStats(stats);
 				critterDefinition.setTalents(new ArrayList<String>());
 				critterDefinitions[i] = critterDefinition;
 			}
