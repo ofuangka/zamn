@@ -67,10 +67,10 @@ public class Zamn implements IEventHandler {
 	private Menu gameOverMenu;
 	private JComponent gameScreen;
 	private InGameMenuLayer inGameMenuLayer;
-	private MessageLayer messageLayer;
 	private Menu mainMenu;
 	private MapEditor mapEditor;
 	private boolean mapEditorInitialized;
+	private MessageLayer messageLayer;
 	private JPanel screenPanel;
 	private List<JComponent> shownScreens = new ArrayList<JComponent>();
 
@@ -376,10 +376,6 @@ public class Zamn implements IEventHandler {
 		return true;
 	}
 
-	private void handleShowMessageRequest(String messageText) {
-		messageLayer.showMessage(messageText);
-	}
-
 	private void handleExitRequest() {
 		System.exit(0);
 	}
@@ -426,6 +422,10 @@ public class Zamn implements IEventHandler {
 
 	private void handleReturnToGameRequest() {
 		showScreen(gameScreen);
+	}
+
+	private void handleShowMessageRequest(String messageText) {
+		messageLayer.showMessage(messageText);
 	}
 
 	private void handleSystemMenuRequest() {

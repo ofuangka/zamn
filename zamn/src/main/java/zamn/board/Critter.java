@@ -9,8 +9,6 @@ import zamn.util.NullSafeCompare;
 
 public class Critter extends BoardPiece {
 
-	private static final int CRITTER_Z = 1000;
-
 	public interface IStat {
 		public int getDefaultValue();
 
@@ -107,6 +105,8 @@ public class Critter extends BoardPiece {
 			}
 		}
 	}
+
+	private static final int CRITTER_Z = 1000;
 
 	private static final String DEFAULT_ATTACK_ID = "default_attack";
 

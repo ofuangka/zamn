@@ -235,4 +235,8 @@ public class Tile extends BoardPiece {
 	public void setTop(Tile top) {
 		adjacents[TOP_EDGE] = top;
 	}
+	
+	public String toString() {
+		return getX() + "," + getY();
+	}
 }

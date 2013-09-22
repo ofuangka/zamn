@@ -3,7 +3,11 @@ package zamn.board;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 import org.apache.log4j.Logger;
@@ -25,6 +29,7 @@ import zamn.framework.event.IEventHandler;
 import zamn.ui.IDelegatingKeySink;
 import zamn.ui.IKeySink;
 import zamn.ui.menu.EventMenuItem;
+import zamn.util.NullSafeCompare;
 
 public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		IDelegatingKeySink {
@@ -66,25 +71,92 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 
 	public int[] addBestPath(int fromX, int fromY, int toX, int toY,
 			List<Action> acc) {
-		int[] ret = addBestPathHelper(fromX, fromY, toX, toY, acc);
-		acc.add(Action.ENTER);
-		return ret;
-	}
 
-	protected int[] addBestPathHelper(int fromX, int fromY, int toX, int toY,
-			List<Action> acc) {
-		if (!isAdjacent(fromX, fromY, toX, toY)) {
-			List<Tile> closerTiles = getCloserTiles(fromX, fromY, toX, toY);
-			for (Tile tile : closerTiles) {
+		// dijkstra's?
+		final Map<Tile, Integer> currentCosts = new HashMap<Tile, Integer>();
+		Map<Tile, Tile> previousTiles = new HashMap<Tile, Tile>();
+		Map<Tile, Action> previousActions = new HashMap<Tile, Action>();
 
-				if (tile.isEnabled() && !tile.isSolid() && !tile.isOccupied()) {
-					acc.add(getDir(fromX, fromY, tile.getX(), tile.getY()));
-					return addBestPathHelper(tile.getX(), tile.getY(), toX,
-							toY, acc);
+		// set the cost of the current tile to 0
+		currentCosts.put(getTile(fromX, fromY), 0);
+
+		// add all of the tiles to the queue
+		PriorityQueue<Tile> priorityQueue = new PriorityQueue<Tile>(
+				tiles.length, new Comparator<Tile>() {
+
+					@Override
+					public int compare(Tile t1, Tile t2) {
+						Integer cost1 = currentCosts.get(t1);
+						Integer cost2 = currentCosts.get(t2);
+
+						if (cost1 == null && cost2 == null) {
+							return 0;
+						} else if (cost1 == null) {
+							return 1;
+						} else if (cost2 == null) {
+							return -1;
+						} else {
+							return cost1.compareTo(cost2);
+						}
+					}
+
+				});
+		for (int x = 0; x < tiles.length; x++) {
+			for (int y = 0; y < tiles[x].length; y++) {
+				priorityQueue.offer(tiles[x][y]);
+			}
+		}
+
+		Tile targetTile = getTile(toX, toY);
+
+		while (!priorityQueue.isEmpty()) {
+			Tile tile = priorityQueue.remove();
+
+			if (tile == targetTile) {
+				break;
+			}
+
+			Integer distanceToTile = currentCosts.get(tile);
+			if (distanceToTile == null) {
+				break;
+			}
+
+			Tile[] neighbors = tile.getAdjacentTiles();
+
+			Action[] directions = new Action[] { Action.UP, Action.RIGHT,
+					Action.DOWN, Action.LEFT };
+
+			for (int i = 0; i < neighbors.length; i++) {
+				Tile neighbor = neighbors[i];
+				if (neighbor != null && !neighbor.isSolid()
+						&& (!neighbor.isOccupied() || neighbor == targetTile)) {
+					int alt = distanceToTile + 1;
+					Integer currentNeighborCost = currentCosts.get(neighbor);
+					if (currentNeighborCost == null
+							|| alt < currentNeighborCost) {
+						currentCosts.put(neighbor, alt);
+						previousTiles.put(neighbor, tile);
+						previousActions.put(neighbor, directions[i]);
+						priorityQueue.remove(neighbor);
+						priorityQueue.offer(neighbor);
+					}
 				}
 			}
 		}
-		return new int[] { fromX, fromY };
+
+		List<Action> moves = new ArrayList<Action>();
+		Tile tile = targetTile;
+		while (previousActions.containsKey(tile) && !tile.isEnabled()) {
+			tile = previousTiles.get(tile);
+		}
+		int[] ret = new int[] { tile.getX(), tile.getY() };
+		while (previousActions.containsKey(tile)) {
+			moves.add(0, previousActions.get(tile));
+			tile = previousTiles.get(tile);
+		}
+		acc.addAll(moves);
+		acc.add(Action.ENTER);
+		return ret;
 	}
 
 	@Override

@@ -87,6 +87,13 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		exits.put(getExitKey(x, y, dir), boardIdAndEntrance);
 	}
 
+	protected void forceClearBoardState() {
+		critters.clear();
+		decorations.clear();
+		exits.clear();
+		tiles = null;
+	}
+
 	public List<Critter> getCritters() {
 		return critters;
 	}
@@ -117,13 +124,6 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 
 	public Tile[][] getTiles() {
 		return tiles;
-	}
-
-	protected void forceClearBoardState() {
-		critters.clear();
-		decorations.clear();
-		exits.clear();
-		tiles = null;
 	}
 
 	public boolean isAdjacent(int x1, int y1, int x2, int y2) {
@@ -220,6 +220,12 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 		return false;
 	}
 
+	public void removeBoardPiece(BoardPiece piece) {
+		removePiece(piece);
+		critters.remove(piece);
+		decorations.remove(piece);
+	}
+
 	/**
 	 * This method removes a piece from the board without affecting the board
 	 * state
@@ -241,12 +247,6 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 			repaint();
 		}
 		// else do nothing (removing a piece that's not on the board)
-	}
-
-	public void removeBoardPiece(BoardPiece piece) {
-		removePiece(piece);
-		critters.remove(piece);
-		decorations.remove(piece);
 	}
 
 	@Required

@@ -9,7 +9,6 @@ public class GameScreen extends DistributedSplitPane implements
 
 	private static final long serialVersionUID = 1535542436102660670L;
 
-	private GameInterface gameInterface;
 	private GameLayeredPane gameLayeredPane;
 
 	public GameScreen(IEventContext eventContext,
@@ -17,7 +16,6 @@ public class GameScreen extends DistributedSplitPane implements
 			Dimension spriteSize, double distribution) {
 		super(gameLayeredPane, gameInterface, spriteSize, distribution);
 		this.gameLayeredPane = gameLayeredPane;
-		this.gameInterface = gameInterface;
 	}
 
 	@Override

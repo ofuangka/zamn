@@ -54,14 +54,14 @@ public class SpriteFactory {
 		sprite.setSpriteId(spriteId);
 	}
 
+	public Sprite get(SpriteDefinition spriteDefinition) {
+		return get(spriteDefinition.getSpriteId());
+	}
+
 	public Sprite get(String spriteId) {
 		Sprite ret = getNewSprite();
 		drawSprite(spriteId, ret);
 		return ret;
-	}
-
-	public Sprite get(SpriteDefinition spriteDefinition) {
-		return get(spriteDefinition.getSpriteId());
 	}
 
 	protected Sprite getNewSprite() {

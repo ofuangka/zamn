@@ -52,18 +52,18 @@ public class MapEditorPalette extends JPanel implements MouseListener {
 		return new Dimension(spriteSheet.getWidth(), spriteSheet.getHeight());
 	}
 
-	public String getSelectedSpriteId() {
-		String ret = null;
-		if (isCursorEnabled()) {
-			ret = spriteFactory.reverseLookup(cursorX, cursorY);
-		}
-		return ret;
-	}
-
 	public Sprite getSelectedSprite() {
 		Sprite ret = null;
 		if (isCursorEnabled()) {
 			ret = spriteFactory.get(getSelectedSpriteId());
+		}
+		return ret;
+	}
+
+	public String getSelectedSpriteId() {
+		String ret = null;
+		if (isCursorEnabled()) {
+			ret = spriteFactory.reverseLookup(cursorX, cursorY);
 		}
 		return ret;
 	}

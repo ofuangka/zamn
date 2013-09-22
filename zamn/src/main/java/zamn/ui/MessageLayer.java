@@ -12,14 +12,19 @@ public class MessageLayer extends JPanel implements ILayer {
 	private static final long serialVersionUID = 1148334419406112709L;
 
 	private JLabel message;
-	private JLabel spacerLeft;
 	private JLabel spacerBottom;
+	private JLabel spacerLeft;
 
 	public MessageLayer() {
 		super(new GridBagLayout());
 		setOpaque(false);
 		createAndAddMessageAndSpacers();
 		setBorder(BorderFactory.createEmptyBorder(1, 1, 1, 1));
+	}
+
+	@Override
+	public void backspace() {
+		hideMessage();
 	}
 
 	private void createAndAddMessageAndSpacers() {
@@ -44,15 +49,6 @@ public class MessageLayer extends JPanel implements ILayer {
 
 	}
 
-	public void hideMessage() {
-		message.setVisible(false);
-	}
-
-	@Override
-	public void backspace() {
-		hideMessage();
-	}
-
 	@Override
 	public void down() {
 		hideMessage();
@@ -66,6 +62,20 @@ public class MessageLayer extends JPanel implements ILayer {
 	@Override
 	public void esc() {
 		hideMessage();
+	}
+
+	public String getStyledMessage(String messageText) {
+		return "<html><p style=\"color: white; background-color: black; padding: 5px;\">"
+				+ messageText + "</p></html>";
+	}
+
+	public void hideMessage() {
+		message.setVisible(false);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return !message.isVisible();
 	}
 
 	@Override
@@ -83,6 +93,11 @@ public class MessageLayer extends JPanel implements ILayer {
 		hideMessage();
 	}
 
+	public void showMessage(String messageText) {
+		message.setText(getStyledMessage(messageText));
+		message.setVisible(true);
+	}
+
 	@Override
 	public void space() {
 		hideMessage();
@@ -96,21 +111,6 @@ public class MessageLayer extends JPanel implements ILayer {
 	@Override
 	public void x() {
 		hideMessage();
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return !message.isVisible();
-	}
-
-	public String getStyledMessage(String messageText) {
-		return "<html><p style=\"color: white; background-color: black; padding: 5px;\">"
-				+ messageText + "</p></html>";
-	}
-
-	public void showMessage(String messageText) {
-		message.setText(getStyledMessage(messageText));
-		message.setVisible(true);
 	}
 
 }

@@ -41,22 +41,15 @@ public class MapEditor extends JFrame {
 
 	private MapEditorBoard board;
 	private BoardSerializer boardSerializer;
+	private MapEditorPalette critterPalette;
+	private MapEditorPalette decorationPalette;
 	private JFileChooser fileChooser;
 	private JPanel interfaze;
 	private JSplitPane mapEditorScreen;
 	private Dimension paletteSize;
 	private JMenuItem saveMenuItem;
-	private MapEditorPalette tilePalette;
-	private MapEditorPalette decorationPalette;
-	private MapEditorPalette critterPalette;
 	private TileFactory tileFactory;
-
-	private void addSpriteAsBoardPiece(Sprite sprite) {
-		if (sprite != null) {
-			board.addBoardPiece((BoardPiece) sprite, board.getCursorX(),
-					board.getCursorY());
-		}
-	}
+	private MapEditorPalette tilePalette;
 
 	private void addCritter() {
 		addSpriteAsBoardPiece(critterPalette.getSelectedSprite());
@@ -64,6 +57,26 @@ public class MapEditor extends JFrame {
 
 	private void addDecoration() {
 		addSpriteAsBoardPiece(decorationPalette.getSelectedSprite());
+	}
+
+	protected void addPalette(MapEditorPalette palette) {
+		JScrollPane scrollPane = new JScrollPane(palette);
+		scrollPane.setPreferredSize(paletteSize);
+		GridBagConstraints gc = new GridBagConstraints();
+		gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = getNumberOfPalettes();
+		gc.weightx = 1;
+		gc.weighty = 1;
+		gc.fill = GridBagConstraints.BOTH;
+		interfaze.add(scrollPane, gc);
+	}
+
+	private void addSpriteAsBoardPiece(Sprite sprite) {
+		if (sprite != null) {
+			board.addBoardPiece((BoardPiece) sprite, board.getCursorX(),
+					board.getCursorY());
+		}
 	}
 
 	public void bootstrap() {
@@ -267,6 +280,10 @@ public class MapEditor extends JFrame {
 		saveMenuItem.setEnabled(true);
 	}
 
+	private int getNumberOfPalettes() {
+		return interfaze.getComponents().length;
+	}
+
 	public void handleBackspace() {
 		board.backspace();
 	}
@@ -338,23 +355,6 @@ public class MapEditor extends JFrame {
 	private void openFile(File selectedFile) throws IOException {
 		board.load(selectedFile.toURI());
 		showAndCenter();
-	}
-
-	protected void addPalette(MapEditorPalette palette) {
-		JScrollPane scrollPane = new JScrollPane(palette);
-		scrollPane.setPreferredSize(paletteSize);
-		GridBagConstraints gc = new GridBagConstraints();
-		gc = new GridBagConstraints();
-		gc.gridx = 0;
-		gc.gridy = getNumberOfPalettes();
-		gc.weightx = 1;
-		gc.weighty = 1;
-		gc.fill = GridBagConstraints.BOTH;
-		interfaze.add(scrollPane, gc);
-	}
-
-	private int getNumberOfPalettes() {
-		return interfaze.getComponents().length;
 	}
 
 	private void populateMapEditorInterface() {
