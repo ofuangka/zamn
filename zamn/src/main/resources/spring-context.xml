@@ -31,6 +31,7 @@
 		<property name="board" ref="board" />
 		<property name="gameInterface" ref="gameInterface" />
 		<property name="mapEditor" ref="mapEditor" />
+		<property name="messageLayer" ref="messageLayer" />
 	</bean>
 
 	<bean id="gameScreen" class="zamn.ui.GameScreen">
@@ -41,6 +42,7 @@
 					<list>
 						<ref bean="board" />
 						<ref bean="inGameMenuLayer" />
+						<ref bean="messageLayer" />
 					</list>
 				</constructor-arg>
 			</bean>
@@ -51,6 +53,8 @@
 	</bean>
 
 	<bean id="inGameMenuLayer" class="zamn.ui.InGameMenuLayer" />
+	
+	<bean id="messageLayer" class="zamn.ui.MessageLayer" />
 
 	<bean id="gameInterface" class="zamn.ui.GameInterface">
 		<constructor-arg ref="eventContext" />

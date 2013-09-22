@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Required;
 
 import zamn.board.controlmode.AbstractGameBoardControlMode;
 import zamn.board.controlmode.Action;
-import zamn.board.controlmode.AdventureMode;
 import zamn.board.controlmode.CombatMovementMode;
 import zamn.board.controlmode.TargetedMove;
 import zamn.board.controlmode.TargetingMode;
@@ -456,27 +455,27 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 
 			AbstractGameBoardControlMode firstMode;
 
-			if (isInCombat()) {
+			// if (isInCombat()) {
 
-				// detect and set up the first control mode
-				firstMode = new CombatMovementMode(this, getEventContext());
+			// detect and set up the first control mode
+			firstMode = new CombatMovementMode(this, getEventContext());
 
-				pushMode(firstMode);
+			pushMode(firstMode);
 
-				if (controllingCritter.isHostile()) {
+			if (controllingCritter.isHostile()) {
 
-					executeAi();
+				executeAi();
 
-				} else {
-					// wait for user input
-				}
 			} else {
-
-				firstMode = new AdventureMode(this, getEventContext());
-
-				pushMode(firstMode);
-
+				// wait for user input
 			}
+			// } else {
+
+			// firstMode = new AdventureMode(this, getEventContext());
+
+			// pushMode(firstMode);
+
+			// }
 		}
 	}
 

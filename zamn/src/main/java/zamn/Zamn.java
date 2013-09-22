@@ -32,6 +32,7 @@ import zamn.mapeditor.MapEditor;
 import zamn.ui.GameInterface;
 import zamn.ui.IKeySink;
 import zamn.ui.InGameMenuLayer;
+import zamn.ui.MessageLayer;
 import zamn.ui.menu.CritterMenuFactory;
 import zamn.ui.menu.EventMenuItem;
 import zamn.ui.menu.Menu;
@@ -66,6 +67,7 @@ public class Zamn implements IEventHandler {
 	private Menu gameOverMenu;
 	private JComponent gameScreen;
 	private InGameMenuLayer inGameMenuLayer;
+	private MessageLayer messageLayer;
 	private Menu mainMenu;
 	private MapEditor mapEditor;
 	private boolean mapEditorInitialized;
@@ -362,12 +364,20 @@ public class Zamn implements IEventHandler {
 			handleMapEditorRequest();
 			break;
 		}
+		case SHOW_MESSAGE_REQUEST: {
+			handleShowMessageRequest((String) arg);
+			break;
+		}
 
 		default: {
 			break;
 		}
 		}
 		return true;
+	}
+
+	private void handleShowMessageRequest(String messageText) {
+		messageLayer.showMessage(messageText);
 	}
 
 	private void handleExitRequest() {
@@ -477,6 +487,11 @@ public class Zamn implements IEventHandler {
 	@Required
 	public void setMapEditor(MapEditor mapEditor) {
 		this.mapEditor = mapEditor;
+	}
+
+	@Required
+	public void setMessageLayer(MessageLayer messageLayer) {
+		this.messageLayer = messageLayer;
 	}
 
 	@Required

@@ -55,8 +55,9 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 			// otherwise disable all tiles
 			getGameBoard().disableAllTiles();
 
-			// error handling
-			LOG.warn("No selectable tiles");
+			getEventContext().fire(
+					GameEventContext.GameEventType.SHOW_MESSAGE_REQUEST,
+					"No targets in range.");
 		}
 
 	}
@@ -70,6 +71,8 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 	public void enter() {
 
 		Critter controllingCritter = getGameBoard().getControllingCritter();
+
+		IEventContext eventContext = getEventContext();
 
 		if (currentIndex != NO_SELECTABLE_TILE_INDEX) {
 			int beforeMp = controllingCritter.getStat(Critter.Stat.MP);
@@ -93,10 +96,14 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 				getEventContext().fire(
 						GameEventContext.GameEventType.NEXT_TURN_REQUEST);
 			} else {
-				LOG.warn("Not enough MP");
+				eventContext.fire(
+						GameEventContext.GameEventType.SHOW_MESSAGE_REQUEST,
+						"Not enough MP.");
 			}
 		} else {
-			LOG.warn("Invalid tile selection, please try again");
+			eventContext.fire(
+					GameEventContext.GameEventType.SHOW_MESSAGE_REQUEST,
+					"Invalid tile selection, please try again");
 		}
 	}
 
