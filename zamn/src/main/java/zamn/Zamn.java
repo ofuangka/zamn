@@ -37,12 +37,16 @@ import zamn.ui.menu.CritterMenuFactory;
 import zamn.ui.menu.EventMenuItem;
 import zamn.ui.menu.Menu;
 
+/**
+ * This contains the main method. It also acts as the main controller
+ * 
+ * @author ofuangka
+ * 
+ */
 public class Zamn implements IEventHandler {
 
 	private static final String APP_CTX_PATH = "spring-context.xml";
-
 	private static final int DEFAULT_ANIMATION_SPEED = 250;
-
 	private static final Logger LOG = Logger.getLogger(Zamn.class);
 	private static final String ZAMN_BEAN_ID = "zamn";
 
@@ -74,15 +78,14 @@ public class Zamn implements IEventHandler {
 	private MessageLayer messageLayer;
 	private JPanel screenPanel;
 	private List<JComponent> shownScreens = new ArrayList<JComponent>();
-
 	private Menu systemMenu;
-
 	private JFrame window;
-
 	private Dimension windowSize;
-
 	private String windowTitle;
 
+	/**
+	 * This method initializes UI elements
+	 */
 	public void bootstrap() {
 
 		// attach to events
@@ -95,6 +98,9 @@ public class Zamn implements IEventHandler {
 
 	}
 
+	/**
+	 * This method creates an animation timer to be used for all "animations"
+	 */
 	private void createAnimationTimer() {
 		animationTimer = new Timer(animationSpeed, new ActionListener() {
 
@@ -255,9 +261,6 @@ public class Zamn implements IEventHandler {
 		window.setContentPane(screenPanel);
 	}
 
-	/**
-	 * Creates and configures the window
-	 */
 	private void createWindow() {
 		LOG.debug("Initializing window...");
 		window = new JFrame(windowTitle);
@@ -274,6 +277,12 @@ public class Zamn implements IEventHandler {
 		screen.setPreferredSize(windowSize);
 	}
 
+	/**
+	 * At the beginning of each round, the game interface gets refreshed with
+	 * the current critters on the board
+	 * 
+	 * @param critterSequence
+	 */
 	private void handleBeginRound(List<Critter> critterSequence) {
 		gameInterface.clearCritters();
 		for (Critter critter : critterSequence) {
@@ -286,19 +295,37 @@ public class Zamn implements IEventHandler {
 				.getControllingCritter()));
 	}
 
+	/**
+	 * This method removes a critter from the game interface
+	 * 
+	 * @param critter
+	 *            - The critter to remove
+	 */
 	private void handleCritterDeath(Critter critter) {
 		gameInterface.removeCritter(critter);
 	}
 
+	/**
+	 * This method hides the in game menu layer to allow the player to target a
+	 * critter
+	 * 
+	 * @param menuItem
+	 */
 	private void handleCritterTargetedActionRequest(EventMenuItem menuItem) {
 		inGameMenuLayer.setVisible(false);
 	}
 
+	/**
+	 * This method resets all menus
+	 */
 	private void handleEndOfTurn() {
 		inGameMenuLayer.clearMenus();
 		inGameMenuLayer.setVisible(true);
 	}
 
+	/**
+	 * This method handles all events fired by the event context
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean handleEvent(Event event, Object arg) {
@@ -395,8 +422,12 @@ public class Zamn implements IEventHandler {
 		showScreen(mainMenu);
 	}
 
+	/**
+	 * This method hides the main window, initializes the map editor (if
+	 * necessary) and shows and centers it
+	 */
 	private void handleMapEditorRequest() {
-		hideWindow();
+		hideMainWindow();
 
 		// we want to do a lazy load of the map editor
 		if (!mapEditorInitialized) {
@@ -435,13 +466,22 @@ public class Zamn implements IEventHandler {
 		showScreen(systemMenu);
 	}
 
+	/**
+	 * This method prevents user input from interrupting the triggers, adds all
+	 * actions to the animation queue and starts the animations
+	 * 
+	 * @param actions
+	 */
 	private void handleTriggerActionsRequest(List<Action> actions) {
 		handlingInput = false;
 		animationQueue.addAll(actions);
 		animationTimer.start();
 	}
 
-	private void hideWindow() {
+	/**
+	 * This method hides the main window
+	 */
+	private void hideMainWindow() {
 		window.setVisible(false);
 	}
 
@@ -553,6 +593,11 @@ public class Zamn implements IEventHandler {
 		screenPanel.repaint();
 	}
 
+	/**
+	 * This simulates player input events
+	 * 
+	 * @param action
+	 */
 	protected void trigger(Action action) {
 		switch (action) {
 		case BACK_SPACE: {
