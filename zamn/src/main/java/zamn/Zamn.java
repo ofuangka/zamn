@@ -66,6 +66,7 @@ public class Zamn implements IEventHandler {
 	private GameInterface gameInterface;
 	private Menu gameOverMenu;
 	private JComponent gameScreen;
+	private boolean handlingInput;
 	private InGameMenuLayer inGameMenuLayer;
 	private Menu mainMenu;
 	private MapEditor mapEditor;
@@ -101,12 +102,14 @@ public class Zamn implements IEventHandler {
 			public void actionPerformed(ActionEvent e) {
 				if (animationQueue.isEmpty()) {
 					animationTimer.stop();
+					handlingInput = true;
 				} else {
 					trigger(animationQueue.remove(0));
 					gameScreen.repaint();
 				}
 			}
 		});
+		handlingInput = true;
 	}
 
 	/**
@@ -144,7 +147,7 @@ public class Zamn implements IEventHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (currentKeySink.isListening()) {
+				if (handlingInput) {
 					currentKeySink.up();
 				}
 			}
@@ -156,7 +159,7 @@ public class Zamn implements IEventHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (currentKeySink.isListening()) {
+				if (handlingInput) {
 					currentKeySink.right();
 				}
 			}
@@ -168,7 +171,7 @@ public class Zamn implements IEventHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (currentKeySink.isListening()) {
+				if (handlingInput) {
 					currentKeySink.down();
 				}
 			}
@@ -180,7 +183,7 @@ public class Zamn implements IEventHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (currentKeySink.isListening()) {
+				if (handlingInput) {
 					currentKeySink.left();
 				}
 			}
@@ -192,7 +195,7 @@ public class Zamn implements IEventHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (currentKeySink.isListening()) {
+				if (handlingInput) {
 					currentKeySink.enter();
 				}
 			}
@@ -204,7 +207,7 @@ public class Zamn implements IEventHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (currentKeySink.isListening()) {
+				if (handlingInput) {
 					currentKeySink.esc();
 				}
 			}
@@ -216,7 +219,7 @@ public class Zamn implements IEventHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (currentKeySink.isListening()) {
+				if (handlingInput) {
 					currentKeySink.backspace();
 				}
 			}
@@ -228,7 +231,7 @@ public class Zamn implements IEventHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (currentKeySink.isListening()) {
+				if (handlingInput) {
 					currentKeySink.space();
 				}
 			}
@@ -240,7 +243,7 @@ public class Zamn implements IEventHandler {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				if (currentKeySink.isListening()) {
+				if (handlingInput) {
 					currentKeySink.x();
 				}
 			}
@@ -433,6 +436,7 @@ public class Zamn implements IEventHandler {
 	}
 
 	private void handleTriggerActionsRequest(List<Action> actions) {
+		handlingInput = false;
 		animationQueue.addAll(actions);
 		animationTimer.start();
 	}

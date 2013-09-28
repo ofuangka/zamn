@@ -79,11 +79,6 @@ public class MessageLayer extends JPanel implements ILayer {
 	}
 
 	@Override
-	public boolean isListening() {
-		return true;
-	}
-
-	@Override
 	public void left() {
 		hideMessage();
 	}

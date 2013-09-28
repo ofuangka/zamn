@@ -49,11 +49,6 @@ public abstract class AbstractGameBoardControlMode implements IKeySink {
 
 	}
 
-	@Override
-	public boolean isListening() {
-		return true;
-	}
-
 	/**
 	 * This method should store the mode's state
 	 */
@@ -72,7 +67,7 @@ public abstract class AbstractGameBoardControlMode implements IKeySink {
 	public void space() {
 
 	}
-	
+
 	@Override
 	public void x() {
 

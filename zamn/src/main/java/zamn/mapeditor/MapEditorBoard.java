@@ -102,11 +102,6 @@ public class MapEditorBoard extends AbstractBoard implements MouseListener {
 	}
 
 	@Override
-	public boolean isListening() {
-		return true;
-	}
-
-	@Override
 	public void left() {
 		tryMove(CURSOR, Action.LEFT);
 	}

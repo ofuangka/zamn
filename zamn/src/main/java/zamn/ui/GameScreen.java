@@ -46,11 +46,6 @@ public class GameScreen extends DistributedSplitPane implements
 	}
 
 	@Override
-	public boolean isListening() {
-		return getCurrentKeySink().isListening();
-	}
-
-	@Override
 	public void left() {
 		getCurrentKeySink().left();
 

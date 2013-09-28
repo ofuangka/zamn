@@ -79,11 +79,6 @@ public class Menu extends JPanel implements IKeySink {
 	}
 
 	@Override
-	public boolean isListening() {
-		return true;
-	}
-
-	@Override
 	public void left() {
 
 	}
@@ -101,8 +96,8 @@ public class Menu extends JPanel implements IKeySink {
 	@Override
 	public void right() {
 		AbstractMenuItem currentlySelectedItem = items.get(currentIndex);
-		if (AbstractMenuItemWithSubMenu.class.isAssignableFrom(currentlySelectedItem
-				.getClass())) {
+		if (AbstractMenuItemWithSubMenu.class
+				.isAssignableFrom(currentlySelectedItem.getClass())) {
 			currentlySelectedItem.execute();
 		}
 	}
@@ -129,7 +124,7 @@ public class Menu extends JPanel implements IKeySink {
 	public String toString() {
 		return items.toString();
 	}
-	
+
 	public void up() {
 		if (items != null & !items.isEmpty()) {
 			items.get(currentIndex).uiDeselect();

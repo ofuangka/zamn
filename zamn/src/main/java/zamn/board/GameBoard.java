@@ -465,11 +465,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	}
 
 	@Override
-	public boolean isListening() {
-		return controllingCritter == null || !controllingCritter.isHostile();
-	}
-
-	@Override
 	protected boolean isTileOpen(Tile tile) {
 		return super.isTileOpen(tile) && !tile.isSolid() && tile.isEnabled()
 				&& !tile.isOccupied();
