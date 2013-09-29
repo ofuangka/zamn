@@ -5,6 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -69,6 +70,7 @@ public class Zamn implements IEventHandler {
 	private IEventContext eventContext;
 	private GameInterface gameInterface;
 	private Menu gameOverMenu;
+	private Menu gameWonMenu;
 	private JComponent gameScreen;
 	private boolean handlingInput;
 	private InGameMenuLayer inGameMenuLayer;
@@ -398,12 +400,20 @@ public class Zamn implements IEventHandler {
 			handleShowMessageRequest((String) arg);
 			break;
 		}
+		case WIN_CONDITION: {
+			handleWinCondition();
+			break;
+		}
 
 		default: {
 			break;
 		}
 		}
 		return true;
+	}
+
+	private void handleWinCondition() {
+		showScreen(gameWonMenu);
 	}
 
 	private void handleExitRequest() {
@@ -431,7 +441,11 @@ public class Zamn implements IEventHandler {
 
 		// we want to do a lazy load of the map editor
 		if (!mapEditorInitialized) {
-			mapEditor.bootstrap();
+			try {
+				mapEditor.bootstrap();
+			} catch (IOException e) {
+				LOG.error(e);
+			}
 			mapEditorInitialized = true;
 		}
 
@@ -512,6 +526,11 @@ public class Zamn implements IEventHandler {
 	@Required
 	public void setGameOverMenu(Menu gameOverMenu) {
 		this.gameOverMenu = gameOverMenu;
+	}
+
+	@Required
+	public void setGameWonMenu(Menu gameWonMenu) {
+		this.gameWonMenu = gameWonMenu;
 	}
 
 	public void setGameScreen(JComponent gameScreen) {

@@ -12,6 +12,7 @@
 		<property name="eventContext" ref="eventContext" />
 		<property name="gameScreen" ref="gameScreen" />
 		<property name="gameOverMenu" ref="gameOverMenu" />
+		<property name="gameWonMenu" ref="gameWonMenu" />
 		<property name="mainMenu" ref="mainMenu" />
 		<property name="systemMenu" ref="systemMenu" />
 		<property name="windowSize" ref="windowSize" />
@@ -144,6 +145,20 @@
 			</list>
 		</property>
 	</bean>
+	
+	<bean id="gameWonMenu" class="zamn.ui.menu.Menu">
+		<property name="items">
+			<list>
+				<bean parent="eventMenuItem">
+					<property name="text" value="You win" />
+					<property name="type">
+						<util:constant
+							static-field="zamn.framework.event.GameEventContext.GameEventType.MAIN_MENU_REQUEST" />
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
 
 	<bean id="systemMenu" class="zamn.ui.menu.Menu">
 		<property name="items">
@@ -219,6 +234,7 @@
 			</bean>
 		</property>
 		<property name="tileFactory" ref="tileFactory" />
+		<property name="firstBoardResource" value="classpath:/boards/goStraight.js" />
 	</bean>
 
 	<bean id="mapEditorBoard" class="zamn.mapeditor.MapEditorBoard">

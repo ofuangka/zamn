@@ -161,6 +161,7 @@ public abstract class AbstractBoard extends JComponent implements ILayer,
 	}
 
 	public void load(URI id) throws IOException {
+		forceClearBoardState();
 		boardLoader.load(id, this);
 	}
 

@@ -26,6 +26,7 @@ import javax.swing.KeyStroke;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
+import org.springframework.core.io.Resource;
 
 import zamn.board.BoardPiece;
 import zamn.board.Sprite;
@@ -44,6 +45,7 @@ public class MapEditor extends JFrame {
 	private MapEditorPalette critterPalette;
 	private MapEditorPalette decorationPalette;
 	private JFileChooser fileChooser;
+	private Resource firstBoardResource;
 	private JPanel interfaze;
 	private JSplitPane mapEditorScreen;
 	private Dimension paletteSize;
@@ -79,7 +81,7 @@ public class MapEditor extends JFrame {
 		}
 	}
 
-	public void bootstrap() {
+	public void bootstrap() throws IOException {
 		LOG.debug("Bootstrapping...");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		createAndAddMenuBar();
@@ -89,6 +91,7 @@ public class MapEditor extends JFrame {
 		createAndAddMapEditorScreen();
 		populateMapEditorInterface();
 		setResizable(false);
+		board.load(firstBoardResource.getURI());
 	}
 
 	private void createAndAddMapEditorScreen() {
@@ -394,6 +397,11 @@ public class MapEditor extends JFrame {
 	@Required
 	public void setDecorationPalette(MapEditorPalette decorationPalette) {
 		this.decorationPalette = decorationPalette;
+	}
+
+	@Required
+	public void setFirstBoardResource(Resource firstBoardResource) {
+		this.firstBoardResource = firstBoardResource;
 	}
 
 	@Required

@@ -29,7 +29,6 @@ import zamn.framework.event.IEventHandler;
 import zamn.ui.IDelegatingKeySink;
 import zamn.ui.IKeySink;
 import zamn.ui.menu.EventMenuItem;
-import zamn.util.NullSafeCompare;
 
 public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		IDelegatingKeySink {
@@ -501,8 +500,9 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 
 		// check end conditions
 		if (!isAtLeastOneHeroOnBoard()) {
-			getEventContext().fire(
-					GameEventContext.GameEventType.LOSE_CONDITION);
+			eventContext.fire(GameEventContext.GameEventType.LOSE_CONDITION);
+		} else if (exits.isEmpty() && !isInCombat()) {
+			eventContext.fire(GameEventContext.GameEventType.WIN_CONDITION);
 		} else {
 
 			if (critterSequence.isEmpty()) {

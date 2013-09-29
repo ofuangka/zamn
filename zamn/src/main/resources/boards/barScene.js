@@ -295,31 +295,7 @@
 		"solid" : false
 	} ],
 	"entranceDefinitions" : [ [ 0, 3 ], [ 0, 4 ] ],
-	"exitDefinitions" : [ {
-		"boardId" : "neverReturnAlive",
-		"dir" : "down",
-		"entryPoint" : 1,
-		"x" : 12,
-		"y" : 14
-	}, {
-		"boardId" : "neverReturnAlive",
-		"dir" : "down",
-		"entryPoint" : 0,
-		"x" : 11,
-		"y" : 14
-	}, {
-		"boardId" : "barScene",
-		"dir" : "right",
-		"entryPoint" : 0,
-		"x" : 18,
-		"y" : 3
-	}, {
-		"boardId" : "barScene",
-		"dir" : "right",
-		"entryPoint" : 1,
-		"x" : 18,
-		"y" : 4
-	} ],
+	"exitDefinitions" : [],
 	"tileDefinitions" : [ [ {
 		"spriteId" : "stone",
 		"coords" : null,
