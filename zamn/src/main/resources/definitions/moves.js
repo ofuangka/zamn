@@ -21,7 +21,8 @@
 			"affectedStat" : "HP",
 			"positive" : false
 		},
-		"mpCost" : 5
+		"mpCost" : 5,
+		"soundClassPath" : "sounds/throw_rock.wav"
 	},
 	"fire_bomb" : {
 		"name" : "Fire bomb",
@@ -45,7 +46,8 @@
 			"affectedStat" : "HP",
 			"positive" : false
 		},
-		"mpCost" : 5
+		"mpCost" : 5,
+		"soundClassPath" : "sounds/fire_bomb.wav"
 	},
 	"default_attack" : {
 		"name" : "Attack",
@@ -69,6 +71,7 @@
 			"affectedStat" : "HP",
 			"positive" : false
 		},
-		"mpCost" : 0
+		"mpCost" : 0,
+		"soundClassPath" : "sounds/default_attack.wav"
 	}
 }

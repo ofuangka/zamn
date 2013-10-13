@@ -16,17 +16,19 @@ public class TargetedMove {
 	private final AbstractEffect effect;
 	private final int mpCost;
 	private final String name;
+	private final String soundClassPath;
 	private final ITileCollector targetingRange;
 
 	public TargetedMove(String name, ITileCollector targetingRange,
 			TileListFilter actualRangeFilter, ITileCollector areaOfEffect,
-			AbstractEffect effect, int mpCost) {
+			AbstractEffect effect, int mpCost, String soundClassPath) {
 		this.name = name;
 		this.targetingRange = targetingRange;
 		this.actualRangeFilter = actualRangeFilter;
 		this.areaOfEffect = areaOfEffect;
 		this.effect = effect;
 		this.mpCost = mpCost;
+		this.soundClassPath = soundClassPath;
 	}
 
 	public TileListFilter getActualRangeFilter() {
@@ -40,13 +42,17 @@ public class TargetedMove {
 	public AbstractEffect getEffect() {
 		return effect;
 	}
-	
+
 	public int getMpCost() {
 		return mpCost;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public String getSoundClassPath() {
+		return soundClassPath;
 	}
 
 	public ITileCollector getTargetingRange() {

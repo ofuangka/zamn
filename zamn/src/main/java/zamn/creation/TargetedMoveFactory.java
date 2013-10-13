@@ -27,8 +27,8 @@ public class TargetedMoveFactory {
 	public TargetedMoveFactory(Resource resource, ObjectMapper objectMapper,
 			IEventContext eventContext) {
 		try {
-			targetedMoveDefinitions = objectMapper.readValue(resource
-					.getURI().toURL(),
+			targetedMoveDefinitions = objectMapper.readValue(resource.getURI()
+					.toURL(),
 					new TypeReference<Map<String, TargetedMoveDefinition>>() {
 					});
 		} catch (IOException e) {
@@ -54,7 +54,8 @@ public class TargetedMoveFactory {
 		effect.setCritter(critter);
 		return new TargetedMove(targetedMoveDefinition.getName(),
 				targetedRange, actualRangeFilter, areaOfEffect, effect,
-				targetedMoveDefinition.getMpCost());
+				targetedMoveDefinition.getMpCost(),
+				targetedMoveDefinition.getSoundClassPath());
 
 	}
 

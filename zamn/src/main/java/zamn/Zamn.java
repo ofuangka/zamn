@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
 import javax.swing.AbstractAction;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
@@ -21,6 +24,8 @@ import javax.swing.Timer;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import zamn.board.Critter;
 import zamn.board.GameBoard;
@@ -65,13 +70,14 @@ public class Zamn implements IEventHandler {
 	private int animationSpeed = DEFAULT_ANIMATION_SPEED;
 	private Timer animationTimer;
 	private GameBoard board;
+	private Resource critterDeathSound;
 	private CritterMenuFactory critterMenuFactory;
 	private IKeySink currentKeySink;
 	private IEventContext eventContext;
 	private GameInterface gameInterface;
 	private Menu gameOverMenu;
-	private Menu gameWonMenu;
 	private JComponent gameScreen;
+	private Menu gameWonMenu;
 	private boolean handlingInput;
 	private InGameMenuLayer inGameMenuLayer;
 	private Menu mainMenu;
@@ -84,6 +90,8 @@ public class Zamn implements IEventHandler {
 	private JFrame window;
 	private Dimension windowSize;
 	private String windowTitle;
+	private Resource youDiedSound;
+	private Resource youWinSound;
 
 	/**
 	 * This method initializes UI elements
@@ -305,6 +313,7 @@ public class Zamn implements IEventHandler {
 	 */
 	private void handleCritterDeath(Critter critter) {
 		gameInterface.removeCritter(critter);
+		playSound(critterDeathSound);
 	}
 
 	/**
@@ -404,16 +413,16 @@ public class Zamn implements IEventHandler {
 			handleWinCondition();
 			break;
 		}
+		case PLAY_SOUND_REQUEST: {
+			handlePlaySoundRequest((String) arg);
+			break;
+		}
 
 		default: {
 			break;
 		}
 		}
 		return true;
-	}
-
-	private void handleWinCondition() {
-		showScreen(gameWonMenu);
 	}
 
 	private void handleExitRequest() {
@@ -426,6 +435,7 @@ public class Zamn implements IEventHandler {
 
 	private void handleLoseCondition() {
 		showScreen(gameOverMenu);
+		playSound(youDiedSound);
 	}
 
 	private void handleMainMenuRequest() {
@@ -454,6 +464,10 @@ public class Zamn implements IEventHandler {
 
 	protected void handleNewGameRequest() {
 		showScreen(gameScreen);
+	}
+
+	private void handlePlaySoundRequest(String soundClassPath) {
+		playSound(new ClassPathResource(soundClassPath));
 	}
 
 	private void handlePreviousInGameMenuRequest() {
@@ -492,11 +506,28 @@ public class Zamn implements IEventHandler {
 		animationTimer.start();
 	}
 
+	private void handleWinCondition() {
+		showScreen(gameWonMenu);
+		playSound(youWinSound);
+	}
+
 	/**
 	 * This method hides the main window
 	 */
 	private void hideMainWindow() {
 		window.setVisible(false);
+	}
+
+	private void playSound(Resource resource) {
+		try {
+			Clip clip = AudioSystem.getClip();
+			AudioInputStream inputStream = AudioSystem
+					.getAudioInputStream(resource.getInputStream());
+			clip.open(inputStream);
+			clip.start();
+		} catch (Exception e) {
+			LOG.error(e);
+		}
 	}
 
 	public void setAnimationSpeed(int animationSpeed) {
@@ -506,6 +537,11 @@ public class Zamn implements IEventHandler {
 	@Required
 	public void setBoard(GameBoard board) {
 		this.board = board;
+	}
+
+	@Required
+	public void setCritterDeathSound(Resource critterDeathSound) {
+		this.critterDeathSound = critterDeathSound;
 	}
 
 	@Required
@@ -528,13 +564,13 @@ public class Zamn implements IEventHandler {
 		this.gameOverMenu = gameOverMenu;
 	}
 
+	public void setGameScreen(JComponent gameScreen) {
+		this.gameScreen = gameScreen;
+	}
+
 	@Required
 	public void setGameWonMenu(Menu gameWonMenu) {
 		this.gameWonMenu = gameWonMenu;
-	}
-
-	public void setGameScreen(JComponent gameScreen) {
-		this.gameScreen = gameScreen;
 	}
 
 	@Required
@@ -568,6 +604,16 @@ public class Zamn implements IEventHandler {
 
 	public void setWindowTitle(String windowTitle) {
 		this.windowTitle = windowTitle;
+	}
+
+	@Required
+	public void setYouDiedSound(Resource youDiedSound) {
+		this.youDiedSound = youDiedSound;
+	}
+
+	@Required
+	public void setYouWinSound(Resource youWinSound) {
+		this.youWinSound = youWinSound;
 	}
 
 	/**

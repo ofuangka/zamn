@@ -92,9 +92,15 @@ public class TargetingMode extends AbstractGameBoardControlMode {
 				for (Tile tile : affectedTiles) {
 					tileEffect.apply(tile);
 				}
+
+				LOG.debug("Playing sound");
+				eventContext.fire(
+						GameEventContext.GameEventType.PLAY_SOUND_REQUEST,
+						action.getSoundClassPath());
+
 				LOG.debug("Valid tile selection, ending turn");
-				getEventContext().fire(
-						GameEventContext.GameEventType.NEXT_TURN_REQUEST);
+				eventContext
+						.fire(GameEventContext.GameEventType.NEXT_TURN_REQUEST);
 			} else {
 				eventContext.fire(
 						GameEventContext.GameEventType.SHOW_MESSAGE_REQUEST,

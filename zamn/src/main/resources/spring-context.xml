@@ -33,6 +33,9 @@
 		<property name="gameInterface" ref="gameInterface" />
 		<property name="mapEditor" ref="mapEditor" />
 		<property name="messageLayer" ref="messageLayer" />
+		<property name="youDiedSound" value="classpath:sounds/you_died.wav" />
+		<property name="youWinSound" value="classpath:sounds/you_win.wav" />
+		<property name="critterDeathSound" value="classpath:sounds/critter_death.wav" />
 	</bean>
 
 	<bean id="gameScreen" class="zamn.ui.GameScreen">

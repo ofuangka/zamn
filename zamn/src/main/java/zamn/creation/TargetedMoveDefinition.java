@@ -1,6 +1,5 @@
 package zamn.creation;
 
-
 public class TargetedMoveDefinition {
 
 	private String actualRangeFilter;
@@ -8,6 +7,7 @@ public class TargetedMoveDefinition {
 	private EffectDefinition effect;
 	private int mpCost;
 	private String name;
+	private String soundClassPath;
 	private TileCollectorDefinition targetingRange;
 
 	public String getActualRangeFilter() {
@@ -21,13 +21,17 @@ public class TargetedMoveDefinition {
 	public EffectDefinition getEffect() {
 		return effect;
 	}
-	
+
 	public int getMpCost() {
 		return mpCost;
 	}
 
 	public String getName() {
 		return name;
+	}
+
+	public String getSoundClassPath() {
+		return soundClassPath;
 	}
 
 	public TileCollectorDefinition getTargetingRange() {
@@ -45,13 +49,17 @@ public class TargetedMoveDefinition {
 	public void setEffect(EffectDefinition effect) {
 		this.effect = effect;
 	}
-	
+
 	public void setMpCost(int mpCost) {
 		this.mpCost = mpCost;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public void setSoundClassPath(String soundClassPath) {
+		this.soundClassPath = soundClassPath;
 	}
 
 	public void setTargetingRange(TileCollectorDefinition targetedRange) {
