@@ -8,18 +8,17 @@ import java.util.Map;
 import zamn.util.NullSafeCompare;
 
 public class Critter extends BoardPiece {
-
+	
 	public interface IStat {
-		public int getDefaultValue();
+		int getDefaultValue();
 
-		public Stat getMaxStat();
+		Stat getMaxStat();
 	}
-
 	public enum Stat implements IStat {
 		HP {
 			@Override
 			public int getDefaultValue() {
-				return 5;
+				return DEFAULT_STAT_VALUE;
 			}
 
 			@Override
@@ -30,7 +29,7 @@ public class Critter extends BoardPiece {
 		MAXHP {
 			@Override
 			public int getDefaultValue() {
-				return 5;
+				return DEFAULT_STAT_VALUE;
 			}
 
 			@Override
@@ -41,7 +40,7 @@ public class Critter extends BoardPiece {
 		MAXMP {
 			@Override
 			public int getDefaultValue() {
-				return 5;
+				return DEFAULT_STAT_VALUE;
 			}
 
 			@Override
@@ -52,7 +51,7 @@ public class Critter extends BoardPiece {
 		MP {
 			@Override
 			public int getDefaultValue() {
-				return 5;
+				return DEFAULT_STAT_VALUE;
 			}
 
 			@Override
@@ -63,7 +62,7 @@ public class Critter extends BoardPiece {
 		SIGHT {
 			@Override
 			public int getDefaultValue() {
-				return 5;
+				return DEFAULT_STAT_VALUE;
 			}
 
 			@Override
@@ -74,7 +73,7 @@ public class Critter extends BoardPiece {
 		SMARTS {
 			@Override
 			public int getDefaultValue() {
-				return 5;
+				return DEFAULT_STAT_VALUE;
 			}
 
 			@Override
@@ -85,7 +84,7 @@ public class Critter extends BoardPiece {
 		SPEED {
 			@Override
 			public int getDefaultValue() {
-				return 3;
+				return DEFAULT_SPEED_VALUE;
 			}
 
 			@Override
@@ -96,7 +95,7 @@ public class Critter extends BoardPiece {
 		STRENGTH {
 			@Override
 			public int getDefaultValue() {
-				return 5;
+				return DEFAULT_STAT_VALUE;
 			}
 
 			@Override
@@ -109,6 +108,10 @@ public class Critter extends BoardPiece {
 	private static final int CRITTER_Z = 1000;
 
 	private static final String DEFAULT_ATTACK_ID = "default_attack";
+
+	private static final int DEFAULT_SPEED_VALUE = 3;
+
+	private static final int DEFAULT_STAT_VALUE = 5;
 
 	public static final Comparator<Critter> SPEED_COMPARATOR = new Comparator<Critter>() {
 

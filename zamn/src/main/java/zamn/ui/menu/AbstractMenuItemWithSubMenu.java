@@ -12,6 +12,11 @@ public abstract class AbstractMenuItemWithSubMenu extends AbstractMenuItem {
 
 	private static final long serialVersionUID = 3288949207624820781L;
 
+	private static final int X_ARROW_OFFSET = 6;
+	private static final int X_ARROW_WIDTH = 3;
+	private static final int Y_ARROW_HEIGHT_RATIO = 2;
+	private static final int Y_ARROW_OFFSET = 10;
+
 	public AbstractMenuItemWithSubMenu() {
 		super();
 	}
@@ -37,15 +42,17 @@ public abstract class AbstractMenuItemWithSubMenu extends AbstractMenuItem {
 
 		Dimension actualSize = getSize();
 
-		int[] xPoints = new int[] { actualSize.width - 6, actualSize.width - 3,
-				actualSize.width - 6 };
-		int[] yPoints = new int[] { 10, actualSize.height / 2,
-				actualSize.height - 10 };
+		int[] xPoints = new int[] { actualSize.width - X_ARROW_OFFSET,
+				actualSize.width - X_ARROW_WIDTH,
+				actualSize.width - X_ARROW_OFFSET };
+		int[] yPoints = new int[] { Y_ARROW_OFFSET,
+				actualSize.height / Y_ARROW_HEIGHT_RATIO,
+				actualSize.height - Y_ARROW_OFFSET };
 
 		g2d.setColor(FONT_COLOR);
 		g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
 				RenderingHints.VALUE_ANTIALIAS_ON);
-		g2d.fillPolygon(xPoints, yPoints, 3);
+		g2d.fillPolygon(xPoints, yPoints, xPoints.length);
 	}
 
 }

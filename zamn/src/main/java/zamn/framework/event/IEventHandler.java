@@ -19,5 +19,5 @@ public interface IEventHandler {
 	 *            The argument that was fired along with the event
 	 * @return
 	 */
-	public boolean handleEvent(Event event, Object arg);
+	boolean handleEvent(Event event, Object arg);
 }

@@ -11,8 +11,8 @@
 	<bean id="zamn" class="zamn.Zamn">
 		<property name="eventContext" ref="eventContext" />
 		<property name="gameScreen" ref="gameScreen" />
-		<property name="gameOverMenu" ref="gameOverMenu" />
-		<property name="gameWonMenu" ref="gameWonMenu" />
+		<property name="youDiedMenu" ref="youDiedMenu" />
+		<property name="youWinMenu" ref="youWinMenu" />
 		<property name="mainMenu" ref="mainMenu" />
 		<property name="systemMenu" ref="systemMenu" />
 		<property name="windowSize" ref="windowSize" />
@@ -135,7 +135,7 @@
 		</property>
 	</bean>
 
-	<bean id="gameOverMenu" class="zamn.ui.menu.Menu">
+	<bean id="youDiedMenu" class="zamn.ui.menu.Menu">
 		<property name="items">
 			<list>
 				<bean parent="eventMenuItem">
@@ -149,7 +149,7 @@
 		</property>
 	</bean>
 	
-	<bean id="gameWonMenu" class="zamn.ui.menu.Menu">
+	<bean id="youWinMenu" class="zamn.ui.menu.Menu">
 		<property name="items">
 			<list>
 				<bean parent="eventMenuItem">

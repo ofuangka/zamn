@@ -5,15 +5,15 @@ import java.util.Random;
 
 public interface IEventContext {
 
-	public void fire(IEventType type);
+	void fire(IEventType type);
 
-	public void fire(IEventType type, Object arg);
+	void fire(IEventType type, Object arg);
 
-	public List<IEventType> getAllEventTypes();
+	List<IEventType> getAllEventTypes();
 
-	public Random getRandom();
+	Random getRandom();
 
-	public void on(IEventType type, IEventHandler handler);
+	void on(IEventType type, IEventHandler handler);
 
-	public void onAll(IEventHandler handler);
+	void onAll(IEventHandler handler);
 }

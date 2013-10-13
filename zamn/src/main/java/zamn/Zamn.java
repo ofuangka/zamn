@@ -52,7 +52,7 @@ import zamn.ui.menu.Menu;
 public class Zamn implements IEventHandler {
 
 	private static final String APP_CTX_PATH = "spring-context.xml";
-	private static final int DEFAULT_ANIMATION_SPEED = 250;
+	private static final int DEFAULT_ANIMATION_SPEED = 200;
 	private static final Logger LOG = Logger.getLogger(Zamn.class);
 	private static final String ZAMN_BEAN_ID = "zamn";
 
@@ -75,9 +75,7 @@ public class Zamn implements IEventHandler {
 	private IKeySink currentKeySink;
 	private IEventContext eventContext;
 	private GameInterface gameInterface;
-	private Menu gameOverMenu;
 	private JComponent gameScreen;
-	private Menu gameWonMenu;
 	private boolean handlingInput;
 	private InGameMenuLayer inGameMenuLayer;
 	private Menu mainMenu;
@@ -90,7 +88,9 @@ public class Zamn implements IEventHandler {
 	private JFrame window;
 	private Dimension windowSize;
 	private String windowTitle;
+	private Menu youDiedMenu;
 	private Resource youDiedSound;
+	private Menu youWinMenu;
 	private Resource youWinSound;
 
 	/**
@@ -434,7 +434,7 @@ public class Zamn implements IEventHandler {
 	}
 
 	private void handleLoseCondition() {
-		showScreen(gameOverMenu);
+		showScreen(youDiedMenu);
 		playSound(youDiedSound);
 	}
 
@@ -507,7 +507,7 @@ public class Zamn implements IEventHandler {
 	}
 
 	private void handleWinCondition() {
-		showScreen(gameWonMenu);
+		showScreen(youWinMenu);
 		playSound(youWinSound);
 	}
 
@@ -559,18 +559,8 @@ public class Zamn implements IEventHandler {
 		this.gameInterface = gameInterface;
 	}
 
-	@Required
-	public void setGameOverMenu(Menu gameOverMenu) {
-		this.gameOverMenu = gameOverMenu;
-	}
-
 	public void setGameScreen(JComponent gameScreen) {
 		this.gameScreen = gameScreen;
-	}
-
-	@Required
-	public void setGameWonMenu(Menu gameWonMenu) {
-		this.gameWonMenu = gameWonMenu;
 	}
 
 	@Required
@@ -607,8 +597,18 @@ public class Zamn implements IEventHandler {
 	}
 
 	@Required
+	public void setYouDiedMenu(Menu youDiedMenu) {
+		this.youDiedMenu = youDiedMenu;
+	}
+
+	@Required
 	public void setYouDiedSound(Resource youDiedSound) {
 		this.youDiedSound = youDiedSound;
+	}
+
+	@Required
+	public void setYouWinMenu(Menu youWinMenu) {
+		this.youWinMenu = youWinMenu;
 	}
 
 	@Required

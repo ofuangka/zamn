@@ -533,8 +533,6 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 
 				executeAi();
 
-			} else {
-				// wait for user input
 			}
 			// } else {
 
