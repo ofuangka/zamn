@@ -498,10 +498,6 @@
 		"coords" : [ 17, 2 ],
 		"solid" : false
 	}, {
-		"spriteId" : "09010",
-		"coords" : [ 13, 13 ],
-		"solid" : false
-	}, {
 		"spriteId" : "02015",
 		"coords" : [ 17, 6 ],
 		"solid" : false
@@ -552,18 +548,6 @@
 	} ],
 	"entranceDefinitions" : [ [ 2, 3 ] ],
 	"exitDefinitions" : [ {
-		"boardId" : "neverReturnAlive",
-		"dir" : "down",
-		"entryPoint" : 1,
-		"x" : 12,
-		"y" : 14
-	}, {
-		"boardId" : "neverReturnAlive",
-		"dir" : "down",
-		"entryPoint" : 0,
-		"x" : 11,
-		"y" : 14
-	}, {
 		"boardId" : "barScene",
 		"dir" : "right",
 		"entryPoint" : 0,
@@ -1293,9 +1277,9 @@
 		"coords" : null,
 		"solid" : false
 	}, {
-		"spriteId" : "slate",
+		"spriteId" : "stone",
 		"coords" : null,
-		"solid" : false
+		"solid" : true
 	} ], [ {
 		"spriteId" : "stone",
 		"coords" : null,
@@ -1353,9 +1337,9 @@
 		"coords" : null,
 		"solid" : false
 	}, {
-		"spriteId" : "slate",
+		"spriteId" : "stone",
 		"coords" : null,
-		"solid" : false
+		"solid" : true
 	} ], [ {
 		"spriteId" : "stone",
 		"coords" : null,
@@ -1411,7 +1395,7 @@
 	}, {
 		"spriteId" : "slate",
 		"coords" : null,
-		"solid" : true
+		"solid" : false
 	}, {
 		"spriteId" : "stone",
 		"coords" : null,
