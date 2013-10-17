@@ -89,7 +89,7 @@
 						<value>1</value>
 					</array>
 				</property>
-				<property name="spriteId" value="0_1" />
+				<property name="spriteId" value="c_0_1" />
 				<property name="stats">
 					<map>
 						<entry key="HP" value="20" />
