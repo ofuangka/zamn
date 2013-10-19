@@ -22,9 +22,9 @@ public class Tile extends BoardPiece {
 
 	private static final int DEFAULT_MOVEMENT_COST = 1;
 
-	private static final Color DISABLED_COLOR = new Color(0, 0, 0, 50);
+	private static final Color DISABLED_COLOR = new Color(0, 0, 0, 100);
 	private static final Color IN_TARGETING_RANGE_COLOR = new Color(255, 255,
-			255, 50);
+			255, 100);
 	public static final int LEFT_EDGE = 3;
 
 	public static final int NUM_TILE_EDGES = 4;
@@ -123,13 +123,19 @@ public class Tile extends BoardPiece {
 				spriteSize.height, 0, 0, spriteSize.width, spriteSize.height,
 				null);
 
+		for (BoardPiece piece : pieces) {
+			g2d.drawImage(piece.getImage(), 0, 0, spriteSize.width,
+					spriteSize.height, 0, 0, spriteSize.width,
+					spriteSize.height, null);
+		}
+
 		if (!isEnabled()) {
 			g2d.setColor(DISABLED_COLOR);
 			g2d.fillRect(0, 0, spriteSize.width, spriteSize.height);
 		}
 
-		for (BoardPiece piece : pieces) {
-			g2d.drawImage(piece.getImage(), 0, 0, spriteSize.width,
+		if (isOccupied()) {
+			g2d.drawImage(getOccupant().getImage(), 0, 0, spriteSize.width,
 					spriteSize.height, 0, 0, spriteSize.width,
 					spriteSize.height, null);
 		}
@@ -235,7 +241,7 @@ public class Tile extends BoardPiece {
 	public void setTop(Tile top) {
 		adjacents[TOP_EDGE] = top;
 	}
-	
+
 	public String toString() {
 		return getX() + "," + getY();
 	}

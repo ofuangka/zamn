@@ -67,6 +67,10 @@ public class MapEditorPalette extends JPanel implements MouseListener {
 		}
 		return ret;
 	}
+	
+	public Dimension getSpriteSize() {
+		return spriteSize;
+	}
 
 	public boolean isCursorEnabled() {
 		return cursorX != DISABLED_CURSOR_XY;

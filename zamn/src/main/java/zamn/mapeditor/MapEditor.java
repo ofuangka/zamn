@@ -64,6 +64,10 @@ public class MapEditor extends JFrame {
 	protected void addPalette(MapEditorPalette palette) {
 		JScrollPane scrollPane = new JScrollPane(palette);
 		scrollPane.setPreferredSize(paletteSize);
+		scrollPane.getVerticalScrollBar().setUnitIncrement(
+				palette.getSpriteSize().height);
+		scrollPane.getHorizontalScrollBar().setUnitIncrement(
+				palette.getSpriteSize().width);
 		GridBagConstraints gc = new GridBagConstraints();
 		gc = new GridBagConstraints();
 		gc.gridx = 0;
