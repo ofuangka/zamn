@@ -60,9 +60,7 @@
 	
 	<bean id="messageLayer" class="zamn.ui.MessageLayer" />
 
-	<bean id="gameInterface" class="zamn.ui.GameInterface">
-		<constructor-arg ref="eventContext" />
-	</bean>
+	<bean id="gameInterface" class="zamn.ui.GameInterface" />
 
 	<bean id="board" class="zamn.board.GameBoard">
 		<constructor-arg ref="eventContext" />

@@ -5,11 +5,16 @@ import java.util.Map;
 
 public class CritterDefinition extends BoardPieceDefinition {
 	private boolean hostile;
+	private int nmuValue;
 	private Map<String, Integer> stats;
 	private List<String> talents;
 
 	public Map<String, Integer> getStats() {
 		return stats;
+	}
+
+	public int getNmuValue() {
+		return nmuValue;
 	}
 
 	public List<String> getTalents() {
@@ -22,6 +27,10 @@ public class CritterDefinition extends BoardPieceDefinition {
 
 	public void setHostile(boolean hostile) {
 		this.hostile = hostile;
+	}
+
+	public void setNmuValue(int nmuValue) {
+		this.nmuValue = nmuValue;
 	}
 
 	public void setStats(Map<String, Integer> stats) {

@@ -23,6 +23,7 @@ public class CritterFactory extends BoardPieceFactory {
 
 		CritterDefinition critterDefinition = (CritterDefinition) spriteDefinition;
 		ret.setHostile(critterDefinition.isHostile());
+		ret.setNmuValue(critterDefinition.getNmuValue());
 		ret.setTalents(critterDefinition.getTalents());
 		Map<String, Integer> statDefinitions = critterDefinition.getStats();
 		Set<String> statKeySet = statDefinitions.keySet();

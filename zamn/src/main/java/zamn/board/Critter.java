@@ -128,6 +128,7 @@ public class Critter extends BoardPiece {
 
 	private Map<Stat, Integer> stats = new HashMap<Stat, Integer>();
 	private List<String> talents;
+	private int nmuValue;
 
 	public Critter() {
 		setSolid(true);
@@ -136,6 +137,10 @@ public class Critter extends BoardPiece {
 
 	public String getAttack() {
 		return DEFAULT_ATTACK_ID;
+	}
+	
+	public int getNmuValue() {
+		return nmuValue;
 	}
 
 	public int getStat(Stat stat) {
@@ -161,6 +166,10 @@ public class Critter extends BoardPiece {
 
 	public void setHostile(boolean hostile) {
 		this.hostile = hostile;
+	}
+	
+	public void setNmuValue(int nmuValue) {
+		this.nmuValue = nmuValue;
 	}
 
 	public void setSelected(boolean selected) {

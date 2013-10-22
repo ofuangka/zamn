@@ -417,12 +417,20 @@ public class Zamn implements IEventHandler {
 			handlePlaySoundRequest((String) arg);
 			break;
 		}
+		case NMU_CHANGE: {
+			handleNmuChange((int) arg);
+			break;
+		}
 
 		default: {
 			break;
 		}
 		}
 		return true;
+	}
+
+	private void handleNmuChange(int newNmus) {
+		gameInterface.setNmus(newNmus);
 	}
 
 	private void handleExitRequest() {
@@ -630,9 +638,7 @@ public class Zamn implements IEventHandler {
 	/**
 	 * Replaces all contents of the window with the argument JComponent, sizing
 	 * it to the window size. If the screen is assignable from IKeySink, this
-	 * method sets up the user input, setting currentKeySink. If the screen is
-	 * not assignable from IKeySink, this method sets the currentKeySink equal
-	 * to the preconfigured fallbackKeySink.
+	 * method sets up the user input, setting currentKeySink.
 	 * 
 	 * @param screen
 	 */
@@ -659,7 +665,7 @@ public class Zamn implements IEventHandler {
 	}
 
 	/**
-	 * This simulates player input events
+	 * This simulates player input events (used when animating enemy movements)
 	 * 
 	 * @param action
 	 */

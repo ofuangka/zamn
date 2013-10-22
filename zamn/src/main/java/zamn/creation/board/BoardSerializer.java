@@ -89,6 +89,7 @@ public class BoardSerializer {
 				for (Critter.Stat key : statKeys) {
 					stats.put(key.toString(), key.getDefaultValue());
 				}
+				critterDefinition.setNmuValue(critter.getNmuValue());
 				critterDefinition.setStats(stats);
 				critterDefinition.setTalents(new ArrayList<String>());
 				critterDefinitions[i] = critterDefinition;

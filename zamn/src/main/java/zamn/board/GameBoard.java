@@ -36,6 +36,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	private static final String DEFAULT_INITIAL_BOARD_ID = "goStraight";
 	private static final Logger LOG = Logger.getLogger(GameBoard.class);
 	private static final long serialVersionUID = -6548852244995136036L;
+	private static final int INITIAL_NMUS = 0;
 
 	private BoardLoader boardLoader;
 	private IBoardUriResolver boardUriResolver;
@@ -49,6 +50,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 	private CritterDefinition initialHeroDefinition;
 	private List<AbstractGameBoardControlMode> modeHistory = new ArrayList<AbstractGameBoardControlMode>();
 	private List<Tile> tilesInTargetingRange = new ArrayList<Tile>();
+	private int nmus;
 
 	public GameBoard(IEventContext eventContext) {
 		this.eventContext = eventContext;
@@ -375,6 +377,10 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		return ret;
 	}
 
+	public int getNormalizedMonetaryUnits() {
+		return nmus;
+	}
+
 	private void handleCoordinatesRequest() {
 		LOG.info(controllingCritter.getX() + ", " + controllingCritter.getY());
 	}
@@ -383,6 +389,9 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 		removePiece(deadCritter);
 		critters.remove(deadCritter);
 		critterSequence.remove(deadCritter);
+		if (deadCritter.isHostile()) {
+			setNmus(nmus + deadCritter.getNmuValue());
+		}
 	}
 
 	protected void handleCritterTargetedActionRequest(EventMenuItem menuItem) {
@@ -435,6 +444,7 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 
 	protected void handleNewGameRequest() {
 		forceClearBoardState();
+		setNmus(INITIAL_NMUS);
 		eventContext.fire(GameEventContext.GameEventType.HERO_JOIN_REQUEST,
 				getInitialHero());
 		load(initialBoardId);
@@ -594,6 +604,11 @@ public class GameBoard extends AbstractViewportBoard implements IEventHandler,
 
 	public void setInitialHeroDefinition(CritterDefinition initialHeroDefinition) {
 		this.initialHeroDefinition = initialHeroDefinition;
+	}
+
+	public void setNmus(int nmus) {
+		this.nmus = nmus;
+		eventContext.fire(GameEventContext.GameEventType.NMU_CHANGE, nmus);
 	}
 
 	public void setTargetingRange(List<Tile> targetingRange) {

@@ -11,20 +11,35 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import zamn.board.Critter;
-import zamn.framework.event.IEventContext;
 
-public class GameInterface extends JScrollPane {
+public class GameInterface extends JPanel {
 
 	private static final long serialVersionUID = 4716145778679751281L;
 
 	private Map<Critter, CritterSticker> items = new HashMap<Critter, CritterSticker>();
 
+	private JScrollPane critterStickers;
+	private JLabel nmuDisplay = new JLabel();
 	private JLabel spacer = new JLabel();
 
-	public GameInterface(IEventContext eventContext) {
-		super(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	public GameInterface() {
+		super(new GridBagLayout());
+		critterStickers = new JScrollPane(
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		setViewportView(new JPanel(new GridBagLayout()));
+		critterStickers.setViewportView(new JPanel(new GridBagLayout()));
+
+		GridBagConstraints gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = 0;
+		gc.weightx = 1;
+		gc.weighty = 1;
+		gc.fill = GridBagConstraints.BOTH;
+		add(critterStickers, gc);
+		gc = new GridBagConstraints();
+		gc.gridx = 0;
+		gc.gridy = 1;
+		add(nmuDisplay, gc);
 	}
 
 	public void addCritter(Critter critter) {
@@ -50,7 +65,7 @@ public class GameInterface extends JScrollPane {
 	}
 
 	protected JPanel getView() {
-		return ((JPanel) getViewport().getView());
+		return ((JPanel) critterStickers.getViewport().getView());
 	}
 
 	protected void refreshSpacer() {
@@ -60,6 +75,10 @@ public class GameInterface extends JScrollPane {
 		gc.gridy = items.size();
 		gc.weighty = 1;
 		getView().add(spacer, gc);
+	}
+
+	public void setNmus(int nmus) {
+		nmuDisplay.setText(nmus + "¢");
 	}
 
 	public void removeCritter(Critter critter) {
